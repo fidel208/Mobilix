@@ -1,0 +1,9 @@
+footer {
+  height: 60dvh;
+  background-color: #4b4038;
+  color: white;
+  display: flex;
+  flex-direction: column;
+  border-top-left-radius: 13px;
+  border-top-right-radius: 13px;
+}
