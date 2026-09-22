@@ -10,4 +10,6 @@
 }
 body {
   background-color: #fdfbf7;
+  color: #020202;
+  scroll-behavior: smooth;
 }

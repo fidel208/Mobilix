@@ -20,13 +20,13 @@
   font-size: 22px;
   border-radius: 8px;
   color: white;
-  background-color: #6c3483;
+  background-color: #4b4038;
   border: none;
   outline: none;
   transition: ease 0.5s background-color;
 }
 .not-found button:hover {
-  background-color: #481a58;
+  background-color: #302721;
 }
 
 @media (max-width: 768px) {
