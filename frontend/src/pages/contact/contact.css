@@ -1,0 +1,144 @@
+.contact {
+  display: flex;
+  flex-direction: column;
+  gap: 50px;
+  align-items: center;
+  padding: 100px 0;
+  width: 100%;
+}
+.support {
+  display: flex;
+  flex-direction: column;
+  width: 100%;
+  align-items: center;
+  gap: 50px;
+}
+.support img {
+  color: #8b584e;
+  height: 400px;
+}
+.support-top {
+  display: flex;
+  flex-direction: column;
+  gap: 10px;
+}
+.support-top p {
+  font-size: 40px;
+  font-weight: bold;
+  color: #202940;
+}
+.support-bottom {
+  display: flex;
+  flex-direction: row;
+  justify-content: space-evenly;
+  width: 100%;
+}
+.support-bottom span {
+  display: flex;
+  flex-direction: column;
+  gap: 15px;
+  align-items: center;
+  justify-content: center;
+  padding: 15px;
+  border-radius: 8px;
+  background-color: white;
+  box-shadow: 0 0 2px rgb(190, 189, 189);
+  height: 200px;
+  width: 300px;
+  transition: ease 0.4s transform;
+  font-size: 30px;
+  color: #202940;
+}
+.support-bottom span:hover {
+  transform: translateY(-5px);
+}
+.support-bottom span i {
+  font-size: 40px;
+  color: #b77466;
+  background-color: #fff6f5;
+  width: 70px;
+  height: 70px;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  border-radius: 8px;
+}
+.support-bottom span h2 {
+  font-size: 25px;
+}
+.support-bottom span p {
+  font-size: 22px;
+}
+.contact-us {
+  display: flex;
+  flex-direction: row;
+  border: solid 1px rgb(207, 204, 204);
+  width: 900px;
+  height: 400px;
+  padding: 50px 20px;
+  border-radius: 12px;
+  margin-bottom: 100px;
+  margin-top: 50px;
+  justify-content: space-between;
+  background-color: #f8f5ee;
+}
+.contact-details {
+  display: flex;
+  flex-direction: column;
+  width: 35%;
+  padding: 0 10px;
+  gap: 10px;
+}
+.contact-details h3 {
+  font-size: 25px;
+}
+.office-details {
+  display: flex;
+  flex-direction: column;
+  gap: 10px;
+}
+.send-message {
+  display: flex;
+  flex-direction: column;
+  gap: 10px;
+  width: 60%;
+}
+#form-div {
+  display: flex;
+  flex-direction: row;
+  gap: 15px;
+}
+#form-span {
+  display: flex;
+  flex-direction: column;
+  gap: 5px;
+}
+#form-span input {
+  font-size: 18px;
+  padding: 8px;
+  border-radius: 8px;
+  border: solid 1px rgb(235, 226, 226);
+  outline: none;
+}
+#form-span input:focus,
+#form-span textarea:focus {
+  border: solid 1px #8b584e;
+}
+#form-span textarea {
+  font-size: 18px;
+  padding: 8px;
+  border-radius: 8px;
+  border: solid 1px rgb(236, 233, 233);
+  outline: none;
+  height: 100px;
+  width: 88%;
+}
+.send-message button {
+  height: 45px;
+  border: none;
+  outline: none;
+  color: white;
+  background-color: #4b4038;
+  border-radius: 8px;
+  margin-top: 15px;
+}

@@ -33,12 +33,13 @@ function Footer() {
               <Link to={"/"}>Home</Link>
               <Link to={"/about"}>About</Link>
               <Link to={"/services"}>Services</Link>
+              <Link to={"/contact"}>Contact</Link>
             </span>
             <span>
               <h3>Support</h3>
               <Link to={"/tickets"}>Print ticket</Link>
               <Link to={"/booking"}>Booking</Link>
-              <Link to={"/contact"}>Contact</Link>
+              <Link>Admin portal</Link>
             </span>
           </div>
           <div className="footer-bottom-two">
