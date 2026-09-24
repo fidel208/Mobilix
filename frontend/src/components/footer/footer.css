@@ -5,13 +5,12 @@ footer {
   color: white;
   display: flex;
   flex-direction: column;
-  justify-content: space-evenly;
   align-items: center;
   border-top-left-radius: 20px;
   border-top-right-radius: 20px;
   font-size: 18px;
   padding: 30px 0;
-  gap: 50px;
+  gap: 100px;
 }
 footer a {
   text-decoration: none;
@@ -96,4 +95,20 @@ footer a:hover {
 #footer-handles {
   display: flex;
   gap: 10px;
+}
+
+@media (max-width: 1024px) {
+  footer {
+    height: 80dvh;
+    width: 100%;
+    gap: 50px;
+  }
+  .footer-top {
+    width: 90%;
+    margin-bottom: 50px;
+  }
+  .footer-bottom {
+    width: 90%;
+    align-self: center;
+  }
 }

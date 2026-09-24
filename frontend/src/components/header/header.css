@@ -69,3 +69,12 @@ header nav button {
 header nav button:hover {
   background-color: #352b23;
 }
+
+@media (max-width: 1024px) {
+  .head-one a {
+    font-size: 22px;
+  }
+  .nav-links a {
+    font-size: 18px;
+  }
+}

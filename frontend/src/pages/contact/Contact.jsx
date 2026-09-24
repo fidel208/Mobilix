@@ -17,12 +17,12 @@ function Contact() {
             <span>
               <i className="fa-solid fa-phone"></i>
               <h2>Call us</h2>
-              <p>+254115931207</p>
+              <p>+254704679648</p>
             </span>
             <span>
               <i className="fa-brands fa-whatsapp"></i>
               <h2>Whatsapp</h2>
-              <p>+254789455874</p>
+              <p>+254704679648</p>
             </span>
             <span>
               <i className="fa-solid fa-envelope"></i>
@@ -38,7 +38,7 @@ function Contact() {
             <span className="office-details">
               <h4>Head office</h4>
               <p>info@mobilix.co.ke</p>
-              <p>+254789455874</p>
+              <p>+254704679648</p>
               <p>
                 <i className="fa-solid fa-location-dot"></i> Ukunda, Kwale -
                 Kenya
@@ -49,26 +49,50 @@ function Contact() {
             <div id="form-div">
               <span id="form-span">
                 <label htmlFor="first-name">First name</label>
-                <input type="text" id="first-name" name="first-name" />
+                <input
+                  type="text"
+                  id="first-name"
+                  name="first-name"
+                  placeholder="Enter your first name"
+                />
               </span>
               <span id="form-span">
                 <label htmlFor="last-name">Last name</label>
-                <input type="text" id="last-name" name="last-name" />
+                <input
+                  type="text"
+                  id="last-name"
+                  name="last-name"
+                  placeholder="Enter your last name"
+                />
               </span>
             </div>
             <div id="form-div">
               <span id="form-span">
                 <label htmlFor="email">Email address</label>
-                <input type="email" id="email" name="email" />
+                <input
+                  type="email"
+                  id="email"
+                  name="email"
+                  placeholder="your@email.com"
+                />
               </span>
               <span id="form-span">
                 <label htmlFor="phone">Phone number</label>
-                <input type="tel" id="phone" name="phone" />
+                <input
+                  type="tel"
+                  id="phone"
+                  name="phone"
+                  placeholder="eg. +254712345678"
+                />
               </span>
             </div>
             <span id="form-span">
               <label htmlFor="message">Message</label>
-              <textarea name="message" id="message"></textarea>
+              <textarea
+                name="message"
+                id="message"
+                placeholder="Enter your message"
+              ></textarea>
             </span>
             <button>Send message</button>
           </form>

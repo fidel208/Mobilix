@@ -85,7 +85,7 @@
 .contact-details {
   display: flex;
   flex-direction: column;
-  width: 35%;
+  width: 30%;
   padding: 0 10px;
   gap: 10px;
 }
@@ -141,4 +141,22 @@
   background-color: #4b4038;
   border-radius: 8px;
   margin-top: 15px;
+}
+
+@media (max-width: 1024px) {
+  .support img {
+    height: 300px;
+  }
+  .support p {
+    font-size: 30px;
+  }
+  .support-bottom span {
+    width: 250px;
+  }
+  .contact-us {
+    width: 800px;
+  }
+  #form-span textarea {
+    width: 99%;
+  }
 }

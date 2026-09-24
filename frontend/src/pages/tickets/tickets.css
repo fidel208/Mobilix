@@ -1,0 +1,81 @@
+.tickets {
+  height: 60dvh;
+  width: 100%;
+  padding: 50px 0;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+}
+.search-ticket {
+  display: flex;
+  flex-direction: column;
+  gap: 20px;
+  width: 600px;
+  background-color: #f8f5ee;
+  border-radius: 12px;
+  height: 200px;
+  padding: 30px;
+}
+.search-ticket h1 {
+  font-size: 25px;
+}
+#search {
+  display: flex;
+  width: 100%;
+  flex-direction: row;
+  justify-content: space-between;
+}
+#search input {
+  width: 60%;
+  padding: 10px;
+  border-radius: 8px;
+  border: solid 1px rgb(235, 226, 226);
+  outline: none;
+  font-size: 18px;
+}
+#search input:focus {
+  border: solid 1px #8b584e;
+}
+#search button {
+  width: 210px;
+  border-radius: 8px;
+  border: none;
+  outline: none;
+  color: white;
+  background-color: #313e5f;
+  font-size: 18px;
+  display: flex;
+  gap: 10px;
+  align-items: center;
+  justify-content: center;
+  transition: ease 0.3s background-color;
+}
+#search button:hover {
+  background-color: #202940;
+}
+#download-ticket {
+  height: 45px;
+  font-size: 20px;
+  border-radius: 8px;
+  outline: none;
+  border: none;
+  margin-top: 10px;
+  color: white;
+  background-color: #4b4038;
+  transition: ease 0.3s background-color;
+}
+#download-ticket:hover {
+  background-color: #2e2621;
+}
+
+@media (max-width: 1024px) {
+  .search-ticket {
+    width: 500px;
+  }
+  .search-ticket h1 {
+    font-size: 22px;
+  }
+  #search button {
+    width: 170px;
+  }
+}

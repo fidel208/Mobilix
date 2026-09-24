@@ -24,9 +24,13 @@ function Footer() {
           <div className="footer-bottom-one">
             <span>
               <h3>Contact</h3>
-              <Link>Email us</Link>
-              <Link>Call us</Link>
-              <Link>Whatsapp</Link>
+              <Link to={"mailto:rajaxraj1997@gmail.com"} target="_blank">
+                Email us
+              </Link>
+              <Link to={"tel:+254704679648"} target="_blank">
+                Call us
+              </Link>
+              <Link to={"https://wa.link/2exqq4"}>Whatsapp</Link>
             </span>
             <span>
               <h3>Quick links</h3>
@@ -50,10 +54,10 @@ function Footer() {
               </p>
             </span>
             <span id="footer-handles">
-              <Link>
+              <Link to={"https://wa.link/2exqq4"} target="_blank">
                 <i className="fa-brands fa-whatsapp"></i>
               </Link>
-              <Link>
+              <Link to={"mailto:rajaxraj1997@gmail.com"} target="_blank">
                 <i className="fa-solid fa-envelope"></i>
               </Link>
             </span>
