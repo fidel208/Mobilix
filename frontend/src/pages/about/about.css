@@ -1,0 +1,125 @@
+.about {
+  display: flex;
+  flex-direction: column;
+  gap: 100px;
+  padding: 100px 0;
+  width: 70%;
+  justify-self: center;
+}
+.about h1 {
+  font-size: 18px;
+  color: #4b4038;
+}
+.about h2 {
+  font-size: 40px;
+  color: #b77466;
+}
+.about p {
+  font-size: 20px;
+  color: #202940;
+}
+.about-top {
+  display: flex;
+  flex-direction: column;
+  gap: 10px;
+  width: 700px;
+  height: 50dvh;
+}
+.about-bottom {
+  display: flex;
+  flex-direction: column;
+  gap: 15px;
+}
+.about-bottom-cont {
+  display: flex;
+  flex-direction: row;
+  justify-content: space-between;
+  height: 50dvh;
+}
+.bottom-cont-left {
+  width: 60%;
+  display: flex;
+  flex-direction: column;
+  gap: 20px;
+}
+.bottom-cont-right {
+  display: flex;
+}
+#years {
+  display: flex;
+  flex-direction: column;
+  text-align: center;
+  align-items: center;
+  justify-content: center;
+  padding: 10px;
+  border-radius: 8px;
+  background-color: #fff6f5;
+  box-shadow: 0 0 2px rgb(190, 189, 189);
+  height: 150px;
+  width: 320px;
+  transition: 0.5s ease transform;
+}
+#years:hover {
+  transform: translateY(-5px);
+}
+#years h2 {
+  font-size: 40px;
+  color: #b77466;
+  background-color: #fff6f5;
+  width: 100px;
+  height: 70px;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  border-radius: 8px;
+}
+#years p {
+  font-size: 22px;
+}
+.values {
+  display: flex;
+  flex-direction: column;
+  gap: 15px;
+  align-self: center;
+  text-align: center;
+  width: 100%;
+}
+.values-cont {
+  display: flex;
+  flex-direction: row;
+  justify-content: space-between;
+  width: 100%;
+  margin-top: 10px;
+}
+.values-cont > span {
+  width: 250px;
+  height: 170px;
+  padding: 15px;
+  border-radius: 8px;
+  background-color: white;
+  box-shadow: 0 0 2px rgb(190, 189, 189);
+  display: flex;
+  flex-direction: column;
+  justify-content: space-evenly;
+  transition: 0.5s ease transform;
+}
+.values-cont > span:hover {
+  transform: translateY(-5px);
+}
+#value-icon {
+  color: #b77466;
+  background-color: #fff6f5;
+  height: 40px;
+  width: 50px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  align-self: center;
+  font-size: 22px;
+}
+.values-cont > span h3 {
+  font-size: 20px;
+}
+.values-cont > span p {
+  font-size: 18px;
+}

@@ -7,7 +7,7 @@ function Header() {
     <>
       <header>
         <div className="head-one">
-          <img src="public/Mobilix-transaparent.png" alt="mobilix-logo" />
+          <img src="Mobilix-transaparent.png" alt="mobilix-logo" />
           <Link to={"/"}>Mobilix</Link>
         </div>
         <nav>

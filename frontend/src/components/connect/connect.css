@@ -1,0 +1,47 @@
+.connect-section {
+  width: 70%;
+  height: 40dvh;
+  display: flex;
+  justify-content: center;
+  justify-self: center;
+  align-items: center;
+  padding: 50px 0;
+  background-color: #fdfbf7;
+}
+.connect {
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  align-items: center;
+  gap: 12px;
+}
+.connect h1 {
+  font-size: 30px;
+  color: #020202;
+}
+.connect p {
+  font-size: 24px;
+  color: #202940;
+}
+.connect button {
+  width: 200px;
+  height: 45px;
+  border-radius: 8px;
+  border: none;
+  outline: none;
+  color: white;
+  background-color: #4b4038;
+  transition: 0.5s background-color;
+}
+.connect button:hover {
+  background-color: #2e2621;
+}
+
+@media (max-width: 1024px) {
+  .connect h1 {
+    font-size: 28px;
+  }
+  .connect p {
+    font-size: 22px;
+  }
+}

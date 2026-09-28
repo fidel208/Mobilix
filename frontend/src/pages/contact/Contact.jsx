@@ -17,17 +17,22 @@ function Contact() {
             <span>
               <i className="fa-solid fa-phone"></i>
               <h2>Call us</h2>
-              <p>+254704679648</p>
+              <p>+254718176860</p>
             </span>
             <span>
               <i className="fa-brands fa-whatsapp"></i>
               <h2>Whatsapp</h2>
-              <p>+254704679648</p>
+              <p>+254734741509</p>
             </span>
             <span>
               <i className="fa-solid fa-envelope"></i>
               <h2>Email us</h2>
               <p>info@mobilix.co.ke</p>
+            </span>
+            <span>
+              <i className="fa-solid fa-hourglass-start"></i>
+              <h2>Availablity</h2>
+              <p>24/7 including weekends</p>
             </span>
           </div>
         </div>
