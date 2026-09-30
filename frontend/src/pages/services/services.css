@@ -1,0 +1,83 @@
+.services {
+  padding: 50px 0;
+  width: 70%;
+  display: flex;
+  flex-direction: column;
+  gap: 50px;
+  justify-self: center;
+}
+.services-top {
+  width: 100%;
+  display: flex;
+  flex-direction: column;
+  gap: 10px;
+  align-items: center;
+  justify-content: center;
+  text-align: center;
+}
+.services-top h1 {
+  font-size: 18px;
+  color: #4b4038;
+}
+.services-top h2 {
+  font-size: 35px;
+  color: #b77466;
+  font-weight: normal;
+}
+.services-bottom {
+  display: flex;
+  flex-direction: column;
+  gap: 100px;
+}
+.service-cont {
+  display: flex;
+  flex-direction: row;
+  justify-content: space-between;
+}
+#description {
+  width: 50%;
+  display: flex;
+  flex-direction: column;
+  gap: 10px;
+}
+.service-cont img {
+  width: 400px;
+  height: 350px;
+  border-radius: 12px;
+}
+#description h2 {
+  font-size: 22px;
+}
+#routes h3 {
+  font-size: 18px;
+}
+#routes ul {
+  list-style: none;
+  padding-left: 0;
+  color: #4b4038;
+}
+#routes ul > li {
+  position: relative;
+  padding-left: 30px;
+  margin-bottom: 10px;
+  line-height: 1.5;
+}
+#routes ul > li::before {
+  content: "";
+  position: absolute;
+  left: 0;
+  top: 50%;
+  transform: translateY(-50%);
+  width: 25px;
+  height: 25px;
+  background-image: url(../../assets/check_40dp_4B4038_FILL0_wght400_GRAD0_opsz40.svg);
+  background-repeat: no-repeat;
+  background-size: cover;
+  background-position: center;
+}
+#description a {
+  text-decoration: none;
+  color: #b77466;
+  display: flex;
+  text-align: center;
+}

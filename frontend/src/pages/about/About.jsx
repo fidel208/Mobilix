@@ -36,7 +36,7 @@ function About() {
                 comfort on their own schedules.
               </p>
               <p>
-                On 2025, we upgraded to providing car rental services where we
+                On 2025, we advanced to providing car rental services where we
                 offerd comfortable, well-maintained vehicles for self-drives and
                 safe cargo handling where we ensured that luggages were
                 transported at their destination safely and right on time.
