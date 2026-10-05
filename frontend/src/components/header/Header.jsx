@@ -1,8 +1,17 @@
-import React from "react";
+import React, { useState } from "react";
 import "./header.css";
 import { Link, NavLink } from "react-router-dom";
 
 function Header() {
+  const [openDropdown, setOpenDropdown] = useState(false);
+  const handleDropdown = () => {
+    if (openDropdown === false) {
+      setOpenDropdown(true);
+    } else {
+      setOpenDropdown(false);
+    }
+  };
+
   return (
     <>
       <header>
@@ -30,10 +39,28 @@ function Header() {
               </li>
             </ul>
           </div>
+
           <Link to={"/booking"}>
             <button>Booking</button>
           </Link>
         </nav>
+        <button id="menu-icon" onClick={handleDropdown}>
+          <span className="material-symbols-outlined">
+            {openDropdown === false ? "menu" : "close"}
+          </span>
+        </button>
+        {openDropdown && (
+          <div className="nav-dropdown">
+            <Link to={"/"}>Home</Link>
+            <Link to={"/about"}>About</Link>
+            <Link to={"/services"}>Services</Link>
+            <Link to={"/tickets"}>Tickets</Link>
+            <Link to={"/contact"}>Contact</Link>
+            <Link to={"/booking"}>
+              <button>Booking</button>
+            </Link>
+          </div>
+        )}
       </header>
     </>
   );

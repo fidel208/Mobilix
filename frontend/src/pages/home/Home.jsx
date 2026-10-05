@@ -9,75 +9,113 @@ function Home() {
   return (
     <>
       <Header />
-      <div className="home"></div>
-      <div className="home-service">
-        <h1>SERVICES</h1>
-        <p>What we provide</p>
-        <div className="home-service-cont">
-          <span className="service-container">
-            <span className="material-symbols-outlined">local_taxi</span>
-            <h2>Local transit</h2>
-            <p>
-              We provide short distance travels that gives you quick comfortable
-              and dependable rides for your everyday errands.
-            </p>
-            <Link>
-              Learn more
-              <span className="material-symbols-outlined">arrow_right_alt</span>
+      <div className="home-top">
+        <div className="top-contents">
+          <h1 id="slogan">Drive, Book, Go</h1>
+          <h1>
+            Your trusted transportation <br /> partner.
+          </h1>
+          <p>
+            Delivering reliable car hire, seamless short-distance travel,
+            private transport, and safe luggage handling across Kwale County and
+            beyond.
+          </p>
+          <div className="top-buttons">
+            <Link to={"/services"}>
+              <button>Explore</button>
             </Link>
-          </span>
-          <span className="service-container">
-            <span className="material-symbols-outlined">directions_car</span>
-            <h2>Private transports</h2>
-            <p>
-              We let you experience the utimate comfort with our private
-              transport service.
-            </p>
-            <Link>
-              Learn more
-              <span className="material-symbols-outlined">arrow_right_alt</span>
+            <Link to={"/booking"}>
+              <button>Get a ticket</button>
             </Link>
-          </span>
-          <span className="service-container">
-            <span className="material-symbols-outlined">local_shipping</span>
-            <h2>Carrier services</h2>
-            <p>
-              Our dedicated luggage transport service ensures your
-              belongingsreach at your destination safely, securely and right on
-              time.
-            </p>
-            <Link>
-              Learn more
-              <span className="material-symbols-outlined">arrow_right_alt</span>
-            </Link>
-          </span>
-          <span className="service-container">
-            <span className="material-symbols-outlined">car_rental</span>
-            <h2>Reliable car hire</h2>
-            <p>
-              We offer well-maintained, comfortable and fuel-efficient vehicles
-              available for both self-drives ad chauffered options.
-            </p>
-            <Link>
-              Learn more
-              <span className="material-symbols-outlined">arrow_right_alt</span>
-            </Link>
-          </span>
+          </div>
         </div>
       </div>
-      <div className="home-routes">
-        <h1>OUR ROUTES</h1>
-        <ul>
-          <li>Kwale town-Kombani</li>
-          <li>Kwale town - Ukunda</li>
-          <li>Kwale town - Likoni</li>
-          <li>Kombani - Ukunda</li>
-          <li>Likoni - Kombani</li>
-          <li>Anywhere - SGR MSA station</li>
-          <li>Anywhere - Ukunda airstrip</li>
-          <li>Anywhere - Moi Int airport</li>
-        </ul>
+      <div className="home">
+        <div className="home-service">
+          <h1>SERVICES</h1>
+          <p>What we provide</p>
+          <div className="home-service-cont">
+            <span className="service-container">
+              <span className="material-symbols-outlined" id="service-icon">
+                local_taxi
+              </span>
+              <h2>Local transit</h2>
+              <p>
+                We provide short distance travels that gives you quick
+                comfortable and dependable rides for your everyday errands.
+              </p>
+              <Link>
+                Learn more
+                <span className="material-symbols-outlined">
+                  arrow_right_alt
+                </span>
+              </Link>
+            </span>
+            <span className="service-container">
+              <span className="material-symbols-outlined" id="service-icon">
+                directions_car
+              </span>
+              <h2>Private transports</h2>
+              <p>
+                We let you experience the utimate comfort with our private
+                transport service.
+              </p>
+              <Link>
+                Learn more
+                <span className="material-symbols-outlined">
+                  arrow_right_alt
+                </span>
+              </Link>
+            </span>
+            <span className="service-container">
+              <span className="material-symbols-outlined" id="service-icon">
+                local_shipping
+              </span>
+              <h2>Carrier services</h2>
+              <p>
+                Our dedicated luggage transport service ensures your belongings
+                reach at your destination safely, securely and right on time.
+              </p>
+              <Link>
+                Learn more
+                <span className="material-symbols-outlined">
+                  arrow_right_alt
+                </span>
+              </Link>
+            </span>
+            <span className="service-container">
+              <span className="material-symbols-outlined" id="service-icon">
+                car_rental
+              </span>
+              <h2>Reliable car hire</h2>
+              <p>
+                We offer well-maintained, comfortable and fuel-efficient
+                vehicles available for both self-drives ad chauffered options.
+              </p>
+              <Link>
+                Learn more
+                <span className="material-symbols-outlined">
+                  arrow_right_alt
+                </span>
+              </Link>
+            </span>
+          </div>
+        </div>
+        <div className="home-routes">
+          <h1>OUR ROUTES</h1>
+          <ul>
+            <li>Kwale town-Kombani</li>
+            <li>Kwale town - Ukunda</li>
+            <li>Kwale town - Likoni</li>
+            <li>Kombani - Ukunda</li>
+            <li>Likoni - Kombani</li>
+            <li>Anywhere - SGR MSA station</li>
+            <li>Anywhere - Ukunda airstrip</li>
+            <li>Anywhere - Moi Int airport</li>
+          </ul>
+        </div>
       </div>
+
       <Connect />
       <Footer />
     </>

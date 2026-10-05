@@ -112,3 +112,32 @@ footer a:hover {
     align-self: center;
   }
 }
+
+@media (max-width: 768px) {
+  footer {
+    height: 100dvh;
+  }
+  #comp-name {
+    font-size: 18px;
+  }
+  #notion {
+    font-size: 25px;
+  }
+  .footer-bottom {
+    width: 80%;
+  }
+  footer h3 {
+    font-size: 20px;
+  }
+  footer a {
+    font-size: 18px;
+  }
+  .footer-bottom-one {
+    display: flex;
+    flex-direction: column;
+    gap: 50px;
+  }
+  #made p {
+    font-size: 16px;
+  }
+}

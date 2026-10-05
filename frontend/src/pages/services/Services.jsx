@@ -18,7 +18,7 @@ function Services() {
           </h2>
         </div>
         <div className="services-bottom">
-          <div className="service-cont">
+          <div className="service-cont" id="cont-1">
             <span id="description">
               <h2>Local transit</h2>
               <p>
@@ -46,7 +46,7 @@ function Services() {
             </span>
             <img src="tuktuk.jpeg" alt="local-transit" loading="lazy" />
           </div>
-          <div className="service-cont">
+          <div className="service-cont" id="cont-2">
             <img src="cx-5.webp" alt="private-booking" loading="lazy" />
             <span id="description">
               <h2>Private transport and personal bookings</h2>
@@ -71,7 +71,7 @@ function Services() {
               </Link>
             </span>
           </div>
-          <div className="service-cont">
+          <div className="service-cont" id="cont-3">
             <span id="description">
               <h2>Carrier services</h2>
               <p>
@@ -95,7 +95,7 @@ function Services() {
             </span>
             <img src="truck.jpeg" alt="carrier-services" loading="lazy" />
           </div>
-          <div className="service-cont">
+          <div className="service-cont" id="cont-4">
             <img src="mazda-demio.png" alt="car-rental" loading="lazy" />
             <span id="description">
               <h2>Reliable car hire</h2>

@@ -81,3 +81,30 @@
   display: flex;
   text-align: center;
 }
+
+@media (max-width: 1024px) {
+  .services {
+    width: 90%;
+  }
+}
+
+@media (max-width: 768px) {
+  .services-top h2 {
+    font-size: 28px;
+  }
+  .service-cont {
+    display: flex;
+    flex-direction: column;
+  }
+  #description {
+    width: 100%;
+  }
+  #cont-2,
+  #cont-4 {
+    flex-direction: column-reverse;
+  }
+  .service-cont img {
+    width: 300px;
+    height: 250px;
+  }
+}

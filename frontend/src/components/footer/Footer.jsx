@@ -43,7 +43,6 @@ function Footer() {
               <h3>Support</h3>
               <Link to={"/tickets"}>Print ticket</Link>
               <Link to={"/booking"}>Booking</Link>
-              <Link>Admin portal</Link>
             </span>
           </div>
           <div className="footer-bottom-two">

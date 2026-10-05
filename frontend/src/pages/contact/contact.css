@@ -144,6 +144,9 @@
 }
 
 @media (max-width: 1024px) {
+  .contact {
+    width: 100%;
+  }
   .support img {
     height: 300px;
   }
@@ -151,12 +154,46 @@
     font-size: 30px;
   }
   .support-bottom span {
-    width: 250px;
+    width: 180px;
+    text-align: center;
   }
   .contact-us {
     width: 800px;
   }
   #form-span textarea {
     width: 99%;
+  }
+}
+
+@media (max-width: 768px) {
+  .contact {
+    width: 90%;
+  }
+  .support p {
+    font-size: 23px;
+    text-align: center;
+  }
+  .support-bottom {
+    flex-wrap: wrap;
+    gap: 15px;
+    justify-content: flex-start;
+  }
+  .support-bottom span {
+    width: 250px;
+  }
+  .contact-us {
+    width: 90%;
+    flex-direction: column;
+    height: auto;
+    gap: 50px;
+  }
+  #form-div {
+    flex-direction: column;
+  }
+  .contact-details {
+    width: 100%;
+  }
+  .send-message {
+    width: 100%;
   }
 }

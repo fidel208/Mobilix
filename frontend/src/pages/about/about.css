@@ -123,3 +123,41 @@
 .values-cont > span p {
   font-size: 18px;
 }
+
+@media (max-width: 1024px) {
+  .about {
+    width: 90%;
+  }
+  .values-cont > span {
+    width: 180px;
+  }
+}
+
+@media (max-width: 768px) {
+  .about-top {
+    width: auto;
+  }
+  .about h2 {
+    font-size: 35px;
+  }
+  .about-bottom-cont {
+    flex-direction: column-reverse;
+    height: auto;
+    gap: 50px;
+  }
+  .bottom-cont-left {
+    width: 100%;
+  }
+  .values {
+    height: auto;
+    text-align: left;
+  }
+  .values-cont {
+    flex-wrap: wrap;
+    gap: 15px;
+  }
+  .values-cont > span {
+    width: 250px;
+    text-align: center;
+  }
+}
