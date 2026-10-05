@@ -11,7 +11,7 @@ function Home() {
       <Header />
       <div className="home-top">
         <div className="top-contents">
-          <h1 id="slogan">Drive, Book, Go</h1>
+          <h1 id="slogan">Book, Drive, Go</h1>
           <h1>
             Your trusted transportation <br /> partner.
           </h1>

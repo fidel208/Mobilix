@@ -7,7 +7,7 @@ function Connect() {
     <>
       <section className="connect-section">
         <div className="connect">
-          <h1>Drive, book, go</h1>
+          <h1>Book, drive, go</h1>
           <p>Enjoy the best transport services at your comfort</p>
           <Link to={"/booking"}>
             <button>Book us now</button>
