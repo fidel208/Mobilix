@@ -196,4 +196,11 @@
   .send-message {
     width: 100%;
   }
+  .support-bottom span h2 {
+    font-size: 20px;
+  }
+  .office-details h4,
+  p {
+    font-size: 18px;
+  }
 }

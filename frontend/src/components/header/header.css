@@ -157,4 +157,7 @@ header nav button:hover {
   .nav-dropdown {
     display: flex;
   }
+  .nav-dropdown a {
+    font-size: 18px;
+  }
 }
