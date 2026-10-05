@@ -117,7 +117,7 @@ header nav button:hover {
 
 @media (max-width: 1024px) {
   header {
-    height: 6dvh;
+    height: 8dvh;
   }
   .head-one a {
     font-size: 22px;
