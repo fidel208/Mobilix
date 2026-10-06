@@ -195,4 +195,7 @@
   .home-service {
     height: auto;
   }
+  .service-container {
+    width: 90%;
+  }
 }

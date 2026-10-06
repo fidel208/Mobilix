@@ -39,26 +39,51 @@ function Header() {
               </li>
             </ul>
           </div>
-
           <Link to={"/booking"}>
             <button>Booking</button>
           </Link>
+          <Link className="sign-in">
+            <span></span>
+            <p>Sign in</p>
+          </Link>
         </nav>
+
         <button id="menu-icon" onClick={handleDropdown}>
           <span className="material-symbols-outlined">
             {openDropdown === false ? "menu" : "close"}
           </span>
         </button>
         {openDropdown && (
-          <div className="nav-dropdown">
-            <Link to={"/"}>Home</Link>
-            <Link to={"/about"}>About</Link>
-            <Link to={"/services"}>Services</Link>
-            <Link to={"/tickets"}>Tickets</Link>
-            <Link to={"/contact"}>Contact</Link>
-            <Link to={"/booking"}>
-              <button>Booking</button>
-            </Link>
+          <div className="nav-overlay">
+            <div className="nav-dropdown">
+              <div className="dropdown-top">
+                <div className="close">
+                  <Link className="sign-in">
+                    <span></span>
+                    <p>Sign in</p>
+                  </Link>
+                  <span
+                    className="material-symbols-outlined"
+                    id="close-icon"
+                    onClick={() => {
+                      setOpenDropdown(false);
+                    }}
+                  >
+                    {openDropdown === false ? "menu" : "close"}
+                  </span>
+                </div>
+                <div className="dropdown-links">
+                  <NavLink to={"/"}>Home</NavLink>
+                  <NavLink to={"/about"}>About</NavLink>
+                  <NavLink to={"/services"}>Services</NavLink>
+                  <NavLink to={"/tickets"}>Tickets</NavLink>
+                  <NavLink to={"/contact"}>Contact</NavLink>
+                  <Link to={"/booking"}>
+                    <button>Booking</button>
+                  </Link>
+                </div>
+              </div>
+            </div>
           </div>
         )}
       </header>

@@ -46,6 +46,9 @@
   }
 }
 @media (max-width: 768px) {
+  .connect-section {
+    width: 90%;
+  }
   .connect p {
     font-size: 19px;
     text-align: center;
