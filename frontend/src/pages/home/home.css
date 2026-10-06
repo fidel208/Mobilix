@@ -198,4 +198,7 @@
   .service-container {
     width: 90%;
   }
+  .home-routes ul > li {
+    font-size: 18px;
+  }
 }

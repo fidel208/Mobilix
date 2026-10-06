@@ -12,6 +12,15 @@ function Header() {
     }
   };
 
+  const [loginModal, setLoginModal] = useState(false);
+  const handleLogin = () => {
+    if (loginModal === false) {
+      setLoginModal(true);
+    } else {
+      setLoginModal(false);
+    }
+  };
+
   return (
     <>
       <header>
@@ -42,7 +51,13 @@ function Header() {
           <Link to={"/booking"}>
             <button>Booking</button>
           </Link>
-          <Link className="sign-in">
+          <Link
+            className="sign-in"
+            onClick={(e) => {
+              e.preventDefault();
+              handleLogin();
+            }}
+          >
             <span></span>
             <p>Sign in</p>
           </Link>
@@ -53,40 +68,47 @@ function Header() {
             {openDropdown === false ? "menu" : "close"}
           </span>
         </button>
-        {openDropdown && (
-          <div className="nav-overlay">
-            <div className="nav-dropdown">
-              <div className="dropdown-top">
-                <div className="close">
-                  <Link className="sign-in">
-                    <span></span>
-                    <p>Sign in</p>
-                  </Link>
-                  <span
-                    className="material-symbols-outlined"
-                    id="close-icon"
-                    onClick={() => {
-                      setOpenDropdown(false);
-                    }}
-                  >
-                    {openDropdown === false ? "menu" : "close"}
-                  </span>
-                </div>
-                <div className="dropdown-links">
-                  <NavLink to={"/"}>Home</NavLink>
-                  <NavLink to={"/about"}>About</NavLink>
-                  <NavLink to={"/services"}>Services</NavLink>
-                  <NavLink to={"/tickets"}>Tickets</NavLink>
-                  <NavLink to={"/contact"}>Contact</NavLink>
-                  <Link to={"/booking"}>
-                    <button>Booking</button>
-                  </Link>
-                </div>
+      </header>
+      {openDropdown && (
+        <div className="nav-overlay">
+          <div className="nav-dropdown">
+            <div className="dropdown-top">
+              <div className="close">
+                <Link
+                  className="sign-in"
+                  onClick={(e) => {
+                    e.preventDefault();
+                    handleLogin();
+                  }}
+                >
+                  <span></span>
+                  <p>Sign in</p>
+                </Link>
+                <span
+                  className="material-symbols-outlined"
+                  id="close-icon"
+                  onClick={() => {
+                    setOpenDropdown(false);
+                  }}
+                >
+                  {openDropdown === false ? "menu" : "close"}
+                </span>
+              </div>
+              <div className="dropdown-links">
+                <NavLink to={"/"}>Home</NavLink>
+                <NavLink to={"/about"}>About</NavLink>
+                <NavLink to={"/services"}>Services</NavLink>
+                <NavLink to={"/tickets"}>Tickets</NavLink>
+                <NavLink to={"/contact"}>Contact</NavLink>
+                <Link to={"/booking"}>
+                  <button>Booking</button>
+                </Link>
               </div>
             </div>
           </div>
-        )}
-      </header>
+        </div>
+      )}
+      {loginModal && <div className="login-modal"></div>}
     </>
   );
 }
