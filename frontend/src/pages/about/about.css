@@ -141,7 +141,7 @@
     font-size: 35px;
   }
   .about-bottom-cont {
-    flex-direction: column-reverse;
+    flex-direction: column;
     height: auto;
     gap: 50px;
   }
@@ -159,5 +159,8 @@
   .values-cont > span {
     width: 90%;
     text-align: center;
+  }
+  #years {
+    width: 100%;
   }
 }
