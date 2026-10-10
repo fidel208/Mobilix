@@ -141,7 +141,7 @@
     font-size: 35px;
   }
   .about-bottom-cont {
-    flex-direction: column;
+    flex-direction: column-reverse;
     height: auto;
     gap: 50px;
   }
