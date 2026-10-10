@@ -191,6 +191,13 @@ header nav button:hover {
   align-items: center;
   z-index: 1000;
 }
+.login-container {
+  background-color: white;
+  width: 700px;
+  height: 500px;
+  border-radius: 12px;
+  box-shadow: 0 0 3px white;
+}
 
 @media (max-width: 1024px) {
   header {

@@ -108,7 +108,11 @@ function Header() {
           </div>
         </div>
       )}
-      {loginModal && <div className="login-modal"></div>}
+      {loginModal && (
+        <div className="login-modal" onClick={handleLogin}>
+          <div className="login-container"></div>
+        </div>
+      )}
     </>
   );
 }
