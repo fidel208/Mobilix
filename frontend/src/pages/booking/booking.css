@@ -24,7 +24,13 @@
   flex-direction: column;
   gap: 10px;
 }
-.booking form > button {
+.form-buttons {
+  display: flex;
+  flex-direction: row;
+  gap: 20px;
+}
+.form-buttons button,
+#luggage-book-btn {
   height: 40px;
   width: 200px;
   margin-top: 10px;
@@ -35,7 +41,14 @@
   border-radius: 8px;
   transition: all 0.4s ease;
 }
-.booking form > button:hover {
+#book-button {
+  background-color: #313e5f;
+}
+#book-button:hover {
+  background-color: #11182e;
+}
+.form-buttons button:hover,
+#luggage-book-btn:hover {
   background-color: #5f3d36;
 }
 .ticket-booking {
@@ -128,8 +141,8 @@
   flex-direction: column;
   gap: 5px;
 }
-.car-hire-booking form span select,
-.car-hire-booking form span input {
+.search-form span select,
+.search-form span input {
   width: 250px;
   font-size: 18px;
   padding: 0 7px;
@@ -162,10 +175,163 @@
 .booking-container,
 .hire-container {
   width: 700px;
-  height: 500px;
+  height: 480px;
   background-color: white;
   border-radius: 12px;
   box-shadow: 0 0 3px white;
+  padding: 20px;
+  display: flex;
+  flex-direction: column;
+  gap: 20px;
+}
+.booking-container label {
+  font-size: 18px;
+}
+.modal-top {
+  display: flex;
+  flex-direction: row;
+  justify-content: space-between;
+}
+.modal-top p {
+  color: #020202;
+  font-size: 20px;
+}
+.modal-top button {
+  background-color: white;
+  color: #8b584e;
+  border: none;
+  outline: none;
+}
+.details-form {
+  display: flex;
+  flex-direction: column;
+  gap: 10px;
+}
+.names,
+.place,
+.date {
+  display: flex;
+  flex-direction: row;
+  gap: 15px;
+}
+.names span,
+.place span,
+.date span {
+  display: flex;
+  flex-direction: column;
+  justify-content: space-between;
+  width: 48%;
+  gap: 7px;
+}
+.names span input,
+.place span input,
+.date span input {
+  width: 90%;
+  font-size: 18px;
+  padding: 0 7px;
+  height: 35px;
+  border: solid 1px rgb(197, 193, 193);
+  outline: none;
+  border-radius: 5px;
+}
+.place span select {
+  width: 94%;
+  font-size: 18px;
+  padding: 0 7px;
+  height: 35px;
+  border: solid 1px rgb(197, 193, 193);
+  outline: none;
+  border-radius: 5px;
+}
+.hire-container .place span select {
+  width: 100%;
+}
+.date span select {
+  width: 100%;
+  font-size: 18px;
+  padding: 0 7px;
+  height: 35px;
+  border: solid 1px rgb(197, 193, 193);
+  outline: none;
+  border-radius: 5px;
+}
+.names span input:focus,
+.place span select:focus,
+.place span input:focus,
+.date span input:focus {
+  border: solid 1px #b77466;
+}
+.payment-choose {
+  display: flex;
+  flex-direction: column;
+  gap: 10px;
+}
+.payment-choose span {
+  display: flex;
+  flex-direction: row;
+  gap: 5px;
+}
+.stk {
+  display: flex;
+  flex-direction: column;
+  gap: 15px;
+  margin-top: 10px;
+}
+.stk span {
+  display: flex;
+  flex-direction: column;
+  gap: 7px;
+  width: 95%;
+}
+.stk span input {
+  font-size: 18px;
+  padding: 0 7px;
+  height: 35px;
+  border: solid 1px rgb(197, 193, 193);
+  outline: none;
+  border-radius: 5px;
+}
+.stk span input:focus {
+  border: solid 1px #b77466;
+}
+.stk button,
+#book-now-btn {
+  width: 95%;
+  height: 40px;
+  border-radius: 5px;
+  border: none;
+  outline: none;
+  color: white;
+  background-color: #b77466;
+  margin-top: 10px;
+}
+.stk button:hover,
+#book-now-btn:hover {
+  background-color: #5f3c35;
+}
+.agree-span {
+  display: flex;
+  flex-direction: row;
+  gap: 10px;
+  margin-top: 10px;
+}
+.agree-span a {
+  text-decoration: none;
+  color: #020202;
+}
+.hire-container .agree-span {
+  display: flex;
+  flex-direction: row;
+  gap: 10px;
+  text-align: center;
+  align-items: center;
+}
+.hire-container .agree-span > input {
+  width: 15px;
+  height: 15px;
+}
+.hire-container span input {
+  width: auto;
 }
 
 @media (max-width: 1024px) {
@@ -237,5 +403,12 @@
   }
   .car-hire-booking form span input {
     width: 95%;
+  }
+  .booking-container,
+  .hire-container {
+    width: 85%;
+  }
+  .agree-span a {
+    font-size: 16px;
   }
 }

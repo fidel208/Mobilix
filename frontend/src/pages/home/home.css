@@ -201,4 +201,7 @@
   .home-routes ul > li {
     font-size: 18px;
   }
+  .home-routes {
+    margin: 0;
+  }
 }

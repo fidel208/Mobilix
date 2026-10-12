@@ -10,7 +10,7 @@ function Contact() {
       <div className="contact">
         <div className="support">
           <div className="support-top">
-            <img src="support.svg" alt="support-image" />
+            <img src="support.svg" alt="support-image" loading="lazy" />
             <p>We provide 24/7 customer support services</p>
           </div>
           <div className="support-bottom">
