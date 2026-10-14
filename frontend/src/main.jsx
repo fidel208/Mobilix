@@ -12,6 +12,11 @@ import Booking from "./pages/booking/Booking";
 import NotFound from "./pages/notFound/NotFound";
 import Admin from "./pages/admin/admin-dashboard/Admin";
 import Login from "./pages/admin/admin-auth/Login";
+import Dashboard from "./sections/dashboard/Dashboard";
+import AdminServices from "./sections/services/AdminServices";
+import AdminRoutes from "./sections/routes/AdminRoutes";
+import AdminTickets from "./sections/tickets/AdminTickets";
+import Community from "./sections/community/Community";
 
 const router = createBrowserRouter([
   { path: "/", element: <Home /> },
@@ -21,7 +26,32 @@ const router = createBrowserRouter([
   { path: "/contact", element: <Contact /> },
   { path: "/booking", element: <Booking /> },
   { path: "/admin/portal/auth", element: <Login /> },
-  { path: "/admin/portal/", element: <Admin /> },
+  {
+    path: "/admin/portal",
+    element: <Admin />,
+    children: [
+      {
+        path: "dashboard",
+        element: <Dashboard />,
+      },
+      {
+        path: "services",
+        element: <AdminServices />,
+      },
+      {
+        path: "routes",
+        element: <AdminRoutes />,
+      },
+      {
+        path: "tickets",
+        element: <AdminTickets />,
+      },
+      {
+        path: "community",
+        element: <Community />,
+      },
+    ],
+  },
   { path: "*", element: <NotFound /> },
 ]);
 

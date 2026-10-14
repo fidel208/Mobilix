@@ -99,3 +99,17 @@
 .form-container p {
   text-align: center;
 }
+
+@media (max-width: 768px) {
+  .auth-top p,
+  .form-top p,
+  .form-container p {
+    font-size: 15px;
+  }
+  .form-container label {
+    font-size: 17px;
+  }
+  .auth-div > span input {
+    font-size: 16px;
+  }
+}

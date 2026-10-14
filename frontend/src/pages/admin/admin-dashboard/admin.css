@@ -1,0 +1,20 @@
+.admin {
+  height: 100dvh;
+  width: 100%;
+  background-color: #4b4038;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+.admin-container {
+  width: 98%;
+  height: 95%;
+  padding: 20px;
+  display: flex;
+  flex-direction: row;
+  gap: 15px;
+}
+.admin-container main {
+  width: 82%;
+  height: 100%;
+}
