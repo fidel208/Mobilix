@@ -1,0 +1,101 @@
+.admin-auth {
+  height: 100dvh;
+  width: 100%;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+}
+.auth-container {
+  width: 500px;
+  padding: 20px;
+  display: flex;
+  flex-direction: column;
+  gap: 30px;
+}
+.auth-top {
+  display: flex;
+  flex-direction: column;
+  text-align: center;
+  align-items: center;
+}
+.logo-span {
+  height: 70px;
+  width: 70px;
+  box-shadow: 0 0 2px rgb(178, 181, 184);
+  border-radius: 5px;
+  background-image: url(../../../../Mobilix-transaparent.png);
+  background-size: cover;
+  background-position: center;
+  background-color: rgb(245, 249, 252);
+}
+.auth-top h1 {
+  font-size: 30px;
+}
+.auth-top p,
+.form-top p,
+.form-container p {
+  font-size: 18px;
+}
+.form-container {
+  display: flex;
+  flex-direction: column;
+  gap: 30px;
+  box-shadow: 0 0 4px rgb(105, 104, 104);
+  border-radius: 12px;
+  padding: 30px;
+}
+.form-top {
+  text-align: center;
+}
+.form-top h2 {
+  font-size: 25px;
+}
+.form-container form {
+  display: flex;
+  flex-direction: column;
+  gap: 15px;
+}
+.auth-div {
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+}
+.auth-div > span {
+  display: flex;
+  flex-direction: row;
+  gap: 5px;
+  align-items: center;
+  border: solid 1px rgb(180, 178, 178);
+  padding: 8px;
+  border-radius: 8px;
+}
+.auth-div > span:hover {
+  border: solid 1px #b77466;
+}
+.auth-div > span input {
+  width: 100%;
+  border: none;
+  outline: none;
+  padding: 0 5px;
+  font-size: 18px;
+}
+.form-container button {
+  height: 45px;
+  margin-top: 10px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 8px;
+  border: none;
+  outline: none;
+  color: white;
+  background-color: #b77466;
+  border-radius: 8px;
+  transition: all 0.5s ease;
+}
+.form-container button:hover {
+  background-color: rgb(97, 60, 52);
+}
+.form-container p {
+  text-align: center;
+}

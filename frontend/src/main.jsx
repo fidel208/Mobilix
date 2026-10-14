@@ -10,6 +10,8 @@ import Contact from "./pages/contact/Contact";
 import Tickets from "./pages/tickets/Tickets";
 import Booking from "./pages/booking/Booking";
 import NotFound from "./pages/notFound/NotFound";
+import Admin from "./pages/admin/admin-dashboard/Admin";
+import Login from "./pages/admin/admin-auth/Login";
 
 const router = createBrowserRouter([
   { path: "/", element: <Home /> },
@@ -18,6 +20,8 @@ const router = createBrowserRouter([
   { path: "/tickets", element: <Tickets /> },
   { path: "/contact", element: <Contact /> },
   { path: "/booking", element: <Booking /> },
+  { path: "/admin/portal/auth", element: <Login /> },
+  { path: "/admin/portal/", element: <Admin /> },
   { path: "*", element: <NotFound /> },
 ]);
 

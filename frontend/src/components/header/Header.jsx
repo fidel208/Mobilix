@@ -21,6 +21,8 @@ function Header() {
     }
   };
 
+  const [auth, setAuth] = useState("login");
+
   return (
     <>
       <header>
@@ -109,8 +111,126 @@ function Header() {
         </div>
       )}
       {loginModal && (
-        <div className="login-modal" onClick={handleLogin}>
-          <div className="login-container"></div>
+        <div className="login-modal">
+          <div className="login-container">
+            <div className="modal-top">
+              <p></p>
+              <button onClick={handleLogin}>
+                <span className="material-symbols-outlined">close</span>
+              </button>
+            </div>
+            {auth === "login" ? (
+              <div className="login">
+                <h1>Login</h1>
+                <form>
+                  <div className="form-div">
+                    <label htmlFor="login-email">Email address</label>
+                    <span>
+                      <span className="material-symbols-outlined">mail</span>
+                      <input
+                        type="email"
+                        name="login-email"
+                        id="login-email"
+                        required
+                      />
+                    </span>
+                  </div>
+                  <div className="form-div">
+                    <label htmlFor="login-pass">Password</label>
+                    <span>
+                      <span className="material-symbols-outlined">lock</span>
+                      <input
+                        type="password"
+                        name="login-pass"
+                        id="login-pass"
+                        required
+                      />
+                    </span>
+                  </div>
+                  <span>
+                    <input type="checkbox" name="show-pass" id="show-pass" />
+                    <label htmlFor="show-pass">Show Password</label>
+                  </span>
+                  <button>Sign in</button>
+                </form>
+                <p>
+                  Don't have an account?{" "}
+                  <Link
+                    onClick={(e) => {
+                      e.preventDefault();
+                      setAuth("register");
+                    }}
+                  >
+                    Register
+                  </Link>
+                </p>
+              </div>
+            ) : (
+              <div className="register">
+                <h1>Create an account</h1>
+                <form>
+                  <div className="form-div">
+                    <label htmlFor="register-email">Email address</label>
+                    <span>
+                      <span className="material-symbols-outlined">mail</span>
+                      <input
+                        type="email"
+                        name="register-email"
+                        id="register-email"
+                        required
+                      />
+                    </span>
+                  </div>
+                  <div className="form-div">
+                    <label htmlFor="register-pass">Password</label>
+                    <span>
+                      <span className="material-symbols-outlined">lock</span>
+                      <input
+                        type="password"
+                        name="register-pass"
+                        id="register-pass"
+                        required
+                      />
+                    </span>
+                  </div>
+                  <div className="form-div">
+                    <label htmlFor="confirm-pass">Confirm password</label>
+                    <span>
+                      <span className="material-symbols-outlined">
+                        lock_open
+                      </span>
+                      <input
+                        type="password"
+                        name="confirm-pass"
+                        id="confirm-pass"
+                        required
+                      />
+                    </span>
+                  </div>
+                  <span>
+                    <input type="checkbox" name="agree" id="agree" />
+                    <label htmlFor="agree">
+                      <Link to={"/register/terms-and-conditions"}>
+                        Agree to the terms and conditions
+                      </Link>
+                    </label>
+                  </span>
+                  <button type="submit">Register</button>
+                </form>
+                <p>
+                  Already have an account?{" "}
+                  <Link
+                    onClick={(e) => {
+                      e.preventDefault();
+                      setAuth("login");
+                    }}
+                  >
+                    Login
+                  </Link>
+                </p>
+              </div>
+            )}
+          </div>
         </div>
       )}
     </>

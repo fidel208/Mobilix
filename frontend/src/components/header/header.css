@@ -184,7 +184,7 @@ header nav button:hover {
   top: 0;
   left: 0;
   width: 100%;
-  height: 100%;
+  height: 100dvh;
   background-color: rgba(0, 0, 0, 0.5);
   display: flex;
   justify-content: center;
@@ -193,10 +193,106 @@ header nav button:hover {
 }
 .login-container {
   background-color: white;
-  width: 700px;
-  height: 500px;
+  width: 600px;
+  height: 550px;
   border-radius: 12px;
   box-shadow: 0 0 3px white;
+  padding: 10px 20px;
+}
+.modal-top {
+  display: flex;
+  flex-direction: row;
+  height: 30px;
+  justify-content: space-between;
+}
+.modal-top button {
+  height: 30px;
+  width: 30px;
+  font-size: 22px;
+}
+.login,
+.register {
+  display: flex;
+  flex-direction: column;
+  gap: 30px;
+}
+.login h1,
+.register h1 {
+  text-align: center;
+  font-size: 30px;
+  font-weight: normal;
+  margin-bottom: 10px;
+}
+.login form,
+.register form {
+  display: flex;
+  flex-direction: column;
+  gap: 15px;
+}
+.form-div {
+  display: flex;
+  flex-direction: column;
+  gap: 7px;
+}
+.form-div > span {
+  width: 95%;
+  display: flex;
+  flex-direction: row;
+  padding: 5px 10px;
+  border: solid 1px gray;
+  gap: 5px;
+  align-items: center;
+  border-radius: 8px;
+}
+.form-div > span:hover,
+.form-div > span:focus {
+  border: solid 1px #b77466;
+}
+.form-div > span input {
+  width: 100%;
+  font-size: 18px;
+  padding: 5px;
+  border: none;
+  outline: none;
+}
+.form-div > span > span {
+  font-size: 25px;
+}
+.login form > span,
+.register form > span {
+  display: flex;
+  flex-direction: row;
+  gap: 5px;
+  align-items: center;
+}
+.login form > span input,
+.register form > span input {
+  height: 15px;
+  width: 15px;
+}
+.register form > span a {
+  text-decoration: none;
+  color: #020202;
+}
+.login button,
+.register button {
+  height: 45px;
+  border-radius: 8px;
+  border: none;
+  outline: none;
+  color: white;
+  background-color: #b77466;
+  margin-top: 5px;
+  transition: 0.5s ease all;
+}
+.login button:hover,
+.register button:hover {
+  background-color: #683f37;
+}
+.login p a,
+.register p a {
+  text-decoration: none;
+  color: #b77466;
 }
 
 @media (max-width: 1024px) {
@@ -254,5 +350,15 @@ header nav button:hover {
   }
   .sign-in {
     height: 30px;
+  }
+  .login-container {
+    width: 85%;
+  }
+  .login label,
+  .register label {
+    font-size: 18px;
+  }
+  .register form > span a {
+    font-size: 18px;
   }
 }
