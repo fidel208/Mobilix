@@ -1,0 +1,39 @@
+.admin-routes {
+  height: 88%;
+  width: 100%;
+  background-color: #fdfbf7;
+  border-radius: 12px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+.admin-routes h1 {
+  font-size: 22px;
+}
+.routes-container {
+  width: 95%;
+  height: 95%;
+  display: flex;
+  flex-direction: column;
+  gap: 20px;
+}
+.routes-table-cont {
+  width: 100%;
+  margin-top: 10px;
+}
+.routes-table {
+  width: 100%;
+  max-height: 100%;
+}
+.routes-table th {
+  position: sticky;
+  top: 0;
+  z-index: 5;
+  padding: 15px;
+  text-align: left;
+}
+.routes-table td {
+  padding: 15px;
+  border-bottom: 1px solid #ccd1d6;
+  color: rgb(97, 95, 95);
+}

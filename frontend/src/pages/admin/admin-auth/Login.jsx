@@ -25,6 +25,7 @@ function Login() {
                     type="email"
                     name="admin-email"
                     id="admin-email"
+                    placeholder="your@email.com"
                     required
                   />
                 </span>
@@ -37,6 +38,7 @@ function Login() {
                     type="password"
                     name="admin-pass"
                     id="admin-pass"
+                    placeholder="********"
                     required
                   />
                 </span>

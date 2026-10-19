@@ -131,6 +131,7 @@ function Header() {
                         type="email"
                         name="login-email"
                         id="login-email"
+                        placeholder="your@email.com"
                         required
                       />
                     </span>
@@ -143,6 +144,7 @@ function Header() {
                         type="password"
                         name="login-pass"
                         id="login-pass"
+                        placeholder="********"
                         required
                       />
                     </span>
@@ -177,6 +179,7 @@ function Header() {
                         type="email"
                         name="register-email"
                         id="register-email"
+                        placeholder="your@email.com"
                         required
                       />
                     </span>
@@ -189,6 +192,7 @@ function Header() {
                         type="password"
                         name="register-pass"
                         id="register-pass"
+                        placeholder="********"
                         required
                       />
                     </span>
@@ -203,6 +207,7 @@ function Header() {
                         type="password"
                         name="confirm-pass"
                         id="confirm-pass"
+                        placeholder="********"
                         required
                       />
                     </span>

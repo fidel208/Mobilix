@@ -3,4 +3,36 @@
   height: 10%;
   background-color: #fdfbf7;
   border-radius: 12px;
+  display: flex;
+  align-items: center;
+}
+.header-container {
+  display: flex;
+  flex-direction: row;
+  justify-content: space-between;
+  padding: 0 20px;
+  align-items: center;
+  width: 100%;
+}
+.hello h1 {
+  font-size: 23px;
+  margin: 0;
+}
+.hello p {
+  font-size: 16px;
+  margin: 0;
+}
+#dp {
+  height: 50px;
+  width: 50px;
+  border-radius: 50%;
+  cursor: pointer;
+  display: flex;
+  justify-content: flex-end;
+  align-items: flex-end;
+  background-color: white;
+  background-position: center;
+  background-size: cover;
+  background-repeat: no-repeat;
+  background-image: url(https://www.gravatar.com/avatar/0000000…?d=mp&f=y);
 }

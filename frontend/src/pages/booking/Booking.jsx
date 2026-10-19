@@ -155,6 +155,7 @@ function Booking() {
                       type="text"
                       name="private-from"
                       id="private-from"
+                      placeholder="Eg. Kwale"
                       required
                     />
                   </span>
@@ -241,6 +242,7 @@ function Booking() {
                         type="text"
                         name="first-name"
                         id="first-name"
+                        placeholder="Enter your first name"
                         required
                       />
                     </span>
@@ -250,6 +252,7 @@ function Booking() {
                         type="text"
                         name="last-name"
                         id="last-name"
+                        placeholder="Enter your last name"
                         required
                       />
                     </span>
@@ -276,12 +279,18 @@ function Booking() {
                   </div>
                   <div className="date">
                     <span>
-                      <label htmlFor="date">Phone number</label>
+                      <label htmlFor="date">Date</label>
                       <input type="date" name="date" id="date" required />
                     </span>
                     <span>
                       <label htmlFor="seats">No of seats</label>
-                      <input type="number" name="seats" id="seats" required />
+                      <input
+                        type="number"
+                        name="seats"
+                        id="seats"
+                        placeholder="Eg. 1"
+                        required
+                      />
                     </span>
                   </div>
                   <div className="payment-choose">
@@ -349,6 +358,7 @@ function Booking() {
                         type="text"
                         name="first-name"
                         id="first-name"
+                        placeholder="Enter your first name"
                         required
                       />
                     </span>
@@ -358,6 +368,7 @@ function Booking() {
                         type="text"
                         name="last-name"
                         id="last-name"
+                        placeholder="Enter your last name"
                         required
                       />
                     </span>
@@ -369,6 +380,7 @@ function Booking() {
                         type="text"
                         name="private-from"
                         id="private-from"
+                        placeholder="Eg. Kwale"
                         required
                       />
                     </span>
@@ -388,7 +400,13 @@ function Booking() {
                     </span>
                     <span>
                       <label htmlFor="seats">No of seats</label>
-                      <input type="number" name="seats" id="seats" required />
+                      <input
+                        type="number"
+                        name="seats"
+                        id="seats"
+                        placeholder="Eg. 1"
+                        required
+                      />
                     </span>
                   </div>
                   <span className="agree-span">
@@ -498,6 +516,7 @@ function Booking() {
                         type="text"
                         name="first-name"
                         id="first-name"
+                        placeholder="Enter your first name"
                         required
                       />
                     </span>
@@ -507,6 +526,7 @@ function Booking() {
                         type="text"
                         name="last-name"
                         id="last-name"
+                        placeholder="Enter your last name"
                         required
                       />
                     </span>
@@ -518,6 +538,7 @@ function Booking() {
                         type="text"
                         name="private-from"
                         id="private-from"
+                        placeholder="Eg. Kwale"
                         required
                       />
                     </span>
