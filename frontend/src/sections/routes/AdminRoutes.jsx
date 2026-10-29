@@ -2,6 +2,15 @@ import React, { useState } from "react";
 import "./admin-routes.css";
 
 function AdminRoutes() {
+  const [routesModal, setRoutesModal] = useState(false);
+  const handleRoutes = () => {
+    if (routesModal === false) {
+      setRoutesModal(true);
+    } else {
+      setRoutesModal(false);
+    }
+  };
+
   const [routes, setRoutes] = useState([]);
   const [currentPage, setCurrentPage] = useState(1);
   const rowsPerPage = 10;
@@ -21,7 +30,7 @@ function AdminRoutes() {
               <span className="material-symbols-outlined">search</span>
               <input type="search" placeholder="Search for a route"></input>
             </span>
-            <button type="button">
+            <button type="button" onClick={handleRoutes}>
               <span className="material-symbols-outlined">add</span>Add a new
               route
             </button>
@@ -34,6 +43,7 @@ function AdminRoutes() {
                   <th>Destination</th>
                   <th>Service type</th>
                   <th>Price</th>
+                  <th>Modify</th>
                 </tr>
               </thead>
               <tbody>
@@ -42,6 +52,11 @@ function AdminRoutes() {
                   <td>Kombani</td>
                   <td>Local transit</td>
                   <td>100</td>
+                  <td>
+                    <button id="delete-btn">
+                      <span className="material-symbols-outlined">delete</span>
+                    </button>
+                  </td>
                 </tr>
               </tbody>
             </table>
@@ -69,6 +84,42 @@ function AdminRoutes() {
           </div>
         </div>
       </div>
+      {routesModal && (
+        <div className="routes-overlay">
+          <div className="routes-modal">
+            <div className="modal-top">
+              <p>Add a client</p>
+              <button onClick={handleRoutes}>
+                <span class="material-symbols-outlined">close</span>
+              </button>
+            </div>
+            <form>
+              <span>
+                <label htmlFor="starting-point">Starting point</label>
+                <input type="text" name="starting-point" id="starting-point" />
+              </span>
+              <span>
+                <label htmlFor="destination">Destination</label>
+                <input type="text" name="destination" id="destination" />
+              </span>
+              <span>
+                <label htmlFor="price">Price</label>
+                <input type="number" name="price" id="price" />
+              </span>
+              <span>
+                <label htmlFor="servicee-type">Service type</label>
+                <select name="service-type" id="service-type">
+                  <option value="local-transit">Local transit</option>
+                  <option value="private-booking">Private booking</option>
+                  <option value="car-hire">Car hire</option>
+                  <option value="carrier">Carrier services</option>
+                </select>
+              </span>
+              <button>Submit</button>
+            </form>
+          </div>
+        </div>
+      )}
     </>
   );
 }

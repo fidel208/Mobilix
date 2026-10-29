@@ -21,6 +21,10 @@ function Aside() {
               <span className="material-symbols-outlined">alt_route</span>
               Routes
             </NavLink>
+            <NavLink to={"/admin/portal/vehicles"}>
+              <span className="material-symbols-outlined">transportation</span>
+              Vehicles
+            </NavLink>
             <NavLink to={"/admin/portal/tickets"}>
               <span className="material-symbols-outlined">local_activity</span>
               Tickets

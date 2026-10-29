@@ -2,6 +2,15 @@ import React, { useState } from "react";
 import "./admin-tickets.css";
 
 function AdminTickets() {
+  const [adminTicketsModal, setAdminTicketsModal] = useState(false);
+  const handleTickets = () => {
+    if (adminTicketsModal === false) {
+      setAdminTicketsModal(true);
+    } else {
+      setAdminTicketsModal(false);
+    }
+  };
+
   const [tickets, setTickets] = useState([]);
   const [currentPage, setCurrentPage] = useState(1);
   const rowsPerPage = 10;
@@ -22,7 +31,7 @@ function AdminTickets() {
               <span className="material-symbols-outlined">search</span>
               <input type="search" placeholder="Search for a ticket"></input>
             </span>
-            <button type="button">
+            <button type="button" onClick={handleTickets}>
               <span className="material-symbols-outlined">add</span>Add a new
               ticket
             </button>
@@ -36,6 +45,8 @@ function AdminTickets() {
                   <th>Last name</th>
                   <th>Phone number</th>
                   <th>Reference code</th>
+                  <th>Date created</th>
+                  <th>Modify</th>
                 </tr>
               </thead>
               <tbody>
@@ -45,6 +56,12 @@ function AdminTickets() {
                   <td>Muthomi</td>
                   <td>0789455874</td>
                   <td>UIE63738SJ</td>
+                  <td>Tuesday 10:34am</td>
+                  <td>
+                    <button id="delete-btn">
+                      <span className="material-symbols-outlined">delete</span>
+                    </button>
+                  </td>
                 </tr>
               </tbody>
             </table>
@@ -72,6 +89,41 @@ function AdminTickets() {
           </div>
         </div>
       </div>
+      {adminTicketsModal && (
+        <div className="tickets-overlay">
+          <div className="ticket-modal">
+            <div className="modal-top">
+              <p>Add a client</p>
+              <button onClick={handleTickets}>
+                <span class="material-symbols-outlined">close</span>
+              </button>
+            </div>
+            <form>
+              <span>
+                <label htmlFor="first-name">First name</label>
+                <input type="text" name="first-name" id="first-name" />
+              </span>
+              <span>
+                <label htmlFor="last-name">last name</label>
+                <input type="text" name="last-name" id="last-name" />
+              </span>
+              <span>
+                <label htmlFor="phone">Phone number</label>
+                <input type="tel" name="phone" id="phone" />
+              </span>
+              <span>
+                <label htmlFor="amount">Amount</label>
+                <input type="number" name="amount" id="amount" />
+              </span>
+              <span>
+                <label htmlFor="ref-code">Reference code</label>
+                <input type="text" name="ref-code" id="ref-code" />
+              </span>
+              <button>Submit</button>
+            </form>
+          </div>
+        </div>
+      )}
     </>
   );
 }

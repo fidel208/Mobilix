@@ -114,7 +114,7 @@ function Dashboard() {
                     border: "none",
                     outline: "none",
                     color: "#fff",
-                    borderRadius: "8px",
+                    borderRadius: "12px",
                   }}
                 />
                 <Legend iconType="circle" />

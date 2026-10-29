@@ -15,6 +15,7 @@ import Login from "./pages/admin/admin-auth/Login";
 import Dashboard from "./sections/dashboard/Dashboard";
 import AdminServices from "./sections/services/AdminServices";
 import AdminRoutes from "./sections/routes/AdminRoutes";
+import Vehicles from "./sections/vehicles/Vehicles";
 import AdminTickets from "./sections/tickets/AdminTickets";
 import Community from "./sections/community/Community";
 
@@ -41,6 +42,10 @@ const router = createBrowserRouter([
       {
         path: "routes",
         element: <AdminRoutes />,
+      },
+      {
+        path: "vehicles",
+        element: <Vehicles />,
       },
       {
         path: "tickets",

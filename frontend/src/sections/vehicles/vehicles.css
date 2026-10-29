@@ -1,0 +1,55 @@
+.vehicles {
+  height: 88%;
+  width: 100%;
+  background-color: #fdfbf7;
+  border-radius: 12px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+.vehicles h1 {
+  font-size: 22px;
+}
+.vehicles-container {
+  width: 95%;
+  height: 95%;
+  display: flex;
+  flex-direction: column;
+  gap: 20px;
+}
+.vehicles-table-cont {
+  width: 100%;
+  margin-top: 10px;
+}
+.vehicles-table {
+  width: 100%;
+  max-height: 100%;
+}
+.vehicles-table th {
+  position: sticky;
+  top: 0;
+  z-index: 5;
+  padding: 15px;
+  text-align: left;
+  font-size: 18px;
+}
+.vehicles-table td {
+  padding: 15px;
+  border-bottom: 1px solid #ccd1d6;
+  color: rgb(97, 95, 95);
+  font-size: 18px;
+}
+.vehicles-overlay {
+  display: none;
+  position: fixed;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+  background: rgba(8, 8, 8, 0.5);
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  backdrop-filter: blur(5px);
+  z-index: 1000;
+}

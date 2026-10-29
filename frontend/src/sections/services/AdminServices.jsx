@@ -2,6 +2,15 @@ import React, { useState } from "react";
 import "./admin-services.css";
 
 function AdminServices() {
+  const [servicesModal, setServicesModal] = useState(false);
+  const handleServices = () => {
+    if (servicesModal === false) {
+      setServicesModal(true);
+    } else {
+      setServicesModal(false);
+    }
+  };
+
   const [services, setServices] = useState([]);
   const [currentPage, setCurrentPage] = useState(1);
   const rowsPerPage = 10;
@@ -21,7 +30,7 @@ function AdminServices() {
               <span className="material-symbols-outlined">search</span>
               <input type="search" placeholder="Search for a services"></input>
             </span>
-            <button type="button">
+            <button type="button" onClick={handleServices}>
               <span className="material-symbols-outlined">add</span>Add a new
               service
             </button>
@@ -31,17 +40,23 @@ function AdminServices() {
               <thead>
                 <tr>
                   <th>Service name</th>
-                  <th>Date created</th>
                   <th>Number of routes</th>
                   <th>Tickets booked</th>
+                  <th>Revenue generated</th>
+                  <th>Modify</th>
                 </tr>
               </thead>
               <tbody>
                 <tr>
                   <td>Local transit</td>
-                  <td>Tuesday 12:45pm</td>
                   <td>5</td>
                   <td>100</td>
+                  <td>5000</td>
+                  <td>
+                    <button id="delete-btn">
+                      <span className="material-symbols-outlined">delete</span>
+                    </button>
+                  </td>
                 </tr>
               </tbody>
             </table>
@@ -69,6 +84,7 @@ function AdminServices() {
           </div>
         </div>
       </div>
+      {servicesModal && <div className="services-overlay"></div>}
     </>
   );
 }

@@ -47,7 +47,7 @@ function Footer() {
           </div>
           <div className="footer-bottom-two">
             <span id="made">
-              <p>Made by Finora technologies. {new Date().getFullYear()}</p>
+              <p>Made by Radah softwares. {new Date().getFullYear()}</p>
               <p>
                 <i className="fa-solid fa-location-dot"></i> Kwale, Kenya
               </p>

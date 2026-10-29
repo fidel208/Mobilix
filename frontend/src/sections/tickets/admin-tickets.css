@@ -31,9 +31,32 @@
   z-index: 5;
   padding: 15px;
   text-align: left;
+  font-size: 18px;
 }
 .tickets-table td {
   padding: 15px;
   border-bottom: 1px solid #ccd1d6;
   color: rgb(97, 95, 95);
+  font-size: 18px;
+}
+.tickets-overlay {
+  display: none;
+  position: fixed;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+  background: rgba(8, 8, 8, 0.5);
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  backdrop-filter: blur(5px);
+  z-index: 1000;
+}
+.ticket-modal {
+  padding: 20px 30px;
+  width: 700px;
+  height: 550px;
+  background-color: #fdfbf7;
+  border-radius: 12px;
 }
