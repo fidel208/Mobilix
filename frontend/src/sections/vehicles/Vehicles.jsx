@@ -94,22 +94,27 @@ function Vehicles() {
             <form>
               <span>
                 <label htmlFor="vehicle-name">Vehicle name</label>
-                <input type="text" name="vehicle-name" id="vehicle-name" />
+                <input
+                  type="text"
+                  name="vehicle-name"
+                  id="vehicle-name"
+                  required
+                />
               </span>
               <span>
                 <label htmlFor="plate">Number plate</label>
-                <input type="text" name="plate" id="plate" />
+                <input type="text" name="plate" id="plate" required />
               </span>
               <span>
                 <label htmlFor="service-type">Service type</label>
-                <select name="service-type" id="service-type">
+                <select name="service-type" id="service-type" required>
                   <option value="local-transit">Local transit</option>
                   <option value="private-booking">Private booking</option>
                   <option value="car-hire">Car hire</option>
                   <option value="carrier">Carrier services</option>
                 </select>
               </span>
-              <button>Submit</button>
+              <button id="form-submit-btn">Submit</button>
             </form>
           </div>
         </div>

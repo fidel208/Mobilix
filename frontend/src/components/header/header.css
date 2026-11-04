@@ -193,11 +193,11 @@ header nav button:hover {
 }
 .login-container {
   background-color: white;
-  width: 600px;
-  height: 550px;
+  width: 500px;
+  height: 600px;
   border-radius: 12px;
   box-shadow: 0 0 3px white;
-  padding: 10px 20px;
+  padding: 10px 30px;
 }
 .modal-top {
   display: flex;
@@ -273,6 +273,7 @@ header nav button:hover {
 .register form > span a {
   text-decoration: none;
   color: #020202;
+  margin-left: 5px;
 }
 .login button,
 .register button {

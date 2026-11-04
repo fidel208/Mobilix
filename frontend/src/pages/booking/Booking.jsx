@@ -412,8 +412,9 @@ function Booking() {
                   <span className="agree-span">
                     <input type="checkbox" name="agree" id="agree" required />
                     <label htmlFor="agree">
+                      Agree to the
                       <Link to={"/private-booking/terms-and-conditions"}>
-                        Agree to the terms and conditions
+                        terms and conditions
                       </Link>
                     </label>
                   </span>
@@ -569,8 +570,9 @@ function Booking() {
                   <span className="agree-span">
                     <input type="checkbox" name="agree" id="agree" required />
                     <label htmlFor="agree">
+                      Agree to the
                       <Link to={"/car-hire/terms-and-conditions"}>
-                        Agree to the terms and conditions
+                        terms and conditions
                       </Link>
                     </label>
                   </span>

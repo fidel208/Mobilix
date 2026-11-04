@@ -115,7 +115,12 @@ function Community() {
             <form>
               <span>
                 <label htmlFor="client-email">Email address</label>
-                <input type="email" name="client-email" id="client-email" />
+                <input
+                  type="email"
+                  name="client-email"
+                  id="client-email"
+                  required
+                />
               </span>
               <span>
                 <label htmlFor="status">Status</label>
@@ -123,8 +128,10 @@ function Community() {
                   <option value="subscribed">Subscribed</option>
                   <option value="not-subscribed">Not subscribed</option>
                 </select>
-                <button>Submit</button>
               </span>
+              <button type="submit" id="form-submit-btn">
+                Submit
+              </button>
             </form>
           </div>
         </div>

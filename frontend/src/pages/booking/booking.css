@@ -319,6 +319,7 @@
 .agree-span a {
   text-decoration: none;
   color: #020202;
+  margin-left: 5px;
 }
 .hire-container .agree-span {
   display: flex;

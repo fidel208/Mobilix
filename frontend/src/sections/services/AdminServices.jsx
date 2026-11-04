@@ -84,7 +84,40 @@ function AdminServices() {
           </div>
         </div>
       </div>
-      {servicesModal && <div className="services-overlay"></div>}
+      {servicesModal && (
+        <div className="services-overlay">
+          <div className="services-modal">
+            <div className="modal-top">
+              <p>Add a services</p>
+              <button onClick={handleServices}>
+                <span class="material-symbols-outlined">close</span>
+              </button>
+            </div>
+            <form>
+              <span>
+                <label htmlFor="service-name">Service name</label>
+                <input
+                  type="text"
+                  name="service-name"
+                  id="service-name"
+                  required
+                />
+              </span>
+              <span>
+                <label htmlFor="service-desc">Description</label>
+                <textarea
+                  name="service-desc"
+                  id="service-desc"
+                  required
+                ></textarea>
+              </span>
+              <button id="form-submit-btn" type="submit">
+                Submit
+              </button>
+            </form>
+          </div>
+        </div>
+      )}
     </>
   );
 }

@@ -101,25 +101,30 @@ function AdminTickets() {
             <form>
               <span>
                 <label htmlFor="first-name">First name</label>
-                <input type="text" name="first-name" id="first-name" />
+                <input type="text" name="first-name" id="first-name" required />
               </span>
               <span>
-                <label htmlFor="last-name">last name</label>
-                <input type="text" name="last-name" id="last-name" />
+                <label htmlFor="last-name">Last name</label>
+                <input type="text" name="last-name" id="last-name" required />
               </span>
               <span>
                 <label htmlFor="phone">Phone number</label>
-                <input type="tel" name="phone" id="phone" />
+                <input type="tel" name="phone" id="phone" required />
               </span>
               <span>
-                <label htmlFor="amount">Amount</label>
-                <input type="number" name="amount" id="amount" />
+                <label htmlFor="ticket-amount">Amount</label>
+                <input
+                  type="number"
+                  name="ticket-amount"
+                  id="ticket-amount"
+                  required
+                />
               </span>
               <span>
                 <label htmlFor="ref-code">Reference code</label>
-                <input type="text" name="ref-code" id="ref-code" />
+                <input type="text" name="ref-code" id="ref-code" required />
               </span>
-              <button>Submit</button>
+              <button id="form-submit-btn">Submit</button>
             </form>
           </div>
         </div>

@@ -53,3 +53,64 @@
   backdrop-filter: blur(5px);
   z-index: 1000;
 }
+.routes-modal {
+  padding: 20px 30px;
+  width: 700px;
+  height: 550px;
+  background-color: #fdfbf7;
+  border-radius: 12px;
+  display: flex;
+  flex-direction: column;
+  gap: 20px;
+}
+.routes-modal form {
+  display: flex;
+  flex-direction: column;
+  gap: 20px;
+}
+.routes-modal form > span {
+  display: flex;
+  flex-direction: row;
+}
+.routes-modal form label {
+  width: 180px;
+  font-size: 18px;
+}
+.routes-modal form input {
+  width: 60%;
+  padding: 7px 10px;
+  font-size: 17px;
+  border: solid 1px gray;
+  outline: none;
+  border-radius: 5px;
+}
+.routes-modal form input:focus,
+.routes-modal form select:focus {
+  border: solid 1px#b77466;
+}
+.routes-modal form select {
+  width: 63%;
+  padding: 7px 10px;
+  font-size: 17px;
+  border: solid 1px gray;
+  outline: none;
+  border-radius: 5px;
+}
+.routes-modal form option {
+  font-size: 17px;
+}
+#form-submit-btn {
+  margin-left: 180px;
+  width: 250px;
+  height: 45px;
+  border-radius: 8px;
+  border: none;
+  outline: none;
+  color: white;
+  background-color: #b77466;
+  margin-top: 5px;
+  transition: 0.5s ease all;
+}
+#form-submit-btn:hover {
+  background-color: #6e443b;
+}

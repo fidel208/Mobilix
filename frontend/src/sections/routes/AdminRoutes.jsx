@@ -115,7 +115,7 @@ function AdminRoutes() {
                   <option value="carrier">Carrier services</option>
                 </select>
               </span>
-              <button>Submit</button>
+              <button id="form-submit-btn">Submit</button>
             </form>
           </div>
         </div>

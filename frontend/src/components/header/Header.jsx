@@ -215,8 +215,9 @@ function Header() {
                   <span>
                     <input type="checkbox" name="agree" id="agree" />
                     <label htmlFor="agree">
+                      Agree to the
                       <Link to={"/register/terms-and-conditions"}>
-                        Agree to the terms and conditions
+                        terms and conditions
                       </Link>
                     </label>
                   </span>
