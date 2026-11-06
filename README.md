@@ -3,7 +3,6 @@
 
 <p align="center">
   <img src="https://img.shields.io/badge/Status-Live-brightgreen?style=flat-square" alt="Status" />
-  <img src="https://img.shields.io/badge/Domain-mobilix.co.ke-blueviolet?style=flat-square" alt="Deployment" />
   <img src="https://img.shields.io/badge/Region-Kwale_County,_Kenya-blue?style=flat-square" alt="Target Region" />
 </p>
 
