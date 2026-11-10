@@ -137,6 +137,9 @@
   .about-top {
     width: auto;
   }
+  .about p {
+    font-size: 17px;
+  }
   .about h2 {
     font-size: 35px;
   }
@@ -148,6 +151,9 @@
   .bottom-cont-left {
     width: 100%;
   }
+  #years p {
+    font-size: 20px;
+  }
   .values {
     height: auto;
     text-align: left;
@@ -155,6 +161,9 @@
   .values-cont {
     flex-wrap: wrap;
     gap: 15px;
+  }
+  .values-cont > span p {
+    font-size: 16px;
   }
   .values-cont > span {
     width: 90%;

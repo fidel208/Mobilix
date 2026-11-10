@@ -16,3 +16,9 @@ body {
 body p {
   line-height: 28px;
 }
+
+@media (max-width: 768px) {
+  * {
+    font-size: 17px;
+  }
+}

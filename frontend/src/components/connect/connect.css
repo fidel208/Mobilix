@@ -50,8 +50,11 @@
     width: 90%;
     padding: 0;
   }
+  .connect h1 {
+    font-size: 25px;
+  }
   .connect p {
-    font-size: 19px;
+    font-size: 17px;
     text-align: center;
   }
   .connect button {

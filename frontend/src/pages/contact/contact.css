@@ -181,6 +181,9 @@
   .support-bottom span {
     width: 90%;
   }
+  .support-bottom span p {
+    font-size: 16px;
+  }
   .contact-us {
     width: 90%;
     flex-direction: column;
