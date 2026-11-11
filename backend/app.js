@@ -1,19 +1,40 @@
-const express = require("express");
-const app = express();
-const serviceRoutes = require("./routes/serviceRouter.js");
-const routesRoutes = require("./routes/routesRouter.js");
-const ticketsRoutes = require("./routes/ticketsRouter.js");
-const vehiclesRoutes = require("./routes/vehiclesRouter.js");
-const communityRoutes = require("./routes/communityRouter.js");
+import express from "express";
+import cors from "cors";
+import dotenv from "dotenv";
 
-require("dotenv").config();
+import authRouter from "./routes/authRouter.js";
+import serviceRouter from "./routes/serviceRouter.js";
+import routesRouter from "./routes/routesRouter.js";
+import ticketsRouter from "./routes/ticketsRouter.js";
+import vehiclesRouter from "./routes/vehiclesRouter.js";
+import communityRouter from "./routes/communityRouter.js";
+
+import passport from "./config/passport.js";
+
+const app = express();
+dotenv.config();
 const PORT = process.env.PORT;
 
-app.use("/services", serviceRoutes);
-app.use("/routes", routesRoutes);
-app.use("/tickets", ticketsRoutes);
-app.use("/vehicles", vehiclesRoutes);
-app.use("/community", communityRoutes);
+const corsOptions = {
+  origin: ["http://localhost:5173", "http://127.0.0.1:5173"],
+  methods: ["GET", "POST", "PUT", "DELETE"],
+  allowedHeaders: ["Content-Type", "Authorization"],
+  credentials: true,
+};
+
+app.use(cors(corsOptions));
+app.use(express.json());
+app.use(passport.initialize());
+
+app.use("/api/auth", authRouter);
+app.use("/services", serviceRouter);
+app.use("/routes", routesRouter);
+app.use("/tickets", ticketsRouter);
+app.use("/vehicles", vehiclesRouter);
+app.use("/community", communityRouter);
+
+app.use(passport.initialize());
+app.use(cors(corsOptions));
 
 app.get("/", (req, res) => {
   res.send("Backend deveopment has started");

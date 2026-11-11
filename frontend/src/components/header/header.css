@@ -295,6 +295,11 @@ header nav button:hover {
   text-decoration: none;
   color: #b77466;
 }
+#auth-errors {
+  font-size: 14px;
+  color: red;
+  margin: 0;
+}
 
 @media (max-width: 1024px) {
   header {

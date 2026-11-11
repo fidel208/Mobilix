@@ -1,8 +1,8 @@
-const { Router } = require("express");
-const communityRoutes = Router();
+import { Router } from "express";
+const communityRouter = Router();
 
-communityRoutes.get("/", (req, res) => {
+communityRouter.get("/", (req, res) => {
   res.send("Community routes is working");
 });
 
-module.exports = communityRoutes;
+export default communityRouter;

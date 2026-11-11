@@ -1,8 +1,8 @@
-const { Router } = require("express");
-const vehiclesRoutes = Router();
+import { Router } from "express";
+const vehiclesRouter = Router();
 
-vehiclesRoutes.get("/", (req, res) => {
+vehiclesRouter.get("/", (req, res) => {
   res.send("Vehicles routes is working");
 });
 
-module.exports = vehiclesRoutes;
+export default vehiclesRouter;
