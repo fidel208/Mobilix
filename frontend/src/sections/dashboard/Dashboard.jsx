@@ -1,32 +1,60 @@
-import React from "react";
+import React, { useEffect, useState } from "react";
 import "./dashboard.css";
+import API from "../../services/api";
 import {
   BarChart,
   Bar,
   XAxis,
   YAxis,
-  CartesianGrid,
   Tooltip,
   Legend,
   ResponsiveContainer,
 } from "recharts";
 
-const data = [
-  { month: "Jan", amount: 2400 },
-  { month: "Feb", amount: 1400 },
-  { month: "Mar", amount: 2000 },
-  { month: "Apr", amount: 1500 },
-  { month: "May", amount: 500 },
-  { month: "Jun", amount: 4000 },
-  { month: "Jul", amount: 3000 },
-  { month: "Aug", amount: 2300 },
-  { month: "Sep", amount: 1000 },
-  { month: "Oct", amount: 2000 },
-  { month: "Nov", amount: 2900 },
-  { month: "Dec", amount: 2400 },
+const defaultMonthlyData = [
+  { month: "Jan", amount: 0 },
+  { month: "Feb", amount: 0 },
+  { month: "Mar", amount: 0 },
+  { month: "Apr", amount: 0 },
+  { month: "May", amount: 0 },
+  { month: "Jun", amount: 0 },
+  { month: "Jul", amount: 0 },
+  { month: "Aug", amount: 0 },
+  { month: "Sep", amount: 0 },
+  { month: "Oct", amount: 0 },
+  { month: "Nov", amount: 0 },
+  { month: "Dec", amount: 0 },
 ];
 
 function Dashboard() {
+  const [stats, setStats] = useState({
+    todaySales: 0,
+    monthSales: 0,
+    servicesCount: 0,
+    routesCount: 0,
+    ticketsCount: 0,
+    communityCount: 0,
+    yearlyData: defaultMonthlyData,
+  });
+  const [loading, setLoading] = useState(true);
+
+  useEffect(() => {
+    const fetchStats = async () => {
+      try {
+        const response = await API.get("/dashboard/stats");
+        if (response.data?.stats) {
+          setStats(response.data.stats);
+        }
+      } catch (err) {
+        console.error("Failed to load dashboard stats:", err);
+      } finally {
+        setLoading(false);
+      }
+    };
+
+    fetchStats();
+  }, []);
+
   return (
     <>
       <div className="dashboard">
@@ -35,7 +63,11 @@ function Dashboard() {
             <div className="day-sales">
               <h1>Your sales today</h1>
               <p id="amount">
-                <sup>Ksh. </sup>1000.00
+                <sup>Ksh. </sup>
+                {Number(stats.todaySales || 0).toLocaleString(undefined, {
+                  minimumFractionDigits: 2,
+                  maximumFractionDigits: 2,
+                })}
               </p>
             </div>
             <div className="month-sales">
@@ -44,7 +76,11 @@ function Dashboard() {
               </span>
               <span className="monthly-words">
                 <p id="amount">
-                  <sup>Ksh.</sup>1000.00
+                  <sup>Ksh.</sup>
+                  {Number(stats.monthSales || 0).toLocaleString(undefined, {
+                    minimumFractionDigits: 2,
+                    maximumFractionDigits: 2,
+                  })}
                 </p>
                 <h1>Monthly sales</h1>
               </span>
@@ -55,7 +91,7 @@ function Dashboard() {
               <div className="small-cont">
                 <span>
                   <div className="span-num">
-                    <p id="size">4</p>
+                    <p id="size">{stats.servicesCount}</p>
                     <p>Services</p>
                   </div>
                   <span className="material-symbols-outlined" id="span-icon">
@@ -66,7 +102,7 @@ function Dashboard() {
               <div className="small-cont">
                 <span>
                   <div className="span-num">
-                    <p id="size">9</p>
+                    <p id="size">{stats.routesCount}</p>
                     <p>Routes</p>
                   </div>
                   <span className="material-symbols-outlined" id="span-icon">
@@ -79,7 +115,7 @@ function Dashboard() {
               <div className="small-cont">
                 <span>
                   <div className="span-num">
-                    <p id="size">60</p>
+                    <p id="size">{stats.ticketsCount}</p>
                     <p>Tickets sold</p>
                   </div>
                   <span className="material-symbols-outlined" id="span-icon">
@@ -90,7 +126,7 @@ function Dashboard() {
               <div className="small-cont">
                 <span>
                   <div className="span-num">
-                    <p id="size">100</p>
+                    <p id="size">{stats.communityCount}</p>
                     <p>Community</p>
                   </div>
                   <span className="material-symbols-outlined" id="span-icon">
@@ -105,7 +141,10 @@ function Dashboard() {
           <div className="graph">
             <p>Yearly sales</p>
             <ResponsiveContainer width="100%" height="100%">
-              <BarChart data={data} margin={{ top: 5, right: 30, left: 0 }}>
+              <BarChart
+                data={stats.yearlyData || defaultMonthlyData}
+                margin={{ top: 5, right: 30, left: 0 }}
+              >
                 <XAxis dataKey="month" />
                 <YAxis />
                 <Tooltip
@@ -116,6 +155,7 @@ function Dashboard() {
                     color: "#fff",
                     borderRadius: "12px",
                   }}
+                  formatter={(value) => [`Ksh. ${Number(value).toLocaleString()}`, "Amount"]}
                 />
                 <Legend iconType="circle" />
                 <Bar

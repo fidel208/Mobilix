@@ -1,8 +1,14 @@
 import { Router } from "express";
+import {
+  getCommunityMembers,
+  createCommunityMember,
+  deleteCommunityMember,
+} from "../controllers/communityController.js";
+
 const communityRouter = Router();
 
-communityRouter.get("/", (req, res) => {
-  res.send("Community routes is working");
-});
+communityRouter.get("/", getCommunityMembers);
+communityRouter.post("/", createCommunityMember);
+communityRouter.delete("/:id", deleteCommunityMember);
 
 export default communityRouter;

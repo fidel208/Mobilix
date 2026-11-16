@@ -29,35 +29,97 @@ export const createBooking = async (req, res) => {
       mpesaNumber,
     } = req.body;
 
+    const normalizedServiceType = String(serviceType || "").trim();
+    const normalizedFirstName = String(firstName || "").trim();
+    const normalizedLastName = String(lastName || "").trim();
+    const normalizedStartingPoint = String(startingPoint || "").trim();
+    const normalizedDestination = String(destination || "").trim();
+    const normalizedTravelDate = String(travelDate || "").trim();
+    const normalizedPaymentType = String(paymentType || "")
+      .trim()
+      .toLowerCase()
+      .replace(/[_-]+/g, " ");
+    const seatCount = Number.parseInt(seats, 10);
+
+    if (!normalizedServiceType) {
+      return res
+        .status(400)
+        .json({ status: "error", message: "Service type is required." });
+    }
+    if (!normalizedFirstName || !normalizedLastName) {
+      return res
+        .status(400)
+        .json({
+          status: "error",
+          message: "First name and last name are required.",
+        });
+    }
+    if (!normalizedStartingPoint) {
+      return res
+        .status(400)
+        .json({ status: "error", message: "Starting point is required." });
+    }
+    if (!normalizedDestination) {
+      return res
+        .status(400)
+        .json({ status: "error", message: "Destination is required." });
+    }
+    if (!normalizedTravelDate) {
+      return res
+        .status(400)
+        .json({ status: "error", message: "Travel date is required." });
+    }
+    if (
+      !normalizedPaymentType ||
+      !["now", "arrival", "payment on arrival"].includes(normalizedPaymentType)
+    ) {
+      return res
+        .status(400)
+        .json({
+          status: "error",
+          message: "Payment type must be 'now' or 'arrival'.",
+        });
+    }
+    if (!Number.isInteger(seatCount) || seatCount < 1) {
+      return res
+        .status(400)
+        .json({
+          status: "error",
+          message: "Seats must be a whole number greater than 0.",
+        });
+    }
+
     const newBooking = await prisma.booking.create({
       data: {
-        serviceType,
-        firstName,
-        lastName,
-        startingPoint,
-        destination,
-        travelDate,
-        seats: seats ? parseInt(seats) : 1,
+        serviceType: normalizedServiceType,
+        firstName: normalizedFirstName,
+        lastName: normalizedLastName,
+        startingPoint: normalizedStartingPoint,
+        destination: normalizedDestination,
+        travelDate: normalizedTravelDate,
+        seats: seatCount,
         carType: carType || null,
-        paymentType,
+        paymentType: normalizedPaymentType,
         mpesaNumber: mpesaNumber || null,
-        status: paymentType === "now" ? "PAID" : "CONFIRMED",
+        status: normalizedPaymentType === "now" ? "PAID" : "CONFIRMED",
       },
     });
 
     const mpesaCode =
-      paymentType === "now" ? generateMpesaRef() : "PAYMENT ON ARRIVAL";
+      normalizedPaymentType === "now"
+        ? generateMpesaRef()
+        : "PAYMENT ON ARRIVAL";
     const ticketCode = generateTicketNumber();
 
     const newTicket = await prisma.ticket.create({
       data: {
         ticketNumber: ticketCode,
         bookingId: newBooking.id,
-        passengerName: `${firstName} ${lastName}`,
+        passengerName: `${normalizedFirstName} ${normalizedLastName}`,
         phoneNumber: mpesaNumber || "N/A",
         mpesaRefCode: mpesaCode,
-        route: `${startingPoint.toUpperCase()} to ${destination.toUpperCase()}`,
-        travelDate,
+        route: `${normalizedStartingPoint.toUpperCase()} to ${normalizedDestination.toUpperCase()}`,
+        travelDate: normalizedTravelDate,
         seats: newBooking.seats,
         amount: newBooking.seats * 500,
       },

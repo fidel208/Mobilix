@@ -26,9 +26,14 @@ app.use(passport.initialize());
 
 app.use("/api/auth", authRouter);
 app.use("/api/bookings", bookingRouter);
+app.use("/api/services", serviceRouter);
+app.use("/api/routes", routesRouter);
+app.use("/api/tickets", ticketsRouter);
+app.use("/api/vehicles", vehiclesRouter);
+app.use("/api/community", communityRouter);
+
 app.use("/services", serviceRouter);
 app.use("/routes", routesRouter);
-app.use("/api/tickets", ticketsRouter);
 app.use("/vehicles", vehiclesRouter);
 app.use("/community", communityRouter);
 
@@ -58,28 +63,44 @@ async function run() {
     {
       const res = await fetch(`${baseUrl}/`);
       const text = await res.text();
-      record("GET /", res.status === 200 && text.includes("Backend deveopment has started"), `Status: ${res.status}, body: "${text}"`);
+      record(
+        "GET /",
+        res.status === 200 && text.includes("Backend deveopment has started"),
+        `Status: ${res.status}, body: "${text}"`,
+      );
     }
 
-    // 2. Stubs (/services, /routes, /vehicles, /community)
+    // 2. Stubs (/api/services, /api/routes, /api/vehicles, /api/community)
     {
-      const res1 = await fetch(`${baseUrl}/services`);
-      record("GET /services", res1.status === 200, `Status: ${res1.status}`);
-
-      const res2 = await fetch(`${baseUrl}/routes`);
-      record("GET /routes", res2.status === 200, `Status: ${res2.status}`);
-
-      const res3 = await fetch(`${baseUrl}/vehicles`);
-      record("GET /vehicles", res3.status === 200, `Status: ${res3.status}`);
-
-      const res4 = await fetch(`${baseUrl}/community`);
-      record("GET /community", res4.status === 200, `Status: ${res4.status}`);
-
-      const resApi = await fetch(`${baseUrl}/api/services`);
+      const res1 = await fetch(`${baseUrl}/api/services`);
       record(
-        "Frontend prefix alignment: GET /api/services",
-        resApi.status === 200,
-        `Status: ${resApi.status} (Frontend baseURL uses /api/, but route is mounted at root /services)`
+        "GET /api/services",
+        res1.status === 200,
+        `Status: ${res1.status}`,
+      );
+
+      const res2 = await fetch(`${baseUrl}/api/routes`);
+      record("GET /api/routes", res2.status === 200, `Status: ${res2.status}`);
+
+      const res3 = await fetch(`${baseUrl}/api/vehicles`);
+      record(
+        "GET /api/vehicles",
+        res3.status === 200,
+        `Status: ${res3.status}`,
+      );
+
+      const res4 = await fetch(`${baseUrl}/api/community`);
+      record(
+        "GET /api/community",
+        res4.status === 200,
+        `Status: ${res4.status}`,
+      );
+
+      const legacyRes = await fetch(`${baseUrl}/services`);
+      record(
+        "Legacy route compatibility: GET /services",
+        legacyRes.status === 200,
+        `Status: ${legacyRes.status}`,
       );
     }
 
@@ -102,7 +123,7 @@ async function run() {
       record(
         "POST /api/auth/register (Valid registration)",
         res.status === 201 && data.status === "success" && !!data.token,
-        `Status: ${res.status}, Token: ${!!data.token}`
+        `Status: ${res.status}, Token: ${!!data.token}`,
       );
     }
 
@@ -120,8 +141,9 @@ async function run() {
       const data = await res.json();
       record(
         "POST /api/auth/register (Duplicate Email)",
-        res.status === 400 && data.message === "User with this email already exists.",
-        `Status: ${res.status}, Message: "${data.message}"`
+        res.status === 400 &&
+          data.message === "User with this email already exists.",
+        `Status: ${res.status}, Message: "${data.message}"`,
       );
     }
 
@@ -139,8 +161,9 @@ async function run() {
       const data = await res.json();
       record(
         "POST /api/auth/register (Password < 6 characters)",
-        res.status === 400 && data.errors?.some(e => e.msg.includes("at least 6 characters")),
-        `Status: ${res.status}`
+        res.status === 400 &&
+          data.errors?.some((e) => e.msg.includes("at least 6 characters")),
+        `Status: ${res.status}`,
       );
     }
 
@@ -157,7 +180,7 @@ async function run() {
       record(
         "POST /api/auth/register (Missing Email)",
         res.status === 400,
-        `Status: ${res.status}`
+        `Status: ${res.status}`,
       );
     }
 
@@ -176,7 +199,7 @@ async function run() {
       record(
         "POST /api/auth/login (Valid credentials)",
         res.status === 200 && data.status === "success" && !!data.token,
-        `Status: ${res.status}`
+        `Status: ${res.status}`,
       );
     }
 
@@ -194,7 +217,7 @@ async function run() {
       record(
         "POST /api/auth/login (Wrong password)",
         res.status === 401,
-        `Status: ${res.status}, Body: "${bodyText}" (Passport returns plain text instead of JSON)`
+        `Status: ${res.status}, Body: "${bodyText}" (Passport returns plain text instead of JSON)`,
       );
     }
 
@@ -211,7 +234,7 @@ async function run() {
       record(
         "POST /api/auth/login (Non-existent email)",
         res.status === 401,
-        `Status: ${res.status}`
+        `Status: ${res.status}`,
       );
     }
 
@@ -224,7 +247,7 @@ async function run() {
       record(
         "GET /api/auth/me (Valid Bearer token)",
         res.status === 200 && data.user?.email === testEmail,
-        `Status: ${res.status}, User: ${data.user?.email}`
+        `Status: ${res.status}, User: ${data.user?.email}`,
       );
     }
 
@@ -233,7 +256,7 @@ async function run() {
       record(
         "GET /api/auth/me (No token)",
         res.status === 401,
-        `Status: ${res.status}`
+        `Status: ${res.status}`,
       );
     }
 
@@ -253,8 +276,11 @@ async function run() {
       adminToken = data.token;
       record(
         "POST /api/auth/admin/login (Valid admin credentials)",
-        res.status === 200 && data.status === "success" && !!data.token && data.admin?.role === "ADMIN",
-        `Status: ${res.status}, Role: ${data.admin?.role}, Token received: ${!!data.token}`
+        res.status === 200 &&
+          data.status === "success" &&
+          !!data.token &&
+          data.admin?.role === "ADMIN",
+        `Status: ${res.status}, Role: ${data.admin?.role}, Token received: ${!!data.token}`,
       );
     }
 
@@ -272,7 +298,7 @@ async function run() {
       record(
         "POST /api/auth/admin/login (Wrong password)",
         res.status === 401 && data.status === "error",
-        `Status: ${res.status}, Message: "${data.message}"`
+        `Status: ${res.status}, Message: "${data.message}"`,
       );
     }
 
@@ -285,7 +311,7 @@ async function run() {
       record(
         "GET /api/auth/admin/me (With Admin Token)",
         res.status === 200 && data.admin?.email === "admin@mobilix.com",
-        `Status: ${res.status}, Admin Email: ${data.admin?.email}`
+        `Status: ${res.status}, Admin Email: ${data.admin?.email}`,
       );
     }
 
@@ -298,7 +324,7 @@ async function run() {
       record(
         "GET /api/auth/admin/me (With Customer Token -> Forbidden)",
         res.status === 403 && data.status === "error",
-        `Status: ${res.status}, Message: "${data.message}"`
+        `Status: ${res.status}, Message: "${data.message}"`,
       );
     }
 
@@ -326,8 +352,11 @@ async function run() {
       createdTicketNumber = data.ticket?.ticketNumber;
       record(
         "POST /api/bookings (Valid booking 'now')",
-        res.status === 201 && data.status === "success" && !!data.ticket && data.ticket.amount === 1000,
-        `Status: ${res.status}, Ticket: ${createdTicketNumber}, Amount: ${data.ticket?.amount}, Status: ${data.booking?.status}`
+        res.status === 201 &&
+          data.status === "success" &&
+          !!data.ticket &&
+          data.ticket.amount === 1000,
+        `Status: ${res.status}, Ticket: ${createdTicketNumber}, Amount: ${data.ticket?.amount}, Status: ${data.booking?.status}`,
       );
     }
 
@@ -351,8 +380,9 @@ async function run() {
       const data = await res.json();
       record(
         "POST /api/bookings (Pay on arrival)",
-        res.status === 201 && data.ticket?.mpesaRefCode === "PAYMENT ON ARRIVAL",
-        `Status: ${res.status}, Ref: ${data.ticket?.mpesaRefCode}`
+        res.status === 201 &&
+          data.ticket?.mpesaRefCode === "PAYMENT ON ARRIVAL",
+        `Status: ${res.status}, Ref: ${data.ticket?.mpesaRefCode}`,
       );
     }
 
@@ -372,7 +402,7 @@ async function run() {
       record(
         "POST /api/bookings (Missing startingPoint validation)",
         res.status === 400,
-        `Status: ${res.status}, Returned: ${JSON.stringify(data)} (Controller crashes with 500 when startingPoint is undefined)`
+        `Status: ${res.status}, Returned: ${JSON.stringify(data)} (Controller crashes with 500 when startingPoint is undefined)`,
       );
     }
 
@@ -395,7 +425,7 @@ async function run() {
       record(
         "POST /api/bookings (Invalid seats 'abc')",
         res.status === 400,
-        `Status: ${res.status}, Returned: ${JSON.stringify(data)}`
+        `Status: ${res.status}, Returned: ${JSON.stringify(data)}`,
       );
     }
 
@@ -405,28 +435,34 @@ async function run() {
       const data = await res.json();
       record(
         "GET /api/tickets (List all tickets)",
-        res.status === 200 && Array.isArray(data.tickets) && data.tickets.length >= 2,
-        `Status: ${res.status}, Count: ${data.tickets?.length}`
+        res.status === 200 &&
+          Array.isArray(data.tickets) &&
+          data.tickets.length >= 2,
+        `Status: ${res.status}, Count: ${data.tickets?.length}`,
       );
     }
 
     {
-      const res = await fetch(`${baseUrl}/api/tickets/search?query=${createdTicketNumber}`);
+      const res = await fetch(
+        `${baseUrl}/api/tickets/search?query=${createdTicketNumber}`,
+      );
       const data = await res.json();
       record(
         "GET /api/tickets/search (By ticketNumber)",
         res.status === 200 && data.ticket?.ticketNumber === createdTicketNumber,
-        `Status: ${res.status}, Ticket: ${data.ticket?.ticketNumber}`
+        `Status: ${res.status}, Ticket: ${data.ticket?.ticketNumber}`,
       );
     }
 
     {
-      const res = await fetch(`${baseUrl}/api/tickets/search?query=${createdPhoneNumber}`);
+      const res = await fetch(
+        `${baseUrl}/api/tickets/search?query=${createdPhoneNumber}`,
+      );
       const data = await res.json();
       record(
         "GET /api/tickets/search (By phoneNumber)",
         res.status === 200 && data.ticket?.phoneNumber === createdPhoneNumber,
-        `Status: ${res.status}, Found Passenger: ${data.ticket?.passengerName}`
+        `Status: ${res.status}, Found Passenger: ${data.ticket?.passengerName}`,
       );
     }
 
@@ -436,17 +472,19 @@ async function run() {
       record(
         "GET /api/tickets/search (No query param)",
         res.status === 400 && data.status === "error",
-        `Status: ${res.status}, Message: "${data.message}"`
+        `Status: ${res.status}, Message: "${data.message}"`,
       );
     }
 
     {
-      const res = await fetch(`${baseUrl}/api/tickets/search?query=NON_EXISTENT_TICKET`);
+      const res = await fetch(
+        `${baseUrl}/api/tickets/search?query=NON_EXISTENT_TICKET`,
+      );
       const data = await res.json();
       record(
         "GET /api/tickets/search (Non-existent query)",
         res.status === 404 && data.status === "error",
-        `Status: ${res.status}, Message: "${data.message}"`
+        `Status: ${res.status}, Message: "${data.message}"`,
       );
     }
 
@@ -464,17 +502,18 @@ async function run() {
       record(
         "OPTIONS /api/bookings (CORS Preflight)",
         res.status === 204 && allowOrigin === "http://localhost:5173",
-        `Status: ${res.status}, Allow-Origin: ${allowOrigin}`
+        `Status: ${res.status}, Allow-Origin: ${allowOrigin}`,
       );
     }
-
   } catch (err) {
     console.error("Test execution error:", err);
   } finally {
     server.close();
     await prisma.$disconnect();
     console.log(`\n========================================`);
-    console.log(`SUMMARY: ${results.filter(r => r.passed).length}/${results.length} PASSED, ${results.filter(r => !r.passed).length} FAILED`);
+    console.log(
+      `SUMMARY: ${results.filter((r) => r.passed).length}/${results.length} PASSED, ${results.filter((r) => !r.passed).length} FAILED`,
+    );
     console.log(`========================================\n`);
   }
 }

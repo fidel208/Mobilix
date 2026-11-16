@@ -1,6 +1,6 @@
+import "dotenv/config";
 import express from "express";
 import cors from "cors";
-import dotenv from "dotenv";
 
 import authRouter from "./routes/authRouter.js";
 import bookingRouter from "./routes/bookingRouter.js";
@@ -9,11 +9,11 @@ import routesRouter from "./routes/routesRouter.js";
 import ticketsRouter from "./routes/ticketsRouter.js";
 import vehiclesRouter from "./routes/vehiclesRouter.js";
 import communityRouter from "./routes/communityRouter.js";
+import dashboardRouter from "./routes/dashboardRouter.js";
 
 import passport from "./config/passport.js";
 
 const app = express();
-dotenv.config();
 const PORT = process.env.PORT || 3000;
 
 const corsOptions = {
@@ -29,9 +29,15 @@ app.use(passport.initialize());
 
 app.use("/api/auth", authRouter);
 app.use("/api/bookings", bookingRouter);
+app.use("/api/services", serviceRouter);
+app.use("/api/routes", routesRouter);
+app.use("/api/tickets", ticketsRouter);
+app.use("/api/vehicles", vehiclesRouter);
+app.use("/api/community", communityRouter);
+app.use("/api/dashboard", dashboardRouter);
+
 app.use("/services", serviceRouter);
 app.use("/routes", routesRouter);
-app.use("/api/tickets", ticketsRouter);
 app.use("/vehicles", vehiclesRouter);
 app.use("/community", communityRouter);
 
