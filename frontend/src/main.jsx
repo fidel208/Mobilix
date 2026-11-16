@@ -1,8 +1,7 @@
 import { StrictMode } from "react";
 import { createRoot } from "react-dom/client";
 import "./index.css";
-import { createBrowserRouter, Router, RouterProvider } from "react-router-dom";
-import { BrowserRouter, Routes, Route } from "react-router-dom";
+import { createBrowserRouter, RouterProvider, Navigate } from "react-router-dom";
 import Home from "./pages/home/Home";
 import About from "./pages/about/About";
 import Services from "./pages/services/Services";
@@ -26,6 +25,7 @@ const router = createBrowserRouter([
   { path: "/tickets", element: <Tickets /> },
   { path: "/contact", element: <Contact /> },
   { path: "/booking", element: <Booking /> },
+  { path: "/login", element: <Navigate to="/admin/portal/auth" replace /> },
   { path: "/admin/portal/auth", element: <Login /> },
   {
     path: "/admin/portal",

@@ -63,10 +63,47 @@
   margin-top: 10px;
   color: white;
   background-color: #4b4038;
+  padding: 10px;
   transition: ease 0.3s background-color;
 }
 #download-ticket:hover {
   background-color: #2e2621;
+}
+.ticket-result-card {
+  margin-top: 20px;
+  padding: 20px;
+  border: 1px solid #ddd;
+  border-radius: 8px;
+  background-color: #f9f9f9;
+  text-align: left;
+}
+@media print {
+  body * {
+    visibility: hidden;
+  }
+  .ticket-result-card,
+  .ticket-result-card * {
+    visibility: visible;
+  }
+  .ticket-result-card {
+    position: absolute;
+    left: 0;
+    top: 0;
+    width: 100%;
+    border: none;
+    background: white;
+    box-shadow: none;
+    padding: 0;
+    display: flex;
+    justify-self: center;
+  }
+  header,
+  footer,
+  .search-ticket h1,
+  #search,
+  #download-ticket {
+    display: none;
+  }
 }
 
 @media (max-width: 1024px) {
@@ -82,6 +119,9 @@
 }
 
 @media (max-width: 768px) {
+  .tickets {
+    height: 70dvh;
+  }
   .search-ticket {
     width: 300px;
   }
@@ -95,5 +135,14 @@
   #search button {
     width: auto;
     height: 38px;
+  }
+  .ticket-result-card {
+    display: flex;
+    flex-direction: column;
+    gap: 5px;
+    width: 250px;
+  }
+  .ticket-result-card p {
+    font-size: 15px;
   }
 }

@@ -1,8 +1,10 @@
 import { Router } from "express";
 const ticketsRouter = Router();
 
-ticketsRouter.get("/", (req, res) => {
-  res.send("Tickets routes is working");
-});
+import { getTickets } from "../controllers/ticketController.js";
+import { searchTicket } from "../controllers/ticketController.js";
+
+ticketsRouter.get("/", getTickets);
+ticketsRouter.get("/search", searchTicket);
 
 export default ticketsRouter;

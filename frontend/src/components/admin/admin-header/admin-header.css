@@ -5,6 +5,10 @@
   border-radius: 12px;
   display: flex;
   align-items: center;
+  position: sticky;
+  top: 0;
+  z-index: 20;
+  box-shadow: 0 1px 0 rgba(75, 64, 56, 0.08);
 }
 .header-container {
   display: flex;
@@ -13,6 +17,10 @@
   padding: 0 20px;
   align-items: center;
   width: 100%;
+  gap: 10px;
+}
+.hello {
+  flex: 1;
 }
 .hello h1 {
   font-size: 23px;
@@ -35,4 +43,56 @@
   background-size: cover;
   background-repeat: no-repeat;
   background-image: url(https://www.gravatar.com/avatar/0000000…?d=mp&f=y);
+}
+
+.admin-menu-btn {
+  display: none;
+  border: none;
+  background-color: #f3dfd6;
+  color: #4b4038;
+  width: 42px;
+  height: 42px;
+  border-radius: 10px;
+  align-items: center;
+  justify-content: center;
+  cursor: pointer;
+}
+
+@media (max-width: 768px) {
+  .header {
+    min-height: 58px;
+    height: auto;
+    border-radius: 10px;
+    margin-bottom: 8px;
+  }
+
+  .admin-menu-btn {
+    display: inline-flex;
+    width: 36px;
+    height: 36px;
+    flex-shrink: 0;
+  }
+
+  .hello {
+    flex: 1;
+    min-width: 0;
+  }
+
+  .hello h1 {
+    font-size: 15px;
+    line-height: 1.2;
+  }
+  .hello p {
+    font-size: 13px;
+    line-height: 1.4;
+  }
+  .header-container {
+    padding: 0 7px;
+    gap: 8px;
+  }
+  #dp {
+    width: 32px;
+    height: 32px;
+    flex-shrink: 0;
+  }
 }

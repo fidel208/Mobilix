@@ -1,9 +1,11 @@
 import React, { useState, useEffect } from "react";
 import "./header.css";
-import { Link, NavLink, useNavigate } from "react-router-dom";
+import { Link, NavLink, useLocation, useNavigate } from "react-router-dom";
 import API from "../../services/api";
 
 function Header() {
+  const location = useLocation();
+  const [loadOverlay, setLoadOverlay] = useState(false);
   const [openDropdown, setOpenDropdown] = useState(false);
   const [loginModal, setLoginModal] = useState(false);
   const [auth, setAuth] = useState("login");
@@ -32,7 +34,27 @@ function Header() {
         console.error("Failed to parse stored user", err);
       }
     }
-  }, []);
+
+    const sessionLoaded = sessionStorage.getItem("mobilix_home_loaded_once");
+
+    if (location.pathname !== "/") {
+      setLoadOverlay(false);
+      return;
+    }
+
+    if (sessionLoaded === "true") {
+      setLoadOverlay(false);
+      return;
+    }
+
+    setLoadOverlay(true);
+    const timer = setTimeout(() => {
+      setLoadOverlay(false);
+      sessionStorage.setItem("mobilix_home_loaded_once", "true");
+    }, 1800);
+
+    return () => clearTimeout(timer);
+  }, [location.pathname]);
 
   const handleDropdown = () => {
     setOpenDropdown(!openDropdown);
@@ -97,6 +119,17 @@ function Header() {
 
   return (
     <>
+      {loadOverlay && (
+        <div className="load-overlay">
+          <div className="loader-modal">
+            <div id="load-image"></div>
+            <div className="loading-bar" aria-label="Loading">
+              <span className="loading-fill"></span>
+            </div>
+            <p>Book, Drive, Go</p>
+          </div>
+        </div>
+      )}
       <header>
         <div className="head-one">
           <img src="Mobilix-transaparent.png" alt="mobilix-logo" />

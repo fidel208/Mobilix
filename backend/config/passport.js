@@ -35,6 +35,16 @@ const jwtOptions = {
 passport.use(
   new JwtStrategy(jwtOptions, async (jwtPayload, done) => {
     try {
+      if (jwtPayload.role === "ADMIN") {
+        const admin = await prisma.admin.findUnique({
+          where: { id: jwtPayload.userId },
+        });
+        if (admin) {
+          const { password: _, ...adminWithoutPassword } = admin;
+          return done(null, { ...adminWithoutPassword, role: "ADMIN" });
+        }
+      }
+
       const user = await prisma.user.findUnique({
         where: { id: jwtPayload.userId },
       });

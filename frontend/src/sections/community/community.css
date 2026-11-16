@@ -62,10 +62,14 @@
 .community-table-cont {
   width: 100%;
   margin-top: 10px;
+  overflow-x: auto;
+  -webkit-overflow-scrolling: touch;
 }
 .community-table {
   width: 100%;
+  min-width: 640px;
   max-height: 100%;
+  border-collapse: collapse;
 }
 .community-table th {
   position: sticky;
@@ -74,12 +78,57 @@
   padding: 15px;
   font-size: 18px;
   text-align: left;
+  background: #fdfbf7;
 }
 .community-table td {
   padding: 15px;
   border-bottom: 1px solid #ccd1d6;
   color: rgb(97, 95, 95);
   font-size: 18px;
+  white-space: nowrap;
+}
+
+@media (max-width: 768px) {
+  .community {
+    border-radius: 10px;
+    height: auto;
+    min-height: 100%;
+    padding: 12px 0;
+  }
+
+  .community-container {
+    width: 92%;
+    gap: 12px;
+  }
+
+  .search-div {
+    flex-direction: column;
+    gap: 10px;
+  }
+
+  #search-input {
+    width: 90%;
+  }
+  .search-div button {
+    height: 40px;
+    width: 95%;
+  }
+
+  .community-table {
+    min-width: 560px;
+  }
+
+  .community-table th,
+  .community-table td {
+    padding: 10px 12px;
+    font-size: 14px;
+  }
+}
+
+@media (max-width: 480px) {
+  .community-table {
+    min-width: 500px;
+  }
 }
 #delete-btn {
   color: rgb(248, 54, 54);
@@ -93,10 +142,11 @@
 }
 .pagination-controls {
   width: 100%;
-  margin-top: 10px;
+  margin-top: 15px;
   display: flex;
   flex-direction: row;
   gap: 5px;
+  margin-bottom: 15px;
 }
 .page-btn {
   outline: none;

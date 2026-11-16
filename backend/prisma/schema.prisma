@@ -31,3 +31,38 @@ model Admin {
   createdAt DateTime @default(now())
   updatedAt DateTime @updatedAt
 }
+
+model Ticket {
+  id            String   @id @default(uuid())
+  ticketNumber  String   @unique
+  bookingId     String   @unique
+  booking       Booking  @relation(fields: [bookingId], references: [id], onDelete: Cascade)
+  passengerName String
+  phoneNumber   String
+  mpesaRefCode  String?
+  route         String
+  travelDate    String
+  seats         Int
+  amount        Float    @default(0.0)
+  status        String   @default("CONFIRMED")
+  createdAt     DateTime @default(now())
+}
+
+model Booking {
+  id            String   @id @default(uuid())
+  userId        String?
+  serviceType   String
+  firstName     String
+  lastName      String
+  startingPoint String
+  destination   String
+  travelDate    String
+  seats         Int      @default(1)
+  carType       String?
+  paymentType   String
+  mpesaNumber   String?
+  status        String   @default("PENDING")
+  createdAt     DateTime @default(now())
+  updatedAt     DateTime @updatedAt
+  ticket        Ticket?
+}

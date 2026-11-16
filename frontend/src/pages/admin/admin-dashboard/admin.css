@@ -15,9 +15,85 @@
   gap: 15px;
 }
 .admin-container main {
-  width: 82%;
+  flex: 1;
+  width: auto;
   height: 100%;
+  min-height: 0;
   display: flex;
   flex-direction: column;
   justify-content: space-between;
+  position: relative;
+  overflow-y: auto;
+  overflow-x: hidden;
+  scroll-behavior: smooth;
+  scrollbar-gutter: stable;
+}
+
+@media (max-width: 1024px) {
+  .admin {
+    height: auto;
+    min-height: 100dvh;
+    padding: 16px 12px;
+  }
+
+  .admin-container {
+    width: 100%;
+    height: auto;
+    flex-direction: column;
+    padding: 12px;
+  }
+
+  .admin-container main {
+    width: 100%;
+    height: auto;
+    overflow: visible;
+  }
+}
+
+@media (max-width: 768px) {
+  .admin {
+    min-height: 100dvh;
+    height: auto;
+    background: #fdfbf7;
+    padding: 0;
+    align-items: stretch;
+  }
+
+  .admin-container {
+    width: 100%;
+    height: auto;
+    min-height: 100dvh;
+    padding: 0;
+    gap: 0;
+    display: block;
+    position: relative;
+  }
+
+  .admin-container main {
+    width: 100%;
+    height: auto;
+    min-height: 100dvh;
+    padding: 8px 8px 20px;
+    justify-content: flex-start;
+    gap: 10px;
+    overflow: visible;
+    box-sizing: border-box;
+    background: #fdfbf7;
+  }
+
+  .admin-container.menu-open main {
+    opacity: 0.15;
+    pointer-events: none;
+    filter: blur(1px);
+  }
+}
+
+@media (max-width: 480px) {
+  .admin {
+    padding: 0;
+  }
+
+  .admin-container main {
+    padding: 6px 6px 16px;
+  }
 }

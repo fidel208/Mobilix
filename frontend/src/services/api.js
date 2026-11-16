@@ -23,10 +23,17 @@ API.interceptors.request.use(
 API.interceptors.response.use(
   (response) => response,
   (error) => {
-    if (error.response && error.response.status === 401) {
+    // Do not redirect on login or register failure; let the component show the error
+    const isAuthEndpoint =
+      error.config?.url?.includes("/login") ||
+      error.config?.url?.includes("/register");
+
+    if (error.response && error.response.status === 401 && !isAuthEndpoint) {
       localStorage.removeItem("mobilix_token");
       localStorage.removeItem("mobilix_user");
-      window.location.href = "/login";
+      localStorage.removeItem("mobilix_admin");
+
+      window.location.href = "/admin/portal/auth";
     }
     return Promise.reject(error);
   },

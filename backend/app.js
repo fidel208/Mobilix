@@ -3,6 +3,7 @@ import cors from "cors";
 import dotenv from "dotenv";
 
 import authRouter from "./routes/authRouter.js";
+import bookingRouter from "./routes/bookingRouter.js";
 import serviceRouter from "./routes/serviceRouter.js";
 import routesRouter from "./routes/routesRouter.js";
 import ticketsRouter from "./routes/ticketsRouter.js";
@@ -13,7 +14,7 @@ import passport from "./config/passport.js";
 
 const app = express();
 dotenv.config();
-const PORT = process.env.PORT;
+const PORT = process.env.PORT || 3000;
 
 const corsOptions = {
   origin: ["http://localhost:5173", "http://127.0.0.1:5173"],
@@ -27,14 +28,12 @@ app.use(express.json());
 app.use(passport.initialize());
 
 app.use("/api/auth", authRouter);
+app.use("/api/bookings", bookingRouter);
 app.use("/services", serviceRouter);
 app.use("/routes", routesRouter);
-app.use("/tickets", ticketsRouter);
+app.use("/api/tickets", ticketsRouter);
 app.use("/vehicles", vehiclesRouter);
 app.use("/community", communityRouter);
-
-app.use(passport.initialize());
-app.use(cors(corsOptions));
 
 app.get("/", (req, res) => {
   res.send("Backend deveopment has started");

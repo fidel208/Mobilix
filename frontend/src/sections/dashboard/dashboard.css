@@ -4,6 +4,7 @@
   display: flex;
   flex-direction: column;
   justify-content: space-between;
+  gap: 16px;
 }
 .dash-top {
   height: 40%;
@@ -11,6 +12,7 @@
   display: flex;
   flex-direction: row;
   justify-content: space-between;
+  gap: 16px;
 }
 .sales {
   width: 35%;
@@ -25,6 +27,7 @@
   border-radius: 12px;
   align-items: center;
   color: white;
+  padding: 18px 0;
 }
 .day-sales {
   display: flex;
@@ -63,6 +66,7 @@
   display: flex;
   flex-direction: row;
   justify-content: space-between;
+  gap: 16px;
 }
 .counts-left,
 .counts-right {
@@ -71,15 +75,19 @@
   width: 49.2%;
   height: 100%;
   justify-content: space-between;
+  gap: 12px;
 }
 .small-cont {
   background-color: #fdfbf7;
   height: 47%;
+  min-height: 120px;
   border-radius: 8px;
   display: flex;
   align-items: center;
   justify-content: center;
   transition: all 0.4s ease;
+  padding: 10px;
+  box-sizing: border-box;
 }
 .small-cont:hover {
   transform: translateY(-3px);
@@ -91,6 +99,7 @@
   justify-content: space-between;
   padding-bottom: 15px;
   border-bottom: solid 2px #b77466;
+  gap: 12px;
 }
 .span-num p {
   font-size: 16px;
@@ -112,6 +121,8 @@
   width: 100%;
   display: flex;
   justify-content: center;
+  padding: 14px 0 10px;
+  box-sizing: border-box;
 }
 .graph {
   display: flex;
@@ -119,4 +130,101 @@
   gap: 15px;
   width: 95%;
   height: 98%;
+}
+
+@media (max-width: 1024px) {
+  .dash-top {
+    flex-direction: column;
+    height: auto;
+  }
+
+  .sales,
+  .counts {
+    width: 100%;
+  }
+
+  .counts {
+    gap: 12px;
+  }
+}
+
+@media (max-width: 768px) {
+  .dashboard {
+    min-height: 88%;
+    height: auto;
+    gap: 12px;
+  }
+
+  .dash-top {
+    flex-direction: column;
+    height: auto;
+    width: 100%;
+    gap: 12px;
+  }
+
+  .sales {
+    height: auto;
+    width: 100%;
+    gap: 18px;
+    padding: 14px 0;
+  }
+
+  .counts {
+    width: 100%;
+    gap: 12px;
+  }
+
+  .counts-left,
+  .counts-right {
+    width: 100%;
+  }
+
+  .small-cont {
+    min-height: 100px;
+  }
+
+  .dash-graph {
+    min-height: 260px;
+    height: 300px;
+  }
+}
+
+@media (max-width: 480px) {
+  .dashboard {
+    gap: 10px;
+  }
+
+  .sales {
+    border-radius: 10px;
+  }
+
+  .day-sales h1,
+  .monthly-words h1 {
+    font-size: 18px;
+  }
+
+  #amount {
+    font-size: 24px;
+  }
+
+  .counts {
+    flex-direction: column;
+  }
+
+  .counts-left,
+  .counts-right {
+    width: 100%;
+  }
+
+  .small-cont > span {
+    width: 100%;
+  }
+
+  #size {
+    font-size: 20px;
+  }
+
+  #span-icon {
+    font-size: 26px;
+  }
 }

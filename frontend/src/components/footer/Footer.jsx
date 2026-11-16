@@ -9,7 +9,7 @@ function Footer() {
         <div className="footer-top">
           <p id="comp-name">&copy; Mobilix. All rights reserved.</p>
           <p id="notion">Seamless rides, smart bookings</p>
-          <p id="entails">Drive, book, go</p>
+          <p id="entails">Book, drive, go</p>
           <form className="subscribe" onSubmit={(e) => e.preventDefault()}>
             <input
               type="text"
