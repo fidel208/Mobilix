@@ -1,6 +1,5 @@
 import prisma from "../lib/prisma.js";
 
-// GET /api/routes
 export const getRoutes = async (req, res) => {
   try {
     const routes = await prisma.route.findMany({
@@ -15,14 +14,14 @@ export const getRoutes = async (req, res) => {
   }
 };
 
-// POST /api/routes
 export const createRoute = async (req, res) => {
   try {
     const { startingPoint, destination, price, serviceType } = req.body;
     if (!startingPoint || !destination || price === undefined || !serviceType) {
       return res.status(400).json({
         status: "error",
-        message: "Starting point, destination, price, and service type are required.",
+        message:
+          "Starting point, destination, price, and service type are required.",
       });
     }
 
@@ -48,7 +47,6 @@ export const createRoute = async (req, res) => {
   }
 };
 
-// DELETE /api/routes/:id
 export const deleteRoute = async (req, res) => {
   try {
     const { id } = req.params;

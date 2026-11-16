@@ -1,6 +1,5 @@
 import prisma from "../lib/prisma.js";
 
-// GET /api/community
 export const getCommunityMembers = async (req, res) => {
   try {
     const members = await prisma.communityMember.findMany({
@@ -15,7 +14,6 @@ export const getCommunityMembers = async (req, res) => {
   }
 };
 
-// POST /api/community
 export const createCommunityMember = async (req, res) => {
   try {
     const { email, status } = req.body;
@@ -56,7 +54,6 @@ export const createCommunityMember = async (req, res) => {
   }
 };
 
-// DELETE /api/community/:id
 export const deleteCommunityMember = async (req, res) => {
   try {
     const { id } = req.params;

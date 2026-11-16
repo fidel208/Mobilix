@@ -1,6 +1,5 @@
 import prisma from "../lib/prisma.js";
 
-// GET /api/vehicles
 export const getVehicles = async (req, res) => {
   try {
     const vehicles = await prisma.vehicle.findMany({
@@ -15,7 +14,6 @@ export const getVehicles = async (req, res) => {
   }
 };
 
-// POST /api/vehicles
 export const createVehicle = async (req, res) => {
   try {
     const { name, plate, serviceType } = req.body;
@@ -57,7 +55,6 @@ export const createVehicle = async (req, res) => {
   }
 };
 
-// DELETE /api/vehicles/:id
 export const deleteVehicle = async (req, res) => {
   try {
     const { id } = req.params;

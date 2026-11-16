@@ -1,5 +1,6 @@
 import { Router } from "express";
 import passport from "../config/passport.js";
+import jwt from "jsonwebtoken";
 import {
   register,
   login,
@@ -16,7 +17,6 @@ const authRouter = Router();
 
 authRouter.post("/register", validateRegister, register);
 
-// User login
 authRouter.post("/login", validateLogin, (req, res, next) => {
   passport.authenticate("local", { session: false }, (err, user, info) => {
     if (err) return next(err);
@@ -31,10 +31,8 @@ authRouter.post("/login", validateLogin, (req, res, next) => {
   })(req, res, next);
 });
 
-// Admin login
 authRouter.post("/admin/login", validateLogin, adminLogin);
 
-// Admin register (Only existing authenticated admins can register another admin)
 authRouter.post(
   "/admin/register",
   passport.authenticate("jwt", { session: false }),
@@ -43,7 +41,30 @@ authRouter.post(
   adminRegister,
 );
 
-// Current authenticated user (User or Admin)
+authRouter.get(
+  "/google",
+  passport.authenticate("google", {
+    scope: ["profile", "email"],
+    session: false,
+  }),
+);
+
+authRouter.get(
+  "/google/callback",
+  passport.authenticate("google", {
+    session: false,
+    failureRedirect: "http://localhost:5173?error=google_auth_failed",
+  }),
+  (req, res) => {
+    const token = jwt.sign({ userId: req.user.id }, process.env.JWT_SECRET, {
+      expiresIn: "24h",
+    });
+
+    const userEncoded = encodeURIComponent(JSON.stringify(req.user));
+    res.redirect(`http://localhost:5173?token=${token}&user=${userEncoded}`);
+  },
+);
+
 authRouter.get(
   "/me",
   passport.authenticate("jwt", { session: false }),
@@ -52,7 +73,6 @@ authRouter.get(
   },
 );
 
-// Current authenticated admin profile
 authRouter.get(
   "/admin/me",
   passport.authenticate("jwt", { session: false }),

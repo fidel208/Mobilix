@@ -159,3 +159,73 @@ export const adminRegister = async (req, res) => {
     });
   }
 };
+
+// Google Sign-In handler (supports ID Token or decoded user profile)
+export const googleAuth = async (req, res) => {
+  try {
+    const { credential, email, name, sub } = req.body;
+
+    let userEmail = email;
+    let userName = name;
+
+    // If Google ID token was provided, decode JWT payload
+    if (credential) {
+      try {
+        const payloadBase64 = credential.split(".")[1];
+        const decoded = JSON.parse(
+          Buffer.from(payloadBase64, "base64").toString("utf-8"),
+        );
+        userEmail = decoded.email;
+        userName = decoded.name || decoded.email.split("@")[0];
+      } catch (decodeErr) {
+        console.warn(
+          "Could not parse credential payload, using body fields",
+          decodeErr,
+        );
+      }
+    }
+
+    if (!userEmail) {
+      return res.status(400).json({
+        status: "error",
+        message: "Google authentication failed: Email is required.",
+      });
+    }
+
+    // Find or create user
+    let user = await prisma.user.findUnique({
+      where: { email: userEmail.toLowerCase() },
+    });
+
+    if (!user) {
+      const randomPass = Math.random().toString(36).slice(-10) + Date.now();
+      const salt = await bcrypt.genSalt(10);
+      const hashedPassword = await bcrypt.hash(randomPass, salt);
+
+      user = await prisma.user.create({
+        data: {
+          name: userName || "Google User",
+          email: userEmail.toLowerCase(),
+          password: hashedPassword,
+          role: "CUSTOMER",
+        },
+      });
+    }
+
+    const token = generateToken(user.id, user.role || "CUSTOMER");
+    const { password: _, ...userWithoutPassword } = user;
+
+    return res.status(200).json({
+      status: "success",
+      message: "Logged in with Google successfully!",
+      token,
+      user: userWithoutPassword,
+    });
+  } catch (error) {
+    console.error("Google auth error:", error);
+    return res.status(500).json({
+      status: "error",
+      message: "Internal server error during Google sign in.",
+    });
+  }
+};

@@ -17,6 +17,7 @@ import AdminRoutes from "./sections/routes/AdminRoutes";
 import Vehicles from "./sections/vehicles/Vehicles";
 import AdminTickets from "./sections/tickets/AdminTickets";
 import Community from "./sections/community/Community";
+import ProtectedAdminRoute from "./components/admin/ProtectedAdminRoute";
 
 const router = createBrowserRouter([
   { path: "/", element: <Home /> },
@@ -29,7 +30,11 @@ const router = createBrowserRouter([
   { path: "/admin/portal/auth", element: <Login /> },
   {
     path: "/admin/portal",
-    element: <Admin />,
+    element: (
+      <ProtectedAdminRoute>
+        <Admin />
+      </ProtectedAdminRoute>
+    ),
     children: [
       {
         path: "dashboard",

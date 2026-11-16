@@ -299,7 +299,7 @@ header nav button:hover {
 .login-container {
   background-color: white;
   width: 450px;
-  height: 600px;
+  height: 650px;
   border-radius: 12px;
   box-shadow: 0 0 3px white;
   padding: 10px 30px;
@@ -319,7 +319,7 @@ header nav button:hover {
 .register {
   display: flex;
   flex-direction: column;
-  gap: 30px;
+  gap: 7px;
 }
 .login h1,
 .register h1 {
@@ -404,6 +404,229 @@ header nav button:hover {
   font-size: 14px;
   color: red;
   margin: 0;
+}
+
+.google-sign-in-btn {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 12px;
+  width: 100%;
+  padding: 10px 16px;
+  background-color: #ffffff;
+  color: #374151;
+  border: 1px solid #d1d5db;
+  border-radius: 8px;
+  font-size: 15px;
+  font-weight: 500;
+  cursor: pointer;
+  margin-bottom: 12px;
+  transition: all 0.2s ease;
+  box-shadow: 0 1px 2px rgba(0, 0, 0, 0.05);
+}
+
+.google-sign-in-btn:hover {
+  background-color: #f9fafb;
+  border-color: #9ca3af;
+}
+
+.auth-separator {
+  display: flex;
+  align-items: center;
+  text-align: center;
+  margin: 10px 0 16px 0;
+  color: #9ca3af;
+  font-size: 13px;
+}
+
+.auth-separator::before,
+.auth-separator::after {
+  content: "";
+  flex: 1;
+  border-bottom: 1px solid #e5e7eb;
+}
+
+.auth-separator span {
+  padding: 0 10px;
+}
+
+/* Google Sign In Modal Overlay */
+.google-modal-overlay {
+  position: fixed;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+  background-color: rgba(0, 0, 0, 0.65);
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  z-index: 3000;
+  backdrop-filter: blur(4px);
+  -webkit-backdrop-filter: blur(4px);
+  animation: fadeInModal 0.25s ease-out;
+}
+
+.google-modal-container {
+  width: 90%;
+  max-width: 440px;
+  background-color: #ffffff;
+  border-radius: 16px;
+  padding: 28px 24px;
+  box-shadow: 0 20px 40px rgba(0, 0, 0, 0.2);
+  display: flex;
+  flex-direction: column;
+  position: relative;
+  animation: slideUpModal 0.25s ease-out;
+}
+
+.google-modal-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  margin-bottom: 20px;
+}
+
+.google-brand-title {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+}
+
+.google-brand-title span {
+  font-size: 19px;
+  font-weight: 600;
+  color: #1f2937;
+}
+
+.google-modal-close-btn {
+  background: none;
+  border: none;
+  font-size: 22px;
+  color: #9ca3af;
+  cursor: pointer;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  border-radius: 50%;
+  width: 32px;
+  height: 32px;
+  transition: all 0.2s ease;
+}
+
+.google-modal-close-btn:hover {
+  background-color: #f3f4f6;
+  color: #374151;
+}
+
+.google-modal-body p {
+  color: #4b5563;
+  font-size: 14px;
+  margin: 0 0 18px 0;
+  line-height: 1.5;
+}
+
+.google-input-group {
+  display: flex;
+  flex-direction: column;
+  gap: 6px;
+  margin-bottom: 16px;
+}
+
+.google-input-group label {
+  font-size: 13px;
+  font-weight: 500;
+  color: #374151;
+}
+
+.google-input-wrapper {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  border: 1px solid #d1d5db;
+  border-radius: 10px;
+  padding: 10px 12px;
+  transition:
+    border-color 0.2s ease,
+    box-shadow 0.2s ease;
+}
+
+.google-input-wrapper:focus-within {
+  border-color: #4285f4;
+  box-shadow: 0 0 0 3px rgba(66, 133, 244, 0.15);
+}
+
+.google-input-wrapper span {
+  font-size: 20px;
+  color: #9ca3af;
+}
+
+.google-input-wrapper input {
+  width: 100%;
+  border: none;
+  outline: none;
+  font-size: 15px;
+  color: #1f2937;
+  background: transparent;
+}
+
+.google-modal-submit-btn {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 10px;
+  width: 100%;
+  padding: 12px 20px;
+  background-color: #1a73e8;
+  color: #ffffff;
+  border: none;
+  border-radius: 10px;
+  font-size: 15px;
+  font-weight: 600;
+  cursor: pointer;
+  transition:
+    background-color 0.2s ease,
+    transform 0.1s ease;
+  margin-top: 8px;
+}
+
+.google-modal-submit-btn:hover:not(:disabled) {
+  background-color: #1557b0;
+}
+
+.google-modal-submit-btn:disabled {
+  opacity: 0.65;
+  cursor: not-allowed;
+}
+
+.google-modal-footer {
+  margin-top: 14px;
+  text-align: center;
+}
+
+.google-modal-footer span {
+  font-size: 12px;
+  color: #9ca3af;
+}
+
+@keyframes fadeInModal {
+  from {
+    opacity: 0;
+  }
+  to {
+    opacity: 1;
+  }
+}
+
+@keyframes slideUpModal {
+  from {
+    opacity: 0;
+    transform: translateY(16px);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
 }
 
 @media (max-width: 1024px) {

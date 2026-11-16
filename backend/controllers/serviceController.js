@@ -1,13 +1,11 @@
 import prisma from "../lib/prisma.js";
 
-// GET /api/services
 export const getServices = async (req, res) => {
   try {
     const services = await prisma.service.findMany({
       orderBy: { createdAt: "desc" },
     });
 
-    // Compute route counts and booking stats for each service
     const servicesWithStats = await Promise.all(
       services.map(async (service) => {
         const routeCount = await prisma.route.count({
@@ -32,7 +30,7 @@ export const getServices = async (req, res) => {
         const ticketCount = bookings.filter((b) => b.ticket).length;
         const revenue = bookings.reduce(
           (sum, b) => sum + (b.ticket?.amount || 0),
-          0
+          0,
         );
 
         return {
@@ -41,10 +39,12 @@ export const getServices = async (req, res) => {
           ticketsBooked: ticketCount,
           revenue,
         };
-      })
+      }),
     );
 
-    return res.status(200).json({ status: "success", services: servicesWithStats });
+    return res
+      .status(200)
+      .json({ status: "success", services: servicesWithStats });
   } catch (error) {
     console.error("Get services error:", error);
     return res
@@ -53,7 +53,6 @@ export const getServices = async (req, res) => {
   }
 };
 
-// POST /api/services
 export const createService = async (req, res) => {
   try {
     const { name, description } = req.body;
@@ -99,7 +98,6 @@ export const createService = async (req, res) => {
   }
 };
 
-// DELETE /api/services/:id
 export const deleteService = async (req, res) => {
   try {
     const { id } = req.params;

@@ -1,8 +1,48 @@
-import React from "react";
+import React, { useState } from "react";
 import "./footer.css";
 import { Link } from "react-router-dom";
+import API from "../../services/api";
 
 function Footer() {
+  const [email, setEmail] = useState("");
+  const [loading, setLoading] = useState(false);
+  const [message, setMessage] = useState("");
+  const [isSuccess, setIsSuccess] = useState(false);
+
+  const handleSubscribe = async (e) => {
+    e.preventDefault();
+    setMessage("");
+
+    if (!email || !email.includes("@")) {
+      setIsSuccess(false);
+      setMessage("Please provide a valid email address.");
+      return;
+    }
+
+    setLoading(true);
+
+    try {
+      const response = await API.post("/community", {
+        email: email.trim().toLowerCase(),
+        status: "subscribed",
+      });
+
+      setIsSuccess(true);
+      setMessage(
+        response.data?.message || "Successfully subscribed to our community!",
+      );
+      setEmail("");
+      window.location.reload();
+    } catch (err) {
+      setIsSuccess(false);
+      setMessage(
+        err.response?.data?.message || "Failed to subscribe. Please try again.",
+      );
+    } finally {
+      setLoading(false);
+    }
+  };
+
   return (
     <>
       <footer>
@@ -10,15 +50,35 @@ function Footer() {
           <p id="comp-name">&copy; Mobilix. All rights reserved.</p>
           <p id="notion">Seamless rides, smart bookings</p>
           <p id="entails">Book, drive, go</p>
-          <form className="subscribe" onSubmit={(e) => e.preventDefault()}>
+          <form className="subscribe" onSubmit={handleSubscribe}>
             <input
-              type="text"
+              type="email"
               name="subscribe"
               id="subscribe"
               placeholder="your@email.com"
+              value={email}
+              onChange={(e) => {
+                setEmail(e.target.value);
+                if (message) setMessage("");
+              }}
+              required
             />
-            <button>Subscribe</button>
+            <button type="submit" disabled={loading}>
+              {loading ? "Adding..." : "Subscribe"}
+            </button>
           </form>
+          {message && (
+            <p
+              style={{
+                fontSize: "14px",
+                margin: "4px 0 0 0",
+                color: isSuccess ? "#86efac" : "#fca5a5",
+                fontWeight: 500,
+              }}
+            >
+              {message}
+            </p>
+          )}
         </div>
         <div className="footer-bottom">
           <div className="footer-bottom-one">

@@ -59,19 +59,26 @@ export const getTickets = async (req, res) => {
       .json({ status: "error", message: "Failed to fetch tickets." });
   }
 };
-
-// POST /api/tickets (Admin manual ticket creation)
 export const createTicket = async (req, res) => {
   try {
-    const { firstName, lastName, phone, amount, refCode, route, travelDate, seats } = req.body;
+    const {
+      firstName,
+      lastName,
+      phone,
+      amount,
+      refCode,
+      route,
+      travelDate,
+      seats,
+    } = req.body;
     if (!firstName || !lastName || !phone || amount === undefined) {
       return res.status(400).json({
         status: "error",
-        message: "First name, last name, phone number, and amount are required.",
+        message:
+          "First name, last name, phone number, and amount are required.",
       });
     }
 
-    // Create a corresponding booking record first
     const booking = await prisma.booking.create({
       data: {
         firstName: firstName.trim(),
@@ -93,7 +100,9 @@ export const createTicket = async (req, res) => {
         bookingId: booking.id,
         passengerName: `${firstName.trim()} ${lastName.trim()}`,
         phoneNumber: phone.trim(),
-        mpesaRefCode: refCode ? refCode.trim() : `REF-${Date.now().toString(36).toUpperCase()}`,
+        mpesaRefCode: refCode
+          ? refCode.trim()
+          : `REF-${Date.now().toString(36).toUpperCase()}`,
         route: route || "Local transit",
         travelDate: travelDate || new Date().toISOString().split("T")[0],
         seats: seats ? parseInt(seats) : 1,
@@ -115,7 +124,6 @@ export const createTicket = async (req, res) => {
   }
 };
 
-// DELETE /api/tickets/:id
 export const deleteTicket = async (req, res) => {
   try {
     const { id } = req.params;

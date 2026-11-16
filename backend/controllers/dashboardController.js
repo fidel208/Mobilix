@@ -1,6 +1,5 @@
 import prisma from "../lib/prisma.js";
 
-// GET /api/dashboard/stats
 export const getDashboardStats = async (req, res) => {
   try {
     const today = new Date();
@@ -18,7 +17,6 @@ export const getDashboardStats = async (req, res) => {
         prisma.communityMember.count(),
       ]);
 
-    // All tickets for revenue calculations
     const allTickets = await prisma.ticket.findMany({
       select: {
         amount: true,
@@ -26,20 +24,27 @@ export const getDashboardStats = async (req, res) => {
       },
     });
 
-    // Today's sales
     const todaySales = allTickets
       .filter((t) => new Date(t.createdAt) >= today)
       .reduce((sum, t) => sum + (t.amount || 0), 0);
 
-    // Month's sales
     const monthSales = allTickets
       .filter((t) => new Date(t.createdAt) >= firstDayOfMonth)
       .reduce((sum, t) => sum + (t.amount || 0), 0);
 
-    // Yearly sales grouped by month (Jan-Dec)
     const monthNames = [
-      "Jan", "Feb", "Mar", "Apr", "May", "Jun",
-      "Jul", "Aug", "Sep", "Oct", "Nov", "Dec",
+      "Jan",
+      "Feb",
+      "Mar",
+      "Apr",
+      "May",
+      "Jun",
+      "Jul",
+      "Aug",
+      "Sep",
+      "Oct",
+      "Nov",
+      "Dec",
     ];
 
     const monthlySalesMap = {};
