@@ -97,7 +97,7 @@ export const adminLogin = async (req, res) => {
     if (!isMatch) {
       return res.status(401).json({
         status: "error",
-        message: "Invalid email or password.",
+        message: "Invalid admin credentials.",
       });
     }
 
@@ -160,7 +160,6 @@ export const adminRegister = async (req, res) => {
   }
 };
 
-// Google Sign-In handler (supports ID Token or decoded user profile)
 export const googleAuth = async (req, res) => {
   try {
     const { credential, email, name, sub } = req.body;
@@ -168,7 +167,6 @@ export const googleAuth = async (req, res) => {
     let userEmail = email;
     let userName = name;
 
-    // If Google ID token was provided, decode JWT payload
     if (credential) {
       try {
         const payloadBase64 = credential.split(".")[1];
@@ -192,7 +190,6 @@ export const googleAuth = async (req, res) => {
       });
     }
 
-    // Find or create user
     let user = await prisma.user.findUnique({
       where: { email: userEmail.toLowerCase() },
     });

@@ -59,6 +59,7 @@ export const getTickets = async (req, res) => {
       .json({ status: "error", message: "Failed to fetch tickets." });
   }
 };
+
 export const createTicket = async (req, res) => {
   try {
     const {

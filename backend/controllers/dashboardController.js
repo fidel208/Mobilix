@@ -8,7 +8,6 @@ export const getDashboardStats = async (req, res) => {
     const firstDayOfMonth = new Date(today.getFullYear(), today.getMonth(), 1);
     const firstDayOfYear = new Date(today.getFullYear(), 0, 1);
 
-    // Total counts
     const [servicesCount, routesCount, ticketsCount, communityCount] =
       await Promise.all([
         prisma.service.count(),

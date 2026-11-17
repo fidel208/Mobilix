@@ -4,9 +4,9 @@ import prisma from "./lib/prisma.js";
 
 async function main() {
   const args = process.argv.slice(2);
-  const adminEmail = args[0] || process.env.ADMIN_EMAIL || "admin@mobilix.com";
-  const adminPassword = args[1] || process.env.ADMIN_PASSWORD || "admin123";
-  const adminName = args[2] || process.env.ADMIN_NAME || "System Administrator";
+  const adminEmail = args[0] || "admin@mobilix.com";
+  const adminPassword = args[1] || "admin123";
+  const adminName = args[2] || "Mwitixo";
 
   console.log(`Checking admin account: ${adminEmail}...`);
 
