@@ -53,7 +53,7 @@ authRouter.get(
   "/google/callback",
   passport.authenticate("google", {
     session: false,
-    failureRedirect: "http://localhost:5173?error=google_auth_failed",
+    failureRedirect: `${process.env.CLIENT_URL}?error=google_auth_failed`,
   }),
   (req, res) => {
     const token = jwt.sign({ userId: req.user.id }, process.env.JWT_SECRET, {
@@ -61,7 +61,9 @@ authRouter.get(
     });
 
     const userEncoded = encodeURIComponent(JSON.stringify(req.user));
-    res.redirect(`http://localhost:5173?token=${token}&user=${userEncoded}`);
+    const frontendURL = process.env.CLIENT_URL;
+
+    res.redirect(`${frontendURL}?token=${token}&user=${userEncoded}`);
   },
 );
 
