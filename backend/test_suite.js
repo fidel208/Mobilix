@@ -9,6 +9,7 @@ import routesRouter from "./routes/routesRouter.js";
 import ticketsRouter from "./routes/ticketsRouter.js";
 import vehiclesRouter from "./routes/vehiclesRouter.js";
 import communityRouter from "./routes/communityRouter.js";
+import mpesaRouter from "./routes/mpesaRouter.js";
 import passport from "./config/passport.js";
 import prisma from "./lib/prisma.js";
 
@@ -31,11 +32,13 @@ app.use("/api/routes", routesRouter);
 app.use("/api/tickets", ticketsRouter);
 app.use("/api/vehicles", vehiclesRouter);
 app.use("/api/community", communityRouter);
+app.use("/api/mpesa", mpesaRouter);
 
 app.use("/services", serviceRouter);
 app.use("/routes", routesRouter);
 app.use("/vehicles", vehiclesRouter);
 app.use("/community", communityRouter);
+app.use("/mpesa", mpesaRouter);
 
 app.get("/", (req, res) => {
   res.send("Backend deveopment has started");
@@ -59,7 +62,7 @@ async function run() {
   console.log(`========================================\n`);
 
   try {
-    // 1. Root route
+    
     {
       const res = await fetch(`${baseUrl}/`);
       const text = await res.text();
@@ -70,7 +73,7 @@ async function run() {
       );
     }
 
-    // 2. Stubs (/api/services, /api/routes, /api/vehicles, /api/community)
+    
     {
       const res1 = await fetch(`${baseUrl}/api/services`);
       record(
@@ -104,11 +107,11 @@ async function run() {
       );
     }
 
-    // 3. User Registration
+    
     let authToken = "";
     const testEmail = `testuser_${Date.now()}@example.com`;
     {
-      // Valid registration
+      
       const res = await fetch(`${baseUrl}/api/auth/register`, {
         method: "POST",
         headers: { "Content-Type": "application/json" },
@@ -128,7 +131,7 @@ async function run() {
     }
 
     {
-      // Duplicate registration
+      
       const res = await fetch(`${baseUrl}/api/auth/register`, {
         method: "POST",
         headers: { "Content-Type": "application/json" },
@@ -148,7 +151,7 @@ async function run() {
     }
 
     {
-      // Short password (< 6 chars)
+      
       const res = await fetch(`${baseUrl}/api/auth/register`, {
         method: "POST",
         headers: { "Content-Type": "application/json" },
@@ -168,7 +171,7 @@ async function run() {
     }
 
     {
-      // Missing email
+      
       const res = await fetch(`${baseUrl}/api/auth/register`, {
         method: "POST",
         headers: { "Content-Type": "application/json" },
@@ -184,9 +187,9 @@ async function run() {
       );
     }
 
-    // 4. User Login
+    
     {
-      // Valid login
+      
       const res = await fetch(`${baseUrl}/api/auth/login`, {
         method: "POST",
         headers: { "Content-Type": "application/json" },
@@ -204,7 +207,7 @@ async function run() {
     }
 
     {
-      // Wrong password
+      
       const res = await fetch(`${baseUrl}/api/auth/login`, {
         method: "POST",
         headers: { "Content-Type": "application/json" },
@@ -222,7 +225,7 @@ async function run() {
     }
 
     {
-      // Non-existent email
+      
       const res = await fetch(`${baseUrl}/api/auth/login`, {
         method: "POST",
         headers: { "Content-Type": "application/json" },
@@ -238,7 +241,7 @@ async function run() {
       );
     }
 
-    // 5. Auth /me (Protected)
+    
     {
       const res = await fetch(`${baseUrl}/api/auth/me`, {
         headers: { Authorization: `Bearer ${authToken}` },
@@ -260,10 +263,10 @@ async function run() {
       );
     }
 
-    // 5b. Admin Authentication
+    
     let adminToken = "";
     {
-      // Valid Admin Login
+      
       const res = await fetch(`${baseUrl}/api/auth/admin/login`, {
         method: "POST",
         headers: { "Content-Type": "application/json" },
@@ -285,7 +288,7 @@ async function run() {
     }
 
     {
-      // Admin Login with wrong password
+      
       const res = await fetch(`${baseUrl}/api/auth/admin/login`, {
         method: "POST",
         headers: { "Content-Type": "application/json" },
@@ -303,7 +306,7 @@ async function run() {
     }
 
     {
-      // Admin Profile GET /api/auth/admin/me with Admin Token
+      
       const res = await fetch(`${baseUrl}/api/auth/admin/me`, {
         headers: { Authorization: `Bearer ${adminToken}` },
       });
@@ -316,7 +319,7 @@ async function run() {
     }
 
     {
-      // Admin Profile GET /api/auth/admin/me with Customer Token (Should be 403 Forbidden)
+      
       const res = await fetch(`${baseUrl}/api/auth/admin/me`, {
         headers: { Authorization: `Bearer ${authToken}` },
       });
@@ -328,11 +331,16 @@ async function run() {
       );
     }
 
-    // 6. Booking creation
+    
     let createdTicketNumber = "";
     let createdPhoneNumber = "0712345678";
+    const testVehicles = await prisma.vehicle.findMany();
+    const testRoutes = await prisma.route.findMany();
+    const activeVehicle = testVehicles[0];
+    const activeRoute = testRoutes[0];
+
     {
-      // Valid booking with paymentType="now"
+      
       const res = await fetch(`${baseUrl}/api/bookings`, {
         method: "POST",
         headers: { "Content-Type": "application/json" },
@@ -340,8 +348,11 @@ async function run() {
           serviceType: "local",
           firstName: "John",
           lastName: "Doe",
-          startingPoint: "Nairobi",
-          destination: "Mombasa",
+          email: "john.doe.test@example.com",
+          vehicleId: activeVehicle?.id || "v-123",
+          routeId: activeRoute?.id || null,
+          startingPoint: activeRoute?.startingPoint || "Kwale",
+          destination: activeRoute?.destination || "Likoni",
           travelDate: "2026-11-15",
           seats: 2,
           paymentType: "now",
@@ -355,13 +366,54 @@ async function run() {
         res.status === 201 &&
           data.status === "success" &&
           !!data.ticket &&
-          data.ticket.amount === 1000,
+          data.ticket.amount > 0,
         `Status: ${res.status}, Ticket: ${createdTicketNumber}, Amount: ${data.ticket?.amount}, Status: ${data.booking?.status}`,
       );
+
+      
+      if (data.checkoutRequestId) {
+        const callbackPayload = {
+          Body: {
+            stkCallback: {
+              MerchantRequestID: "MR_TEST_123",
+              CheckoutRequestID: data.checkoutRequestId,
+              ResultCode: 0,
+              ResultDesc: "The service request is processed successfully.",
+              CallbackMetadata: {
+                Item: [
+                  { Name: "Amount", Value: 300.0 },
+                  { Name: "MpesaReceiptNumber", Value: "SAB12CD34E" },
+                  { Name: "PhoneNumber", Value: 254712345678 },
+                ],
+              },
+            },
+          },
+        };
+        const cbRes = await fetch(`${baseUrl}/api/mpesa/callback`, {
+          method: "POST",
+          headers: { "Content-Type": "application/json" },
+          body: JSON.stringify(callbackPayload),
+        });
+        const cbData = await cbRes.json();
+        record(
+          "POST /api/mpesa/callback (Confirm payment & real Mpesa ref)",
+          cbRes.status === 200 && cbData.ResultCode === 0,
+          `ResultCode: ${cbData.ResultCode}`,
+        );
+
+        
+        const statusRes = await fetch(`${baseUrl}/api/mpesa/status/${data.checkoutRequestId}`);
+        const statusData = await statusRes.json();
+        record(
+          "GET /api/mpesa/status/:checkoutRequestId (Real M-Pesa ref fetched)",
+          statusData.paid === true && statusData.mpesaRefCode === "SAB12CD34E",
+          `Paid: ${statusData.paid}, Real M-Pesa Ref: ${statusData.mpesaRefCode}`,
+        );
+      }
     }
 
     {
-      // Booking with paymentType="arrival"
+      
       const res = await fetch(`${baseUrl}/api/bookings`, {
         method: "POST",
         headers: { "Content-Type": "application/json" },
@@ -369,8 +421,11 @@ async function run() {
           serviceType: "local",
           firstName: "Jane",
           lastName: "Smith",
-          startingPoint: "Kisumu",
-          destination: "Nakuru",
+          email: "jane.smith.test@example.com",
+          vehicleId: activeVehicle?.id || "v-123",
+          routeId: activeRoute?.id || null,
+          startingPoint: activeRoute?.startingPoint || "Kwale",
+          destination: activeRoute?.destination || "Likoni",
           travelDate: "2026-11-20",
           seats: 1,
           paymentType: "arrival",
@@ -387,7 +442,7 @@ async function run() {
     }
 
     {
-      // Edge case: Missing startingPoint / destination
+      
       const res = await fetch(`${baseUrl}/api/bookings`, {
         method: "POST",
         headers: { "Content-Type": "application/json" },
@@ -407,7 +462,7 @@ async function run() {
     }
 
     {
-      // Edge case: Invalid seats value "abc"
+      
       const res = await fetch(`${baseUrl}/api/bookings`, {
         method: "POST",
         headers: { "Content-Type": "application/json" },
@@ -429,7 +484,7 @@ async function run() {
       );
     }
 
-    // 7. Tickets Listing & Search
+    
     {
       const res = await fetch(`${baseUrl}/api/tickets`);
       const data = await res.json();
@@ -488,7 +543,7 @@ async function run() {
       );
     }
 
-    // 8. CORS Preflight
+    
     {
       const res = await fetch(`${baseUrl}/api/bookings`, {
         method: "OPTIONS",

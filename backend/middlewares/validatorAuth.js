@@ -37,6 +37,14 @@ export const validateBooking = [
   body("serviceType").trim().notEmpty().withMessage("Service type is required"),
   body("firstName").trim().notEmpty().withMessage("First name is required"),
   body("lastName").trim().notEmpty().withMessage("Last name is required"),
+  body("email")
+    .isEmail()
+    .normalizeEmail()
+    .withMessage("Please provide a valid email address for confirmation"),
+  body("vehicleId")
+    .trim()
+    .notEmpty()
+    .withMessage("A valid admin vehicle selection is required"),
   body("startingPoint")
     .trim()
     .notEmpty()

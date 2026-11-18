@@ -27,7 +27,7 @@ export const handleStkPush = async (req, res) => {
       });
     }
 
-    // If bookingId is provided, link checkoutRequestId to ticket
+    
     if (bookingId) {
       await prisma.ticket.updateMany({
         where: { bookingId },
@@ -67,7 +67,7 @@ export const handleMpesaCallback = async (req, res) => {
       CallbackMetadata,
     } = callbackData;
 
-    // Locate ticket matching checkoutRequestId in mpesaRefCode or booking.userId
+    
     const existingTicket = await prisma.ticket.findFirst({
       where: {
         OR: [
@@ -79,7 +79,7 @@ export const handleMpesaCallback = async (req, res) => {
     });
 
     if (ResultCode === 0) {
-      // Payment Successful! Extract real MpesaReceiptNumber
+      
       let realMpesaCode = "";
       let amountPaid = 0;
       let paidByPhone = "";
@@ -95,7 +95,7 @@ export const handleMpesaCallback = async (req, res) => {
       console.log(`Payment confirmed! Real M-Pesa Receipt: ${realMpesaCode}, Amount: ${amountPaid}`);
 
       if (existingTicket) {
-        // Update Ticket with real M-Pesa ref code
+        
         const updatedTicket = await prisma.ticket.update({
           where: { id: existingTicket.id },
           data: {
@@ -104,16 +104,16 @@ export const handleMpesaCallback = async (req, res) => {
           },
         });
 
-        // Update Booking
+        
         const updatedBooking = await prisma.booking.update({
           where: { id: existingTicket.bookingId },
           data: { status: "PAID" },
         });
 
-        // Send confirmation email via Resend with REAL M-Pesa receipt
-        // The community member table was populated with the customer email at booking time.
-        // For STK Push bookings, booking.userId = checkoutRequestId (not email).
-        // We look up the most recently added community member who matches the booking's passenger name.
+        
+        
+        
+        
         let customerEmailAddr = "";
         try {
           const firstName = existingTicket.passengerName?.split(" ")[0]?.toLowerCase() || "";
@@ -125,7 +125,7 @@ export const handleMpesaCallback = async (req, res) => {
             customerEmailAddr = matchedMember?.email || "";
           }
         } catch {
-          // non-critical — continue without email
+          
         }
 
         if (customerEmailAddr) {
@@ -136,7 +136,7 @@ export const handleMpesaCallback = async (req, res) => {
         }
       }
     } else {
-      // Payment failed or cancelled
+      
       console.log(`Payment failed/cancelled: ${ResultDesc} (ResultCode: ${ResultCode})`);
       if (existingTicket) {
         await prisma.ticket.update({
@@ -153,7 +153,7 @@ export const handleMpesaCallback = async (req, res) => {
     return res.status(200).json({ ResultCode: 0, ResultDesc: "Accepted" });
   } catch (error) {
     console.error("M-Pesa callback processing error:", error);
-    // Always return 200 to Safaricom so it doesn't repeatedly retry
+    
     return res.status(200).json({ ResultCode: 0, ResultDesc: "Error handled" });
   }
 };
@@ -165,7 +165,7 @@ export const checkPaymentStatus = async (req, res) => {
       return res.status(400).json({ status: "error", message: "CheckoutRequestID is required." });
     }
 
-    // 1. Check local DB first
+    
     const ticket = await prisma.ticket.findFirst({
       where: {
         OR: [
@@ -187,12 +187,12 @@ export const checkPaymentStatus = async (req, res) => {
       });
     }
 
-    // 2. Query Safaricom Daraja STK query directly
+    
     const queryResult = await queryStkPush(checkoutRequestId);
     console.log("Daraja STK Query result:", queryResult);
 
     if (queryResult?.ResultCode === "0") {
-      // Safaricom confirms success! Update ticket if found
+      
       if (ticket) {
         await prisma.ticket.update({
           where: { id: ticket.id },
@@ -211,7 +211,7 @@ export const checkPaymentStatus = async (req, res) => {
         ticketNumber: ticket?.ticketNumber,
       });
     } else if (queryResult?.ResultCode) {
-      // Completed with error (e.g. 1032 cancelled, 1037 timeout)
+      
       return res.status(200).json({
         status: "failed",
         paid: false,
@@ -219,7 +219,7 @@ export const checkPaymentStatus = async (req, res) => {
       });
     }
 
-    // Still pending / user entering PIN
+    
     return res.status(200).json({
       status: "pending",
       paid: false,

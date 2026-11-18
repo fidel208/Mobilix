@@ -27,8 +27,17 @@ function Header() {
     const params = new URLSearchParams(window.location.search);
     const token = params.get("token");
     const userParam = params.get("user");
+    const errorParam = params.get("error");
 
-    if (token && userParam) {
+    if (errorParam) {
+      setError(
+        errorParam === "google_auth_failed"
+          ? "Google sign-in was canceled or failed. Please try again."
+          : `Sign-in error: ${errorParam}`,
+      );
+      setLoginModal(true);
+      window.history.replaceState({}, document.title, window.location.pathname);
+    } else if (token && userParam) {
       try {
         const parsedUser = JSON.parse(decodeURIComponent(userParam));
         localStorage.setItem("mobilix_token", token);
@@ -378,7 +387,7 @@ function Header() {
                 <h1>Login</h1>
 
                 <a
-                  href={`${API_BASE_URL}/auth/google`}
+                  href={`${API_BASE_URL}/auth/google?returnTo=${encodeURIComponent(window.location.origin + window.location.pathname)}`}
                   className="google-sign-in-btn"
                   style={{
                     display: "flex",
@@ -484,7 +493,7 @@ function Header() {
                 <h1>Create an account</h1>
 
                 <a
-                  href={`${API_BASE_URL}/auth/google`}
+                  href={`${API_BASE_URL}/auth/google?returnTo=${encodeURIComponent(window.location.origin + window.location.pathname)}`}
                   className="google-sign-in-btn"
                   style={{
                     display: "flex",

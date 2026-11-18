@@ -98,7 +98,7 @@ export const createBooking = async (req, res) => {
         });
     }
 
-    // Verify vehicle exists in database (Added by Admin)
+    
     const adminVehicle = await prisma.vehicle.findUnique({
       where: { id: vehicleId },
     });
@@ -111,7 +111,7 @@ export const createBooking = async (req, res) => {
       });
     }
 
-    // Verify route exists in database (Added by Admin)
+    
     let adminRoute = null;
     if (routeId) {
       adminRoute = await prisma.route.findUnique({
@@ -128,7 +128,7 @@ export const createBooking = async (req, res) => {
       });
     }
 
-    // For non-hire transit services, an admin-created route is strictly required
+    
     if (!adminRoute && normalizedServiceType !== "hire") {
       return res.status(400).json({
         status: "error",
@@ -163,7 +163,7 @@ export const createBooking = async (req, res) => {
         });
       }
 
-      // Initiate Daraja STK Push
+      
       stkResult = await initiateStkPush({
         phoneNumber: formattedPhone,
         amount: totalAmount,
@@ -178,7 +178,7 @@ export const createBooking = async (req, res) => {
         });
       }
 
-      // Store CheckoutRequestID in mpesaRefCode until callback resolves with real receipt code
+      
       mpesaRefCode = stkResult.checkoutRequestId;
       initialStatus = "PENDING_PAYMENT";
       bookingInitialStatus = "PENDING_PAYMENT";
@@ -186,7 +186,7 @@ export const createBooking = async (req, res) => {
 
     const newBooking = await prisma.booking.create({
       data: {
-        // userId stores checkoutRequestId for "now" payments, or customer email for "arrival" (for email lookup in callbacks)
+        
         userId: stkResult?.checkoutRequestId || normalizedEmail || null,
         serviceType: normalizedServiceType,
         firstName: normalizedFirstName,
@@ -217,7 +217,7 @@ export const createBooking = async (req, res) => {
       },
     });
 
-    // 1. Send confirmation email (for arrival payments right away; for STK push, callback updates & re-sends receipt)
+    
     if (normalizedEmail && normalizedPaymentType !== "now") {
       sendTicketEmail(normalizedEmail, {
         booking: newBooking,
@@ -229,7 +229,7 @@ export const createBooking = async (req, res) => {
       );
     }
 
-    // 2. Automatically add / subscribe to Community Member list
+    
     if (normalizedEmail) {
       await prisma.communityMember
         .upsert({

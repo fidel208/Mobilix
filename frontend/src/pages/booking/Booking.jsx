@@ -23,16 +23,24 @@ function Booking() {
 
   const [loading, setLoading] = useState(false);
   const [vehiclesLoading, setVehiclesLoading] = useState(false);
+  const [routesLoading, setRoutesLoading] = useState(false);
   const [vehiclesError, setVehiclesError] = useState("");
+  const [routesError, setRoutesError] = useState("");
   const [successMsg, setSuccessMsg] = useState("");
   const [errorMsg, setErrorMsg] = useState("");
-  const [vehicles, setVehicles] = useState([]);
 
+  const [vehicles, setVehicles] = useState([]);
+  const [routes, setRoutes] = useState([]);
+
+  
   const [formData, setFormData] = useState({
     firstName: "",
     lastName: "",
-    startingPoint: "kwale",
-    destination: "kwale",
+    email: "",
+    selectedRouteId: "",
+    startingPoint: "",
+    destination: "",
+    price: 0,
     date: "",
     seats: 1,
     selectedVehicleId: "",
@@ -65,6 +73,7 @@ function Booking() {
 
   const formatVehicleLabel = (vehicle) => `${vehicle.name} (${vehicle.plate})`;
 
+  
   const vehiclesByServiceType = {
     local: vehicles.filter(
       (vehicle) =>
@@ -88,6 +97,26 @@ function Booking() {
     ),
   };
 
+  
+  const routesByServiceType = {
+    local: routes.filter(
+      (r) =>
+        normalizeVehicleServiceType(r.serviceType) === vehicleTypeMap.local,
+    ),
+    private: routes.filter(
+      (r) =>
+        normalizeVehicleServiceType(r.serviceType) === vehicleTypeMap.private,
+    ),
+    luggage: routes.filter(
+      (r) =>
+        normalizeVehicleServiceType(r.serviceType) === vehicleTypeMap.luggage,
+    ),
+    hire: routes.filter(
+      (r) =>
+        normalizeVehicleServiceType(r.serviceType) === vehicleTypeMap.hire,
+    ),
+  };
+
   const fetchVehicles = async () => {
     setVehiclesLoading(true);
     setVehiclesError("");
@@ -102,26 +131,105 @@ function Booking() {
     }
   };
 
-  useEffect(() => {
-    fetchVehicles();
-  }, []);
+  const fetchRoutes = async () => {
+    setRoutesLoading(true);
+    setRoutesError("");
+    try {
+      const response = await API.get("/routes");
+      setRoutes(response.data?.routes || []);
+    } catch (err) {
+      setRoutesError("Unable to load routes right now.");
+      console.error("Failed to fetch booking routes:", err);
+    } finally {
+      setRoutesLoading(false);
+    }
+  };
 
   useEffect(() => {
+    fetchVehicles();
+    fetchRoutes();
+  }, []);
+
+  
+  useEffect(() => {
+    const currentServiceVehicles =
+      type === "hire"
+        ? vehiclesByServiceType.hire
+        : vehiclesByServiceType[type] || [];
+
+    if (type === "hire") {
+      if (
+        currentServiceVehicles.length > 0 &&
+        !currentServiceVehicles.some((v) => v.id === formData.hireVehicleId)
+      ) {
+        setFormData((prev) => ({
+          ...prev,
+          hireVehicleId: currentServiceVehicles[0].id,
+        }));
+      }
+    } else {
+      if (
+        currentServiceVehicles.length > 0 &&
+        !currentServiceVehicles.some((v) => v.id === formData.selectedVehicleId)
+      ) {
+        setFormData((prev) => ({
+          ...prev,
+          selectedVehicleId: currentServiceVehicles[0].id,
+        }));
+      }
+    }
+  }, [type, vehicles]);
+
+  
+  useEffect(() => {
+    const currentServiceRoutes = routesByServiceType[type] || [];
     if (
-      vehiclesByServiceType.hire.length > 0 &&
-      !vehiclesByServiceType.hire.some(
-        (vehicle) => vehicle.id === formData.hireVehicleId,
-      )
+      currentServiceRoutes.length > 0 &&
+      !currentServiceRoutes.some((r) => r.id === formData.selectedRouteId)
     ) {
+      const defaultRoute = currentServiceRoutes[0];
       setFormData((prev) => ({
         ...prev,
-        hireVehicleId: vehiclesByServiceType.hire[0].id,
+        selectedRouteId: defaultRoute.id,
+        startingPoint: defaultRoute.startingPoint,
+        destination: defaultRoute.destination,
+        price: defaultRoute.price,
+      }));
+    } else if (currentServiceRoutes.length === 0 && type !== "hire") {
+      setFormData((prev) => ({
+        ...prev,
+        selectedRouteId: "",
+        startingPoint: "",
+        destination: "",
+        price: 0,
       }));
     }
-  }, [vehiclesByServiceType.hire, formData.hireVehicleId]);
+  }, [type, routes]);
 
   const handleInputChange = (e) => {
     setFormData({ ...formData, [e.target.name]: e.target.value });
+  };
+
+  const handleRouteChange = (e) => {
+    const routeId = e.target.value;
+    const selected = routes.find((r) => r.id === routeId);
+    if (selected) {
+      setFormData((prev) => ({
+        ...prev,
+        selectedRouteId: routeId,
+        startingPoint: selected.startingPoint,
+        destination: selected.destination,
+        price: selected.price,
+      }));
+    } else {
+      setFormData((prev) => ({
+        ...prev,
+        selectedRouteId: "",
+        startingPoint: "",
+        destination: "",
+        price: 0,
+      }));
+    }
   };
 
   const handleType = (e) => setType(e.target.value);
@@ -145,6 +253,14 @@ function Booking() {
     setSuccessMsg("");
   };
 
+  const selectedVehicle = vehicles.find((v) =>
+    type === "hire"
+      ? v.id === formData.hireVehicleId
+      : v.id === formData.selectedVehicleId,
+  );
+
+  const selectedRoute = routes.find((r) => r.id === formData.selectedRouteId);
+
   const handleBookingSubmit = async (e, serviceType) => {
     e.preventDefault();
     setLoading(true);
@@ -157,11 +273,8 @@ function Booking() {
           ? formData.hireVehicleId
           : formData.selectedVehicleId;
 
-      const selectedVehicle = vehicles.find(
-        (vehicle) => vehicle.id === selectedVehicleId,
-      );
-
-      if (!selectedVehicle) {
+      const vehicle = vehicles.find((v) => v.id === selectedVehicleId);
+      if (!vehicle) {
         setLoading(false);
         setErrorMsg(
           "Please select a valid admin-added vehicle before booking.",
@@ -169,16 +282,36 @@ function Booking() {
         return;
       }
 
+      if (serviceType !== "hire") {
+        const route = routes.find((r) => r.id === formData.selectedRouteId);
+        if (!route) {
+          setLoading(false);
+          setErrorMsg(
+            "Please select a valid admin-added route before booking.",
+          );
+          return;
+        }
+      }
+
+      if (!formData.email || !formData.email.includes("@")) {
+        setLoading(false);
+        setErrorMsg("Please provide a valid email address for confirmation.");
+        return;
+      }
+
+      
       const payload = {
         serviceType,
         firstName: formData.firstName,
         lastName: formData.lastName,
-        startingPoint: formData.startingPoint,
-        destination: formData.destination,
+        email: formData.email,
+        routeId: formData.selectedRouteId || null,
+        startingPoint: formData.startingPoint || (serviceType === "hire" ? "Hire Station" : "N/A"),
+        destination: formData.destination || (serviceType === "hire" ? "Self Drive" : "N/A"),
         travelDate: formData.date,
         seats: Number(formData.seats) || 1,
-        vehicleId: selectedVehicle.id, // Securely passing database vehicle ID
-        carType: formatVehicleLabel(selectedVehicle),
+        vehicleId: vehicle.id,
+        carType: formatVehicleLabel(vehicle),
         paymentType:
           serviceType === "local"
             ? localPayTime === "later"
@@ -189,7 +322,65 @@ function Booking() {
       };
 
       const response = await API.post("/bookings", payload);
-      setSuccessMsg(response.data.message || "Booking processed successfully!");
+
+      if (response.data.requiresPayment && response.data.checkoutRequestId) {
+        const checkoutId = response.data.checkoutRequestId;
+        setSuccessMsg(
+          "M-Pesa STK prompt sent to your phone! Please enter your M-Pesa PIN to complete payment.",
+        );
+
+        let attempts = 0;
+        const maxAttempts = 15; 
+        const interval = setInterval(async () => {
+          attempts++;
+          try {
+            const checkRes = await API.get(`/mpesa/status/${checkoutId}`);
+            if (checkRes.data?.paid) {
+              clearInterval(interval);
+              setSuccessMsg(
+                `Payment confirmed! M-Pesa Ref: ${checkRes.data.mpesaRefCode || "CONFIRMED"}. Ticket: ${checkRes.data.ticketNumber || response.data.ticket?.ticketNumber}`,
+              );
+              setLoading(false);
+              setTimeout(() => {
+                setLocalBookingModal(false);
+                setPrivateBookingModal(false);
+                setHireModal(false);
+                setSuccessMsg("");
+              }, 4000);
+            } else if (checkRes.data?.status === "failed") {
+              clearInterval(interval);
+              setErrorMsg(
+                checkRes.data.message || "M-Pesa payment was cancelled or failed. Please try again.",
+              );
+              setLoading(false);
+            } else if (attempts >= maxAttempts) {
+              clearInterval(interval);
+              setSuccessMsg(
+                "Payment prompt initiated. Your ticket will be updated once your M-Pesa transaction clears.",
+              );
+              setLoading(false);
+              setTimeout(() => {
+                setLocalBookingModal(false);
+                setPrivateBookingModal(false);
+                setHireModal(false);
+                setSuccessMsg("");
+              }, 4000);
+            }
+          } catch (pollErr) {
+            console.error("M-Pesa status polling error:", pollErr);
+            if (attempts >= maxAttempts) {
+              clearInterval(interval);
+              setLoading(false);
+            }
+          }
+        }, 3000);
+        return;
+      }
+
+      setSuccessMsg(
+        response.data.message ||
+          "Booking successful! Ticket confirmation has been sent to your email and you have been added to the community.",
+      );
       setLoading(false);
 
       setTimeout(() => {
@@ -197,10 +388,12 @@ function Booking() {
         setPrivateBookingModal(false);
         setHireModal(false);
         setSuccessMsg("");
-      }, 2500);
+      }, 3000);
     } catch (err) {
       setLoading(false);
-      setErrorMsg(err.response?.data?.message || "Failed to complete booking.");
+      setErrorMsg(
+        err.response?.data?.message || "Failed to complete booking. Please try again.",
+      );
     }
   };
 
@@ -247,13 +440,27 @@ function Booking() {
               </span>
             </div>
 
+            {}
             {type === "local" && (
               <div className="local-div">
                 <p>
-                  {vehiclesLoading
-                    ? "Loading vehicles..."
-                    : `${vehiclesByServiceType.local.length} vehicles available`}
+                  {vehiclesLoading || routesLoading
+                    ? "Loading available options..."
+                    : `${vehiclesByServiceType.local.length} vehicles & ${routesByServiceType.local.length} routes available`}
                 </p>
+
+                {vehiclesByServiceType.local.length === 0 && !vehiclesLoading && (
+                  <p style={{ color: "#d97706", fontSize: "14px", margin: "4px 0" }}>
+                     No vehicles added by admin for Local Transit yet.
+                  </p>
+                )}
+
+                {routesByServiceType.local.length === 0 && !routesLoading && (
+                  <p style={{ color: "#d97706", fontSize: "14px", margin: "4px 0" }}>
+                     No routes added by admin for Local Transit yet.
+                  </p>
+                )}
+
                 <div className="inputs">
                   <span>
                     <label htmlFor="local-vehicle">Vehicle</label>
@@ -264,7 +471,7 @@ function Booking() {
                       onChange={handleInputChange}
                       required
                     >
-                      <option value="">Select vehicle</option>
+                      <option value="">Select admin vehicle</option>
                       {vehiclesByServiceType.local.map((vehicle) => (
                         <option key={vehicle.id} value={vehicle.id}>
                           {formatVehicleLabel(vehicle)}
@@ -272,38 +479,32 @@ function Booking() {
                       ))}
                     </select>
                   </span>
+
                   <span>
-                    <label htmlFor="local-from">Starting point</label>
+                    <label htmlFor="local-route">Admin Route</label>
                     <select
-                      name="startingPoint"
-                      id="local-from"
-                      onChange={handleInputChange}
+                      name="selectedRouteId"
+                      id="local-route"
+                      value={formData.selectedRouteId}
+                      onChange={handleRouteChange}
+                      required
                     >
-                      <option value="kwale">Kwale town</option>
-                      <option value="kombani">Kombani</option>
-                      <option value="ukunda">Ukunda</option>
-                      <option value="likoni">Likoni</option>
+                      <option value="">Select admin route</option>
+                      {routesByServiceType.local.map((r) => (
+                        <option key={r.id} value={r.id}>
+                          {r.startingPoint} → {r.destination} (KES {r.price})
+                        </option>
+                      ))}
                     </select>
                   </span>
-                  <span>
-                    <label htmlFor="local-to">Destination</label>
-                    <select
-                      name="destination"
-                      id="local-to"
-                      onChange={handleInputChange}
-                    >
-                      <option value="kwale">Kwale town</option>
-                      <option value="kombani">Kombani</option>
-                      <option value="ukunda">Ukunda</option>
-                      <option value="likoni">Likoni</option>
-                    </select>
-                  </span>
+
                   <span>
                     <label htmlFor="local-date">Date</label>
                     <input
                       type="date"
                       name="date"
                       id="local-date"
+                      value={formData.date}
                       onChange={handleInputChange}
                       required
                     />
@@ -317,7 +518,9 @@ function Booking() {
                     id="book-button"
                     disabled={
                       vehiclesByServiceType.local.length === 0 ||
-                      vehiclesLoading
+                      routesByServiceType.local.length === 0 ||
+                      vehiclesLoading ||
+                      routesLoading
                     }
                   >
                     Get a ticket
@@ -326,13 +529,27 @@ function Booking() {
               </div>
             )}
 
+            {}
             {type === "private" && (
               <div className="private-div">
                 <p>
-                  {vehiclesLoading
-                    ? "Loading vehicles..."
-                    : `${vehiclesByServiceType.private.length} vehicles available`}
+                  {vehiclesLoading || routesLoading
+                    ? "Loading available options..."
+                    : `${vehiclesByServiceType.private.length} vehicles & ${routesByServiceType.private.length} routes available`}
                 </p>
+
+                {vehiclesByServiceType.private.length === 0 && !vehiclesLoading && (
+                  <p style={{ color: "#d97706", fontSize: "14px", margin: "4px 0" }}>
+                     No vehicles added by admin for Private Booking yet.
+                  </p>
+                )}
+
+                {routesByServiceType.private.length === 0 && !routesLoading && (
+                  <p style={{ color: "#d97706", fontSize: "14px", margin: "4px 0" }}>
+                     No routes added by admin for Private Booking yet.
+                  </p>
+                )}
+
                 <div className="inputs">
                   <span>
                     <label htmlFor="private-vehicle">Vehicle</label>
@@ -343,7 +560,7 @@ function Booking() {
                       onChange={handleInputChange}
                       required
                     >
-                      <option value="">Select vehicle</option>
+                      <option value="">Select admin vehicle</option>
                       {vehiclesByServiceType.private.map((vehicle) => (
                         <option key={vehicle.id} value={vehicle.id}>
                           {formatVehicleLabel(vehicle)}
@@ -351,28 +568,35 @@ function Booking() {
                       ))}
                     </select>
                   </span>
+
                   <span>
-                    <label htmlFor="private-from">Starting point</label>
+                    <label htmlFor="private-route">Admin Route</label>
+                    <select
+                      name="selectedRouteId"
+                      id="private-route"
+                      value={formData.selectedRouteId}
+                      onChange={handleRouteChange}
+                      required
+                    >
+                      <option value="">Select admin route</option>
+                      {routesByServiceType.private.map((r) => (
+                        <option key={r.id} value={r.id}>
+                          {r.startingPoint} → {r.destination} (KES {r.price})
+                        </option>
+                      ))}
+                    </select>
+                  </span>
+
+                  <span>
+                    <label htmlFor="private-date">Date</label>
                     <input
-                      type="text"
-                      name="startingPoint"
-                      id="private-from"
-                      placeholder="Eg. Kwale"
+                      type="date"
+                      name="date"
+                      id="private-date"
+                      value={formData.date}
                       onChange={handleInputChange}
                       required
                     />
-                  </span>
-                  <span>
-                    <label htmlFor="private-to">Destination</label>
-                    <select
-                      name="destination"
-                      id="private-to"
-                      onChange={handleInputChange}
-                    >
-                      <option value="airstrip">Ukunda airstrip</option>
-                      <option value="airport">Moi Int airport</option>
-                      <option value="sgr">Mombasa SGR station</option>
-                    </select>
                   </span>
                 </div>
                 <div className="form-buttons">
@@ -383,7 +607,9 @@ function Booking() {
                     onClick={handlePrivateBooking}
                     disabled={
                       vehiclesByServiceType.private.length === 0 ||
-                      vehiclesLoading
+                      routesByServiceType.private.length === 0 ||
+                      vehiclesLoading ||
+                      routesLoading
                     }
                   >
                     Reserve a seat
@@ -392,13 +618,27 @@ function Booking() {
               </div>
             )}
 
+            {}
             {type === "luggage" && (
               <div className="luggage-div">
                 <p>
-                  {vehiclesLoading
-                    ? "Loading vehicles..."
-                    : `${vehiclesByServiceType.luggage.length} vehicles available`}
+                  {vehiclesLoading || routesLoading
+                    ? "Loading available options..."
+                    : `${vehiclesByServiceType.luggage.length} vehicles & ${routesByServiceType.luggage.length} routes available`}
                 </p>
+
+                {vehiclesByServiceType.luggage.length === 0 && !vehiclesLoading && (
+                  <p style={{ color: "#d97706", fontSize: "14px", margin: "4px 0" }}>
+                     No vehicles added by admin for Carrier Services yet.
+                  </p>
+                )}
+
+                {routesByServiceType.luggage.length === 0 && !routesLoading && (
+                  <p style={{ color: "#d97706", fontSize: "14px", margin: "4px 0" }}>
+                     No routes added by admin for Carrier Services yet.
+                  </p>
+                )}
+
                 <div className="inputs">
                   <span>
                     <label htmlFor="luggage-vehicle">Vehicle</label>
@@ -409,7 +649,7 @@ function Booking() {
                       onChange={handleInputChange}
                       required
                     >
-                      <option value="">Select vehicle</option>
+                      <option value="">Select admin vehicle</option>
                       {vehiclesByServiceType.luggage.map((vehicle) => (
                         <option key={vehicle.id} value={vehicle.id}>
                           {formatVehicleLabel(vehicle)}
@@ -417,76 +657,104 @@ function Booking() {
                       ))}
                     </select>
                   </span>
+
                   <span>
-                    <label htmlFor="luggage-from">Starting point</label>
+                    <label htmlFor="luggage-route">Admin Route</label>
                     <select
-                      name="startingPoint"
-                      id="luggage-from"
-                      onChange={handleInputChange}
+                      name="selectedRouteId"
+                      id="luggage-route"
+                      value={formData.selectedRouteId}
+                      onChange={handleRouteChange}
+                      required
                     >
-                      <option value="kwale">Kwale town</option>
-                      <option value="kombani">Kombani</option>
-                      <option value="ukunda">Ukunda</option>
-                      <option value="likoni">Likoni</option>
+                      <option value="">Select admin route</option>
+                      {routesByServiceType.luggage.map((r) => (
+                        <option key={r.id} value={r.id}>
+                          {r.startingPoint} → {r.destination} (KES {r.price})
+                        </option>
+                      ))}
                     </select>
                   </span>
-                  <span>
-                    <label htmlFor="luggage-to">Destination</label>
-                    <select
-                      name="destination"
-                      id="luggage-to"
-                      onChange={handleInputChange}
-                    >
-                      <option value="kwale">Kwale town</option>
-                      <option value="kombani">Kombani</option>
-                      <option value="ukunda">Ukunda</option>
-                      <option value="likoni">Likoni</option>
-                    </select>
-                  </span>
+
                   <span>
                     <label htmlFor="luggage-date">Date</label>
                     <input
                       type="date"
                       name="date"
                       id="luggage-date"
+                      value={formData.date}
                       onChange={handleInputChange}
                       required
                     />
                   </span>
                 </div>
                 <button
-                  type="submit"
+                  type="button"
                   id="luggage-book-btn"
-                  onClick={(e) => handleBookingSubmit(e, "luggage")}
+                  onClick={handleLocalBooking}
                   disabled={
                     vehiclesByServiceType.luggage.length === 0 ||
-                    vehiclesLoading
+                    routesByServiceType.luggage.length === 0 ||
+                    vehiclesLoading ||
+                    routesLoading
                   }
                 >
-                  Book now
+                  Book carrier
                 </button>
               </div>
             )}
           </form>
 
-          {vehiclesError && (
-            <p style={{ color: "red", marginTop: "8px" }}>{vehiclesError}</p>
+          {(vehiclesError || routesError) && (
+            <p style={{ color: "red", marginTop: "8px" }}>
+              {vehiclesError || routesError}
+            </p>
           )}
 
+          {}
           {localBookingModal && (
             <div className="booking-modal">
               <form
                 className="booking-container"
-                onSubmit={(e) => handleBookingSubmit(e, "local")}
+                onSubmit={(e) => handleBookingSubmit(e, type === "luggage" ? "luggage" : "local")}
               >
                 <div className="modal-top">
-                  <p>Fill the following form</p>
+                  <p>Complete Your Reservation</p>
                   <button type="button" onClick={handleLocalBooking}>
                     <span className="material-symbols-outlined">close</span>
                   </button>
                 </div>
-                {successMsg && <p style={{ color: "green" }}>{successMsg}</p>}
-                {errorMsg && <p style={{ color: "red" }}>{errorMsg}</p>}
+                {successMsg && <p style={{ color: "green", fontWeight: "600" }}>{successMsg}</p>}
+                {errorMsg && <p style={{ color: "red", fontWeight: "600" }}>{errorMsg}</p>}
+
+                {}
+                <div
+                  style={{
+                    background: "#f8fafc",
+                    border: "1px solid #e2e8f0",
+                    borderRadius: "8px",
+                    padding: "12px 16px",
+                    marginBottom: "16px",
+                    fontSize: "14px",
+                    color: "#334155",
+                  }}
+                >
+                  <div>
+                    <strong>Vehicle:</strong> {selectedVehicle ? formatVehicleLabel(selectedVehicle) : "None selected"}
+                  </div>
+                  {selectedRoute && (
+                    <div>
+                      <strong>Route:</strong> {selectedRoute.startingPoint} → {selectedRoute.destination} (KES {selectedRoute.price} / seat)
+                    </div>
+                  )}
+                  {formData.date && <div><strong>Travel Date:</strong> {formData.date}</div>}
+                  {formData.seats > 0 && selectedRoute && (
+                    <div style={{ marginTop: "6px", color: "#2563eb", fontWeight: "700" }}>
+                      Estimated Total: KES {(selectedRoute.price * (Number(formData.seats) || 1)).toLocaleString()}
+                    </div>
+                  )}
+                </div>
+
                 <div className="details-form">
                   <div className="names">
                     <span>
@@ -496,6 +764,7 @@ function Booking() {
                         name="firstName"
                         id="first-name"
                         placeholder="Enter your first name"
+                        value={formData.firstName}
                         onChange={handleInputChange}
                         required
                       />
@@ -507,22 +776,39 @@ function Booking() {
                         name="lastName"
                         id="last-name"
                         placeholder="Enter your last name"
+                        value={formData.lastName}
                         onChange={handleInputChange}
                         required
                       />
                     </span>
                   </div>
-                  <div className="date">
+
+                  {}
+                  <div
+                    className="form-div"
+                    style={{ width: "100%", marginBottom: "15px" }}
+                  >
                     <span>
-                      <label htmlFor="date">Date</label>
+                      <label htmlFor="local-email">Email address (for ticket &amp; community updates)</label>
                       <input
-                        type="date"
-                        name="date"
-                        id="date"
+                        type="email"
+                        name="email"
+                        id="local-email"
+                        placeholder="your@email.com"
+                        value={formData.email}
                         onChange={handleInputChange}
                         required
+                        style={{
+                          width: "100%",
+                          padding: "10px",
+                          marginTop: "5px",
+                          boxSizing: "border-box",
+                        }}
                       />
                     </span>
+                  </div>
+
+                  <div className="date">
                     <span>
                       <label htmlFor="seats">No of seats</label>
                       <input
@@ -531,11 +817,13 @@ function Booking() {
                         id="seats"
                         placeholder="Eg. 1"
                         min={1}
+                        value={formData.seats}
                         onChange={handleInputChange}
                         required
                       />
                     </span>
                   </div>
+
                   <div className="payment-choose">
                     <span>
                       <input
@@ -561,33 +849,37 @@ function Booking() {
                     </span>
                   </div>
                 </div>
+
                 {localPayTime === "now" && (
                   <div className="stk">
                     <span>
-                      <label htmlFor="mpesa-number">Mpesa number</label>
+                      <label htmlFor="mpesa-number">M-Pesa phone number</label>
                       <input
                         type="text"
                         name="mpesaNumber"
                         id="mpesa-number"
                         placeholder="Eg. 0712345678"
+                        value={formData.mpesaNumber}
                         onChange={handleInputChange}
                         required
                       />
                     </span>
                     <button type="submit" disabled={loading}>
-                      {loading ? "Initialising STK..." : "Initialise"}
+                      {loading ? "Processing..." : "Confirm & Pay"}
                     </button>
                   </div>
                 )}
+
                 {localPayTime === "later" && (
                   <button id="book-now-btn" type="submit" disabled={loading}>
-                    {loading ? "Processing..." : "Book now"}
+                    {loading ? "Processing..." : "Confirm Booking"}
                   </button>
                 )}
               </form>
             </div>
           )}
 
+          {}
           {privateBookingModal && (
             <div className="booking-modal">
               <form
@@ -595,13 +887,42 @@ function Booking() {
                 onSubmit={(e) => handleBookingSubmit(e, "private")}
               >
                 <div className="modal-top">
-                  <p>Fill the following form</p>
+                  <p>Complete Private Booking</p>
                   <button type="button" onClick={handlePrivateBooking}>
                     <span className="material-symbols-outlined">close</span>
                   </button>
                 </div>
-                {successMsg && <p style={{ color: "green" }}>{successMsg}</p>}
-                {errorMsg && <p style={{ color: "red" }}>{errorMsg}</p>}
+                {successMsg && <p style={{ color: "green", fontWeight: "600" }}>{successMsg}</p>}
+                {errorMsg && <p style={{ color: "red", fontWeight: "600" }}>{errorMsg}</p>}
+
+                {}
+                <div
+                  style={{
+                    background: "#f8fafc",
+                    border: "1px solid #e2e8f0",
+                    borderRadius: "8px",
+                    padding: "12px 16px",
+                    marginBottom: "16px",
+                    fontSize: "14px",
+                    color: "#334155",
+                  }}
+                >
+                  <div>
+                    <strong>Vehicle:</strong> {selectedVehicle ? formatVehicleLabel(selectedVehicle) : "None selected"}
+                  </div>
+                  {selectedRoute && (
+                    <div>
+                      <strong>Route:</strong> {selectedRoute.startingPoint} → {selectedRoute.destination} (KES {selectedRoute.price})
+                    </div>
+                  )}
+                  {formData.date && <div><strong>Travel Date:</strong> {formData.date}</div>}
+                  {selectedRoute && (
+                    <div style={{ marginTop: "6px", color: "#2563eb", fontWeight: "700" }}>
+                      Estimated Total: KES {(selectedRoute.price * (Number(formData.seats) || 1)).toLocaleString()}
+                    </div>
+                  )}
+                </div>
+
                 <div className="details-form">
                   <div className="names">
                     <span>
@@ -611,6 +932,7 @@ function Booking() {
                         name="firstName"
                         id="p-first"
                         placeholder="Enter first name"
+                        value={formData.firstName}
                         onChange={handleInputChange}
                         required
                       />
@@ -622,63 +944,67 @@ function Booking() {
                         name="lastName"
                         id="p-last"
                         placeholder="Enter last name"
+                        value={formData.lastName}
                         onChange={handleInputChange}
                         required
                       />
                     </span>
                   </div>
-                  <div className="date">
+
+                  <div
+                    className="form-div"
+                    style={{ width: "100%", marginBottom: "15px" }}
+                  >
                     <span>
-                      <label htmlFor="p-date">Date</label>
+                      <label htmlFor="private-email">Email address</label>
                       <input
-                        type="date"
-                        name="date"
-                        id="p-date"
+                        type="email"
+                        name="email"
+                        id="private-email"
+                        placeholder="your@email.com"
+                        value={formData.email}
                         onChange={handleInputChange}
                         required
+                        style={{
+                          width: "100%",
+                          padding: "10px",
+                          marginTop: "5px",
+                          boxSizing: "border-box",
+                        }}
                       />
                     </span>
+                  </div>
+
+                  <div className="date">
                     <span>
                       <label htmlFor="p-seats">No of seats</label>
                       <input
                         type="number"
                         name="seats"
                         id="p-seats"
-                        defaultValue={1}
                         min={1}
+                        value={formData.seats}
                         onChange={handleInputChange}
                         required
                       />
                     </span>
                   </div>
-                  <span className="agree-span">
-                    <input
-                      type="checkbox"
-                      name="agree"
-                      id="agree-private"
-                      required
-                    />
-                    <label htmlFor="agree-private">
-                      Agree to the{" "}
-                      <Link to={"/private-booking/terms-and-conditions"}>
-                        terms and conditions
-                      </Link>
-                    </label>
-                  </span>
+
                   <div className="stk">
                     <span>
-                      <label htmlFor="p-mpesa">Mpesa number</label>
+                      <label htmlFor="p-mpesa">M-Pesa phone number</label>
                       <input
                         type="text"
                         name="mpesaNumber"
                         id="p-mpesa"
                         placeholder="Eg. 0712345678"
+                        value={formData.mpesaNumber}
                         onChange={handleInputChange}
                         required
                       />
                     </span>
                     <button type="submit" disabled={loading}>
-                      {loading ? "Initialising STK..." : "Initialise"}
+                      {loading ? "Processing..." : "Confirm & Pay"}
                     </button>
                   </div>
                 </div>
@@ -687,6 +1013,7 @@ function Booking() {
           )}
         </div>
 
+        {}
         <div className="car-hire-booking">
           <h1>Rent a car</h1>
           <form className="search-form" onSubmit={(e) => e.preventDefault()}>
@@ -700,7 +1027,7 @@ function Booking() {
                   onChange={handleInputChange}
                   required
                 >
-                  <option value="">Select vehicle</option>
+                  <option value="">Select admin vehicle</option>
                   {vehiclesByServiceType.hire.map((vehicle) => (
                     <option key={vehicle.id} value={vehicle.id}>
                       {formatVehicleLabel(vehicle)}
@@ -722,34 +1049,26 @@ function Booking() {
                 </select>
               </span>
               <div>
-                {days === "one" && (
-                  <span>
-                    <label htmlFor="hire-date">Date</label>
-                    <input
-                      type="date"
-                      name="date"
-                      id="hire-date"
-                      onChange={handleInputChange}
-                      required
-                    />
-                  </span>
-                )}
-                {days === "more" && (
-                  <div className="more-days">
-                    <span>
-                      <label htmlFor="from-hire">From</label>
-                      <input
-                        type="date"
-                        name="date"
-                        id="from-hire"
-                        onChange={handleInputChange}
-                        required
-                      />
-                    </span>
-                  </div>
-                )}
+                <span>
+                  <label htmlFor="hire-date">Date</label>
+                  <input
+                    type="date"
+                    name="date"
+                    id="hire-date"
+                    value={formData.date}
+                    onChange={handleInputChange}
+                    required
+                  />
+                </span>
               </div>
             </div>
+
+            {vehiclesByServiceType.hire.length === 0 && !vehiclesLoading && (
+              <p style={{ color: "#d97706", fontSize: "14px", margin: "4px 0" }}>
+                 No vehicles added by admin for Car Hire yet.
+              </p>
+            )}
+
             <div className="form-buttons">
               <button type="submit">Search for cars</button>
               <button
@@ -765,6 +1084,7 @@ function Booking() {
             </div>
           </form>
 
+          {}
           {hireModal && (
             <div className="hire-modal">
               <form
@@ -772,13 +1092,33 @@ function Booking() {
                 onSubmit={(e) => handleBookingSubmit(e, "hire")}
               >
                 <div className="modal-top">
-                  <p>Fill the following form</p>
+                  <p>Complete Car Rental</p>
                   <button type="button" onClick={handleHire}>
                     <span className="material-symbols-outlined">close</span>
                   </button>
                 </div>
-                {successMsg && <p style={{ color: "green" }}>{successMsg}</p>}
-                {errorMsg && <p style={{ color: "red" }}>{errorMsg}</p>}
+                {successMsg && <p style={{ color: "green", fontWeight: "600" }}>{successMsg}</p>}
+                {errorMsg && <p style={{ color: "red", fontWeight: "600" }}>{errorMsg}</p>}
+
+                {}
+                <div
+                  style={{
+                    background: "#f8fafc",
+                    border: "1px solid #e2e8f0",
+                    borderRadius: "8px",
+                    padding: "12px 16px",
+                    marginBottom: "16px",
+                    fontSize: "14px",
+                    color: "#334155",
+                  }}
+                >
+                  <div>
+                    <strong>Vehicle:</strong> {selectedVehicle ? formatVehicleLabel(selectedVehicle) : "None selected"}
+                  </div>
+                  <div><strong>Rental Period:</strong> {days === "one" ? "1 Day" : "Multi-day"}</div>
+                  {formData.date && <div><strong>Start Date:</strong> {formData.date}</div>}
+                </div>
+
                 <div className="details-form">
                   <div className="names">
                     <span>
@@ -788,6 +1128,7 @@ function Booking() {
                         name="firstName"
                         id="h-first"
                         placeholder="Enter first name"
+                        value={formData.firstName}
                         onChange={handleInputChange}
                         required
                       />
@@ -799,68 +1140,52 @@ function Booking() {
                         name="lastName"
                         id="h-last"
                         placeholder="Enter last name"
+                        value={formData.lastName}
                         onChange={handleInputChange}
                         required
                       />
                     </span>
                   </div>
-                  <div className="date">
+
+                  <div
+                    className="form-div"
+                    style={{ width: "100%", marginBottom: "15px" }}
+                  >
                     <span>
-                      <label htmlFor="h-cartype">Car type</label>
-                      <select
-                        name="hireVehicleId"
-                        id="h-cartype"
-                        value={formData.hireVehicleId}
-                        onChange={handleInputChange}
-                        required
-                      >
-                        <option value="">Select vehicle</option>
-                        {vehiclesByServiceType.hire.map((vehicle) => (
-                          <option key={vehicle.id} value={vehicle.id}>
-                            {formatVehicleLabel(vehicle)}
-                          </option>
-                        ))}
-                      </select>
-                    </span>
-                    <span>
-                      <label htmlFor="h-date">Date</label>
+                      <label htmlFor="hire-email">Email address</label>
                       <input
-                        type="date"
-                        name="date"
-                        id="h-date"
+                        type="email"
+                        name="email"
+                        id="hire-email"
+                        placeholder="your@email.com"
+                        value={formData.email}
                         onChange={handleInputChange}
                         required
+                        style={{
+                          width: "100%",
+                          padding: "10px",
+                          marginTop: "5px",
+                          boxSizing: "border-box",
+                        }}
                       />
                     </span>
                   </div>
-                  <span className="agree-span">
-                    <input
-                      type="checkbox"
-                      name="agree"
-                      id="agree-hire"
-                      required
-                    />
-                    <label htmlFor="agree-hire">
-                      Agree to the{" "}
-                      <Link to={"/car-hire/terms-and-conditions"}>
-                        terms and conditions
-                      </Link>
-                    </label>
-                  </span>
+
                   <div className="stk">
                     <span>
-                      <label htmlFor="h-mpesa">Mpesa number</label>
+                      <label htmlFor="h-mpesa">M-Pesa phone number</label>
                       <input
                         type="text"
                         name="mpesaNumber"
                         id="h-mpesa"
                         placeholder="Eg. 0712345678"
+                        value={formData.mpesaNumber}
                         onChange={handleInputChange}
                         required
                       />
                     </span>
                     <button type="submit" disabled={loading}>
-                      {loading ? "Initialising STK..." : "Initialise"}
+                      {loading ? "Processing..." : "Confirm & Pay"}
                     </button>
                   </div>
                 </div>

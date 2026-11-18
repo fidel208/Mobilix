@@ -10,7 +10,7 @@ function AdminRoutes() {
   const [formLoading, setFormLoading] = useState(false);
   const [error, setError] = useState("");
 
-  // Form fields
+  
   const [startingPoint, setStartingPoint] = useState("");
   const [destination, setDestination] = useState("");
   const [price, setPrice] = useState("");

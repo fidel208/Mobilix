@@ -10,7 +10,7 @@ function AdminTickets() {
   const [formLoading, setFormLoading] = useState(false);
   const [error, setError] = useState("");
 
-  // Form fields
+  
   const [firstName, setFirstName] = useState("");
   const [lastName, setLastName] = useState("");
   const [phone, setPhone] = useState("");

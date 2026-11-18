@@ -450,7 +450,6 @@ header nav button:hover {
   padding: 0 10px;
 }
 
-/* Google Sign In Modal Overlay */
 .google-modal-overlay {
   position: fixed;
   top: 0;

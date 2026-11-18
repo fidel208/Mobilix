@@ -10,7 +10,7 @@ function Community() {
   const [formLoading, setFormLoading] = useState(false);
   const [error, setError] = useState("");
 
-  // Form fields
+  
   const [clientEmail, setClientEmail] = useState("");
   const [status, setStatus] = useState("subscribed");
 

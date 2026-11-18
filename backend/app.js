@@ -13,6 +13,7 @@ import ticketsRouter from "./routes/ticketsRouter.js";
 import vehiclesRouter from "./routes/vehiclesRouter.js";
 import communityRouter from "./routes/communityRouter.js";
 import dashboardRouter from "./routes/dashboardRouter.js";
+import mpesaRouter from "./routes/mpesaRouter.js";
 
 import passport from "./config/passport.js";
 
@@ -42,11 +43,13 @@ app.use("/api/tickets", ticketsRouter);
 app.use("/api/vehicles", vehiclesRouter);
 app.use("/api/community", communityRouter);
 app.use("/api/dashboard", dashboardRouter);
+app.use("/api/mpesa", mpesaRouter);
 
 app.use("/services", serviceRouter);
 app.use("/routes", routesRouter);
 app.use("/vehicles", vehiclesRouter);
 app.use("/community", communityRouter);
+app.use("/mpesa", mpesaRouter);
 
 app.get("/", (req, res) => {
   res.send("Server is running succesfully");

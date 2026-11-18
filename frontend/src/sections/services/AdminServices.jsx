@@ -10,7 +10,7 @@ function AdminServices() {
   const [formLoading, setFormLoading] = useState(false);
   const [error, setError] = useState("");
 
-  // Form inputs
+  
   const [serviceName, setServiceName] = useState("");
   const [serviceDesc, setServiceDesc] = useState("");
 

@@ -1,7 +1,6 @@
 import "dotenv/config";
 import dns from "node:dns";
 
-// Ensure IPv4 is prioritized for Safaricom Daraja endpoints
 dns.setDefaultResultOrder("ipv4first");
 
 let cachedToken = null;
@@ -68,7 +67,7 @@ export const initiateStkPush = async ({
       };
     }
 
-    // Development/Test mock bypass for test phone numbers to prevent accidental charges during CI/test runs
+    
     if (process.env.NODE_ENV === "test" || formattedPhone === "254712345678") {
       return {
         success: true,
@@ -87,12 +86,12 @@ export const initiateStkPush = async ({
     const callbackUrl =
       process.env.MPESA_CALLBACK_URL || "https://mobilix-fwbd.onrender.com/api/mpesa/callback";
 
-    // Timestamp format: YYYYMMDDHHmmss
+    
     const now = new Date();
     const pad = (n) => String(n).padStart(2, "0");
     const timestamp = `${now.getFullYear()}${pad(now.getMonth() + 1)}${pad(now.getDate())}${pad(now.getHours())}${pad(now.getMinutes())}${pad(now.getSeconds())}`;
 
-    // For Buy Goods: password is base64(StoreNumber + Passkey + Timestamp)
+    
     const businessShortCode = storeNumber;
     const password = Buffer.from(`${businessShortCode}${passkey}${timestamp}`).toString("base64");
 

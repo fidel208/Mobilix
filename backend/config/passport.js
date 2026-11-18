@@ -64,14 +64,22 @@ passport.use(
 passport.use(
   new GoogleStrategy(
     {
-      clientID: process.env.GOOGLE_CLIENT_ID,
-      clientSecret: process.env.GOOGLE_CLIENT_SECRET,
-      callbackURL: process.env.GOOGLE_CALLBACK_URL,
+      clientID: process.env.GOOGLE_CLIENT_ID || "dummy_client_id",
+      clientSecret: process.env.GOOGLE_CLIENT_SECRET || "dummy_client_secret",
+      callbackURL:
+        process.env.GOOGLE_CALLBACK_URL ||
+        "http://localhost:3000/api/auth/google/callback",
     },
     async (accessToken, refreshToken, profile, done) => {
       try {
-        const email = profile.emails[0].value;
-        const name = profile.displayName;
+        const email =
+          profile.emails?.[0]?.value ||
+          profile._json?.email ||
+          `${profile.id}@google.user`;
+        const name =
+          profile.displayName ||
+          `${profile.name?.givenName || ""} ${profile.name?.familyName || ""}`.trim() ||
+          "Google User";
 
         let user = await prisma.user.findUnique({ where: { email } });
 
@@ -86,8 +94,10 @@ passport.use(
           });
         }
 
-        return done(null, user);
+        const { password: _, ...userWithoutPassword } = user;
+        return done(null, userWithoutPassword);
       } catch (error) {
+        console.error("Google OAuth strategy verification error:", error);
         return done(error, false);
       }
     },
