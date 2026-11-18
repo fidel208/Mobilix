@@ -1,4 +1,6 @@
 import prisma from "../lib/prisma.js";
+import { sendTicketEmail } from "../services/emailService.js";
+import { initiateStkPush, formatMpesaPhoneNumber } from "../services/mpesaService.js";
 
 const generateTicketNumber = () => {
   const randomNum = Math.floor(100000 + Math.random() * 900000);
@@ -20,11 +22,13 @@ export const createBooking = async (req, res) => {
       serviceType,
       firstName,
       lastName,
+      email,
       startingPoint,
       destination,
       travelDate,
       seats,
-      carType,
+      vehicleId,
+      routeId,
       paymentType,
       mpesaNumber,
     } = req.body;
@@ -32,6 +36,9 @@ export const createBooking = async (req, res) => {
     const normalizedServiceType = String(serviceType || "").trim();
     const normalizedFirstName = String(firstName || "").trim();
     const normalizedLastName = String(lastName || "").trim();
+    const normalizedEmail = String(email || "")
+      .trim()
+      .toLowerCase();
     const normalizedStartingPoint = String(startingPoint || "").trim();
     const normalizedDestination = String(destination || "").trim();
     const normalizedTravelDate = String(travelDate || "").trim();
@@ -54,6 +61,11 @@ export const createBooking = async (req, res) => {
           message: "First name and last name are required.",
         });
     }
+    if (!normalizedEmail) {
+      return res
+        .status(400)
+        .json({ status: "error", message: "Email address is required." });
+    }
     if (!normalizedStartingPoint) {
       return res
         .status(400)
@@ -69,15 +81,12 @@ export const createBooking = async (req, res) => {
         .status(400)
         .json({ status: "error", message: "Travel date is required." });
     }
-    if (
-      !normalizedPaymentType ||
-      !["now", "arrival", "payment on arrival"].includes(normalizedPaymentType)
-    ) {
+    if (!vehicleId) {
       return res
         .status(400)
         .json({
           status: "error",
-          message: "Payment type must be 'now' or 'arrival'.",
+          message: "A valid vehicle added by the admin must be selected.",
         });
     }
     if (!Number.isInteger(seatCount) || seatCount < 1) {
@@ -89,27 +98,109 @@ export const createBooking = async (req, res) => {
         });
     }
 
+    // Verify vehicle exists in database (Added by Admin)
+    const adminVehicle = await prisma.vehicle.findUnique({
+      where: { id: vehicleId },
+    });
+
+    if (!adminVehicle) {
+      return res.status(400).json({
+        status: "error",
+        message:
+          "Selected vehicle does not exist or has been removed by the admin.",
+      });
+    }
+
+    // Verify route exists in database (Added by Admin)
+    let adminRoute = null;
+    if (routeId) {
+      adminRoute = await prisma.route.findUnique({
+        where: { id: routeId },
+      });
+    }
+
+    if (!adminRoute && normalizedStartingPoint && normalizedDestination) {
+      adminRoute = await prisma.route.findFirst({
+        where: {
+          startingPoint: { equals: normalizedStartingPoint, mode: "insensitive" },
+          destination: { equals: normalizedDestination, mode: "insensitive" },
+        },
+      });
+    }
+
+    // For non-hire transit services, an admin-created route is strictly required
+    if (!adminRoute && normalizedServiceType !== "hire") {
+      return res.status(400).json({
+        status: "error",
+        message:
+          "Selected route does not exist or has not been added by an administrator. Please select an available admin route.",
+      });
+    }
+
+    const formattedCarLabel = `${adminVehicle.name} (${adminVehicle.plate})`;
+    const routeFare = adminRoute ? Number(adminRoute.price) : 500;
+    const totalAmount = routeFare * seatCount;
+    const ticketCode = generateTicketNumber();
+
+    let stkResult = null;
+    let mpesaRefCode = "PAYMENT ON ARRIVAL";
+    let initialStatus = "CONFIRMED";
+    let bookingInitialStatus = "CONFIRMED";
+
+    if (normalizedPaymentType === "now") {
+      if (!mpesaNumber) {
+        return res.status(400).json({
+          status: "error",
+          message: "M-Pesa phone number is required for immediate payment.",
+        });
+      }
+
+      const formattedPhone = formatMpesaPhoneNumber(mpesaNumber);
+      if (!formattedPhone || formattedPhone.length !== 12) {
+        return res.status(400).json({
+          status: "error",
+          message: "Please enter a valid Kenyan Safaricom phone number (e.g. 07XXXXXXXX or 01XXXXXXXX).",
+        });
+      }
+
+      // Initiate Daraja STK Push
+      stkResult = await initiateStkPush({
+        phoneNumber: formattedPhone,
+        amount: totalAmount,
+        accountReference: ticketCode,
+        transactionDesc: "Ticket Booking",
+      });
+
+      if (!stkResult.success) {
+        return res.status(400).json({
+          status: "error",
+          message: stkResult.message || "Failed to initiate M-Pesa STK push. Please check your phone number.",
+        });
+      }
+
+      // Store CheckoutRequestID in mpesaRefCode until callback resolves with real receipt code
+      mpesaRefCode = stkResult.checkoutRequestId;
+      initialStatus = "PENDING_PAYMENT";
+      bookingInitialStatus = "PENDING_PAYMENT";
+    }
+
     const newBooking = await prisma.booking.create({
       data: {
+        // userId stores checkoutRequestId for "now" payments, or customer email for "arrival" (for email lookup in callbacks)
+        userId: stkResult?.checkoutRequestId || normalizedEmail || null,
         serviceType: normalizedServiceType,
         firstName: normalizedFirstName,
         lastName: normalizedLastName,
-        startingPoint: normalizedStartingPoint,
-        destination: normalizedDestination,
+        startingPoint: adminRoute ? adminRoute.startingPoint : normalizedStartingPoint,
+        destination: adminRoute ? adminRoute.destination : normalizedDestination,
         travelDate: normalizedTravelDate,
         seats: seatCount,
-        carType: carType || null,
+        carType: formattedCarLabel,
         paymentType: normalizedPaymentType,
         mpesaNumber: mpesaNumber || null,
-        status: normalizedPaymentType === "now" ? "PAID" : "CONFIRMED",
+        status: bookingInitialStatus,
       },
     });
-
-    const mpesaCode =
-      normalizedPaymentType === "now"
-        ? generateMpesaRef()
-        : "PAYMENT ON ARRIVAL";
-    const ticketCode = generateTicketNumber();
 
     const newTicket = await prisma.ticket.create({
       data: {
@@ -117,17 +208,51 @@ export const createBooking = async (req, res) => {
         bookingId: newBooking.id,
         passengerName: `${normalizedFirstName} ${normalizedLastName}`,
         phoneNumber: mpesaNumber || "N/A",
-        mpesaRefCode: mpesaCode,
-        route: `${normalizedStartingPoint.toUpperCase()} to ${normalizedDestination.toUpperCase()}`,
+        mpesaRefCode: mpesaRefCode,
+        route: `${(adminRoute ? adminRoute.startingPoint : normalizedStartingPoint).toUpperCase()} to ${(adminRoute ? adminRoute.destination : normalizedDestination).toUpperCase()}`,
         travelDate: normalizedTravelDate,
         seats: newBooking.seats,
-        amount: newBooking.seats * 500,
+        amount: totalAmount,
+        status: initialStatus,
       },
     });
 
+    // 1. Send confirmation email (for arrival payments right away; for STK push, callback updates & re-sends receipt)
+    if (normalizedEmail && normalizedPaymentType !== "now") {
+      sendTicketEmail(normalizedEmail, {
+        booking: newBooking,
+        ticket: newTicket,
+        vehicle: adminVehicle,
+        route: adminRoute,
+      }).catch((err) =>
+        console.error("Resend ticket email notification error:", err),
+      );
+    }
+
+    // 2. Automatically add / subscribe to Community Member list
+    if (normalizedEmail) {
+      await prisma.communityMember
+        .upsert({
+          where: { email: normalizedEmail },
+          update: { status: "subscribed" },
+          create: {
+            email: normalizedEmail,
+            status: "subscribed",
+          },
+        })
+        .catch((err) =>
+          console.error("Auto community member upsert error:", err),
+        );
+    }
+
     return res.status(201).json({
       status: "success",
-      message: "Booking successful! Ticket generated.",
+      message:
+        normalizedPaymentType === "now"
+          ? "M-Pesa STK prompt sent to your phone! Please enter your M-Pesa PIN to complete payment."
+          : "Booking successful! Ticket generated.",
+      requiresPayment: normalizedPaymentType === "now",
+      checkoutRequestId: stkResult?.checkoutRequestId || null,
       booking: newBooking,
       ticket: newTicket,
     });
