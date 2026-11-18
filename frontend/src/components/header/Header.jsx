@@ -190,7 +190,6 @@ function Header() {
             <button>Booking</button>
           </Link>
 
-          {/* User Sign In / Profile Button */}
           <div style={{ position: "relative" }}>
             <Link
               className="sign-in"
