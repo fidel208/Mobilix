@@ -10,7 +10,6 @@ function Vehicles() {
   const [formLoading, setFormLoading] = useState(false);
   const [error, setError] = useState("");
 
-  // Form fields
   const [vehicleName, setVehicleName] = useState("");
   const [plate, setPlate] = useState("");
   const [serviceType, setServiceType] = useState("local-transit");
@@ -68,7 +67,8 @@ function Vehicles() {
   };
 
   const handleDelete = async (id) => {
-    if (!window.confirm("Are you sure you want to delete this vehicle?")) return;
+    if (!window.confirm("Are you sure you want to delete this vehicle?"))
+      return;
     try {
       await API.delete(`/vehicles/${id}`);
       setVehicles((prev) => prev.filter((v) => v.id !== id));
@@ -80,7 +80,7 @@ function Vehicles() {
   const filteredVehicles = vehicles.filter((v) =>
     `${v.name} ${v.plate} ${v.serviceType}`
       .toLowerCase()
-      .includes(searchQuery.toLowerCase())
+      .includes(searchQuery.toLowerCase()),
   );
 
   const lastRowIndex = currentPage * rowsPerPage;
@@ -115,7 +115,8 @@ function Vehicles() {
               />
             </span>
             <button type="button" onClick={handleVehiclesModal}>
-              <span className="material-symbols-outlined">add</span>Add a new vehicle
+              <span className="material-symbols-outlined">add</span>Add a new
+              vehicle
             </button>
           </div>
           <div className="vehicles-table-cont">
@@ -131,14 +132,22 @@ function Vehicles() {
               <tbody>
                 {loading ? (
                   <tr>
-                    <td colSpan="4" style={{ textAlign: "center", padding: "20px" }}>
+                    <td
+                      colSpan="4"
+                      style={{ textAlign: "center", padding: "20px" }}
+                    >
                       Loading vehicles...
                     </td>
                   </tr>
                 ) : currentRows.length === 0 ? (
                   <tr>
-                    <td colSpan="4" style={{ textAlign: "center", padding: "20px" }}>
-                      {searchQuery ? "No vehicles match your search." : "No vehicles added yet."}
+                    <td
+                      colSpan="4"
+                      style={{ textAlign: "center", padding: "20px" }}
+                    >
+                      {searchQuery
+                        ? "No vehicles match your search."
+                        : "No vehicles added yet."}
                     </td>
                   </tr>
                 ) : (
@@ -154,7 +163,9 @@ function Vehicles() {
                           onClick={() => handleDelete(v.id)}
                           title="Delete vehicle"
                         >
-                          <span className="material-symbols-outlined">delete</span>
+                          <span className="material-symbols-outlined">
+                            delete
+                          </span>
                         </button>
                       </td>
                     </tr>
@@ -196,7 +207,14 @@ function Vehicles() {
               </button>
             </div>
             {error && (
-              <p style={{ color: "red", padding: "0 20px", margin: 0, fontSize: "14px" }}>
+              <p
+                style={{
+                  color: "red",
+                  padding: "0 20px",
+                  margin: 0,
+                  fontSize: "14px",
+                }}
+              >
                 {error}
               </p>
             )}

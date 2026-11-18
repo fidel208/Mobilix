@@ -1,4 +1,4 @@
-import React, { useState } from "react";
+import React, { useEffect, useState } from "react";
 import "./booking.css";
 import Header from "../../components/header/Header";
 import Footer from "../../components/footer/Footer";
@@ -6,6 +6,13 @@ import { Link } from "react-router-dom";
 import API from "../../services/api";
 
 function Booking() {
+  const vehicleTypeMap = {
+    local: "local-transit",
+    private: "private-booking",
+    luggage: "carrier",
+    hire: "car-hire",
+  };
+
   const [type, setType] = useState("local");
   const [days, setDays] = useState("one");
   const [localPayTime, setLocalPayTime] = useState("now");
@@ -15,8 +22,11 @@ function Booking() {
   const [hireModal, setHireModal] = useState(false);
 
   const [loading, setLoading] = useState(false);
+  const [vehiclesLoading, setVehiclesLoading] = useState(false);
+  const [vehiclesError, setVehiclesError] = useState("");
   const [successMsg, setSuccessMsg] = useState("");
   const [errorMsg, setErrorMsg] = useState("");
+  const [vehicles, setVehicles] = useState([]);
 
   const [formData, setFormData] = useState({
     firstName: "",
@@ -25,9 +35,90 @@ function Booking() {
     destination: "kwale",
     date: "",
     seats: 1,
-    carType: "demio",
+    selectedVehicleId: "",
+    hireVehicleId: "",
     mpesaNumber: "",
   });
+
+  const normalizeVehicleServiceType = (serviceType) => {
+    const normalized = String(serviceType || "")
+      .trim()
+      .toLowerCase()
+      .replace(/[_\s]+/g, "-");
+
+    if (["local", "local-transit", "transit"].includes(normalized)) {
+      return "local-transit";
+    }
+    if (
+      ["private", "private-booking", "private-bookings"].includes(normalized)
+    ) {
+      return "private-booking";
+    }
+    if (["carrier", "luggage", "cargo"].includes(normalized)) {
+      return "carrier";
+    }
+    if (["hire", "car-hire", "rent"].includes(normalized)) {
+      return "car-hire";
+    }
+    return normalized;
+  };
+
+  const formatVehicleLabel = (vehicle) => `${vehicle.name} (${vehicle.plate})`;
+
+  const vehiclesByServiceType = {
+    local: vehicles.filter(
+      (vehicle) =>
+        normalizeVehicleServiceType(vehicle.serviceType) ===
+        vehicleTypeMap.local,
+    ),
+    private: vehicles.filter(
+      (vehicle) =>
+        normalizeVehicleServiceType(vehicle.serviceType) ===
+        vehicleTypeMap.private,
+    ),
+    luggage: vehicles.filter(
+      (vehicle) =>
+        normalizeVehicleServiceType(vehicle.serviceType) ===
+        vehicleTypeMap.luggage,
+    ),
+    hire: vehicles.filter(
+      (vehicle) =>
+        normalizeVehicleServiceType(vehicle.serviceType) ===
+        vehicleTypeMap.hire,
+    ),
+  };
+
+  const fetchVehicles = async () => {
+    setVehiclesLoading(true);
+    setVehiclesError("");
+    try {
+      const response = await API.get("/vehicles");
+      setVehicles(response.data?.vehicles || []);
+    } catch (err) {
+      setVehiclesError("Unable to load vehicles right now.");
+      console.error("Failed to fetch booking vehicles:", err);
+    } finally {
+      setVehiclesLoading(false);
+    }
+  };
+
+  useEffect(() => {
+    fetchVehicles();
+  }, []);
+
+  useEffect(() => {
+    if (
+      vehiclesByServiceType.hire.length > 0 &&
+      !vehiclesByServiceType.hire.some(
+        (vehicle) => vehicle.id === formData.hireVehicleId,
+      )
+    ) {
+      setFormData((prev) => ({
+        ...prev,
+        hireVehicleId: vehiclesByServiceType.hire[0].id,
+      }));
+    }
+  }, [vehiclesByServiceType.hire, formData.hireVehicleId]);
 
   const handleInputChange = (e) => {
     setFormData({ ...formData, [e.target.name]: e.target.value });
@@ -61,6 +152,23 @@ function Booking() {
     setSuccessMsg("");
 
     try {
+      const selectedVehicleId =
+        serviceType === "hire"
+          ? formData.hireVehicleId
+          : formData.selectedVehicleId;
+
+      const selectedVehicle = vehicles.find(
+        (vehicle) => vehicle.id === selectedVehicleId,
+      );
+
+      if (!selectedVehicle) {
+        setLoading(false);
+        setErrorMsg(
+          "Please select a valid admin-added vehicle before booking.",
+        );
+        return;
+      }
+
       const payload = {
         serviceType,
         firstName: formData.firstName,
@@ -69,8 +177,14 @@ function Booking() {
         destination: formData.destination,
         travelDate: formData.date,
         seats: Number(formData.seats) || 1,
-        carType: serviceType === "hire" ? formData.carType : null,
-        paymentType: serviceType === "local" ? localPayTime : "now",
+        vehicleId: selectedVehicle.id, // Securely passing database vehicle ID
+        carType: formatVehicleLabel(selectedVehicle),
+        paymentType:
+          serviceType === "local"
+            ? localPayTime === "later"
+              ? "arrival"
+              : "now"
+            : "now",
         mpesaNumber: formData.mpesaNumber,
       };
 
@@ -135,8 +249,29 @@ function Booking() {
 
             {type === "local" && (
               <div className="local-div">
-                <p>5 seats left</p>
+                <p>
+                  {vehiclesLoading
+                    ? "Loading vehicles..."
+                    : `${vehiclesByServiceType.local.length} vehicles available`}
+                </p>
                 <div className="inputs">
+                  <span>
+                    <label htmlFor="local-vehicle">Vehicle</label>
+                    <select
+                      name="selectedVehicleId"
+                      id="local-vehicle"
+                      value={formData.selectedVehicleId}
+                      onChange={handleInputChange}
+                      required
+                    >
+                      <option value="">Select vehicle</option>
+                      {vehiclesByServiceType.local.map((vehicle) => (
+                        <option key={vehicle.id} value={vehicle.id}>
+                          {formatVehicleLabel(vehicle)}
+                        </option>
+                      ))}
+                    </select>
+                  </span>
                   <span>
                     <label htmlFor="local-from">Starting point</label>
                     <select
@@ -180,6 +315,10 @@ function Booking() {
                     type="button"
                     onClick={handleLocalBooking}
                     id="book-button"
+                    disabled={
+                      vehiclesByServiceType.local.length === 0 ||
+                      vehiclesLoading
+                    }
                   >
                     Get a ticket
                   </button>
@@ -189,8 +328,29 @@ function Booking() {
 
             {type === "private" && (
               <div className="private-div">
-                <p>2 cars left</p>
+                <p>
+                  {vehiclesLoading
+                    ? "Loading vehicles..."
+                    : `${vehiclesByServiceType.private.length} vehicles available`}
+                </p>
                 <div className="inputs">
+                  <span>
+                    <label htmlFor="private-vehicle">Vehicle</label>
+                    <select
+                      name="selectedVehicleId"
+                      id="private-vehicle"
+                      value={formData.selectedVehicleId}
+                      onChange={handleInputChange}
+                      required
+                    >
+                      <option value="">Select vehicle</option>
+                      {vehiclesByServiceType.private.map((vehicle) => (
+                        <option key={vehicle.id} value={vehicle.id}>
+                          {formatVehicleLabel(vehicle)}
+                        </option>
+                      ))}
+                    </select>
+                  </span>
                   <span>
                     <label htmlFor="private-from">Starting point</label>
                     <input
@@ -221,6 +381,10 @@ function Booking() {
                     type="button"
                     id="book-button"
                     onClick={handlePrivateBooking}
+                    disabled={
+                      vehiclesByServiceType.private.length === 0 ||
+                      vehiclesLoading
+                    }
                   >
                     Reserve a seat
                   </button>
@@ -230,8 +394,29 @@ function Booking() {
 
             {type === "luggage" && (
               <div className="luggage-div">
-                <p>3 cars available</p>
+                <p>
+                  {vehiclesLoading
+                    ? "Loading vehicles..."
+                    : `${vehiclesByServiceType.luggage.length} vehicles available`}
+                </p>
                 <div className="inputs">
+                  <span>
+                    <label htmlFor="luggage-vehicle">Vehicle</label>
+                    <select
+                      name="selectedVehicleId"
+                      id="luggage-vehicle"
+                      value={formData.selectedVehicleId}
+                      onChange={handleInputChange}
+                      required
+                    >
+                      <option value="">Select vehicle</option>
+                      {vehiclesByServiceType.luggage.map((vehicle) => (
+                        <option key={vehicle.id} value={vehicle.id}>
+                          {formatVehicleLabel(vehicle)}
+                        </option>
+                      ))}
+                    </select>
+                  </span>
                   <span>
                     <label htmlFor="luggage-from">Starting point</label>
                     <select
@@ -273,12 +458,20 @@ function Booking() {
                   type="submit"
                   id="luggage-book-btn"
                   onClick={(e) => handleBookingSubmit(e, "luggage")}
+                  disabled={
+                    vehiclesByServiceType.luggage.length === 0 ||
+                    vehiclesLoading
+                  }
                 >
                   Book now
                 </button>
               </div>
             )}
           </form>
+
+          {vehiclesError && (
+            <p style={{ color: "red", marginTop: "8px" }}>{vehiclesError}</p>
+          )}
 
           {localBookingModal && (
             <div className="booking-modal">
@@ -292,24 +485,8 @@ function Booking() {
                     <span className="material-symbols-outlined">close</span>
                   </button>
                 </div>
-                {successMsg && (
-                  <p
-                    style={{
-                      color: "green",
-                    }}
-                  >
-                    {successMsg}
-                  </p>
-                )}
-                {errorMsg && (
-                  <p
-                    style={{
-                      color: "red",
-                    }}
-                  >
-                    {errorMsg}
-                  </p>
-                )}
+                {successMsg && <p style={{ color: "green" }}>{successMsg}</p>}
+                {errorMsg && <p style={{ color: "red" }}>{errorMsg}</p>}
                 <div className="details-form">
                   <div className="names">
                     <span>
@@ -423,24 +600,8 @@ function Booking() {
                     <span className="material-symbols-outlined">close</span>
                   </button>
                 </div>
-                {successMsg && (
-                  <p
-                    style={{
-                      color: "green",
-                    }}
-                  >
-                    {successMsg}
-                  </p>
-                )}
-                {errorMsg && (
-                  <p
-                    style={{
-                      color: "red",
-                    }}
-                  >
-                    {errorMsg}
-                  </p>
-                )}
+                {successMsg && <p style={{ color: "green" }}>{successMsg}</p>}
+                {errorMsg && <p style={{ color: "red" }}>{errorMsg}</p>}
                 <div className="details-form">
                   <div className="names">
                     <span>
@@ -533,15 +694,18 @@ function Booking() {
               <span>
                 <label htmlFor="car-type">Car type</label>
                 <select
-                  name="carType"
+                  name="hireVehicleId"
                   id="car-type"
+                  value={formData.hireVehicleId}
                   onChange={handleInputChange}
                   required
                 >
-                  <option value="demio">Mazda demio</option>
-                  <option value="vits">Vits</option>
-                  <option value="sienta">Sienta</option>
-                  <option value="noah">Noah</option>
+                  <option value="">Select vehicle</option>
+                  {vehiclesByServiceType.hire.map((vehicle) => (
+                    <option key={vehicle.id} value={vehicle.id}>
+                      {formatVehicleLabel(vehicle)}
+                    </option>
+                  ))}
                 </select>
               </span>
               <span>
@@ -588,7 +752,14 @@ function Booking() {
             </div>
             <div className="form-buttons">
               <button type="submit">Search for cars</button>
-              <button type="button" onClick={handleHire} id="book-button">
+              <button
+                type="button"
+                onClick={handleHire}
+                id="book-button"
+                disabled={
+                  vehiclesByServiceType.hire.length === 0 || vehiclesLoading
+                }
+              >
                 Hire a car
               </button>
             </div>
@@ -606,24 +777,8 @@ function Booking() {
                     <span className="material-symbols-outlined">close</span>
                   </button>
                 </div>
-                {successMsg && (
-                  <p
-                    style={{
-                      color: "green",
-                    }}
-                  >
-                    {successMsg}
-                  </p>
-                )}
-                {errorMsg && (
-                  <p
-                    style={{
-                      color: "red",
-                    }}
-                  >
-                    {errorMsg}
-                  </p>
-                )}
+                {successMsg && <p style={{ color: "green" }}>{successMsg}</p>}
+                {errorMsg && <p style={{ color: "red" }}>{errorMsg}</p>}
                 <div className="details-form">
                   <div className="names">
                     <span>
@@ -653,15 +808,18 @@ function Booking() {
                     <span>
                       <label htmlFor="h-cartype">Car type</label>
                       <select
-                        name="carType"
+                        name="hireVehicleId"
                         id="h-cartype"
+                        value={formData.hireVehicleId}
                         onChange={handleInputChange}
                         required
                       >
-                        <option value="demio">Mazda demio</option>
-                        <option value="vits">Vits</option>
-                        <option value="sienta">Sienta</option>
-                        <option value="noah">Noah</option>
+                        <option value="">Select vehicle</option>
+                        {vehiclesByServiceType.hire.map((vehicle) => (
+                          <option key={vehicle.id} value={vehicle.id}>
+                            {formatVehicleLabel(vehicle)}
+                          </option>
+                        ))}
                       </select>
                     </span>
                     <span>
