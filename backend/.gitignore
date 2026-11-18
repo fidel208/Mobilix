@@ -5,3 +5,4 @@ node_modules/
 pgdata/
 pgdata/
 test_suite.js
+script.js

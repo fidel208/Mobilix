@@ -1,7 +1,7 @@
 import React, { useState, useEffect } from "react";
 import "./header.css";
 import { Link, NavLink, useLocation, useNavigate } from "react-router-dom";
-import API from "../../services/api";
+import API, { API_BASE_URL } from "../../services/api";
 
 function Header() {
   const location = useLocation();
@@ -379,7 +379,7 @@ function Header() {
                 <h1>Login</h1>
 
                 <a
-                  href="http://localhost:3000/api/auth/google"
+                  href={`${API_BASE_URL}/auth/google`}
                   className="google-sign-in-btn"
                   style={{
                     display: "flex",
@@ -485,7 +485,7 @@ function Header() {
                 <h1>Create an account</h1>
 
                 <a
-                  href="http://localhost:3000/api/auth/google"
+                  href={`${API_BASE_URL}/auth/google`}
                   className="google-sign-in-btn"
                   style={{
                     display: "flex",

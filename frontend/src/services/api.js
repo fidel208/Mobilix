@@ -1,7 +1,11 @@
 import axios from "axios";
 
+export const API_BASE_URL = (
+  import.meta.env.VITE_API_URL || "https://mobilix-fwbd.onrender.com/api"
+).replace(/\/$/, "");
+
 const API = axios.create({
-  baseURL: import.meta.env.VITE_API_URL || "/api",
+  baseURL: API_BASE_URL,
   headers: {
     "Content-Type": "application/json",
   },
@@ -23,7 +27,6 @@ API.interceptors.request.use(
 API.interceptors.response.use(
   (response) => response,
   (error) => {
-    // Do not redirect on login or register failure; let the component show the error
     const isAuthEndpoint =
       error.config?.url?.includes("/login") ||
       error.config?.url?.includes("/register");

@@ -20,8 +20,12 @@ const app = express();
 const PORT = process.env.PORT || 3000;
 
 const corsOptions = {
-  origin: ["http://localhost:5173", "http://127.0.0.1:5173"],
-  methods: ["GET", "POST", "PUT", "DELETE"],
+  origin: [
+    "https://mobilix-eight.vercel.app",
+    "http://localhost:5173",
+    "http://127.0.0.1:5173",
+  ],
+  methods: ["GET", "POST", "PUT", "PATCH", "DELETE", "OPTIONS"],
   allowedHeaders: ["Content-Type", "Authorization"],
   credentials: true,
 };
@@ -45,7 +49,7 @@ app.use("/vehicles", vehiclesRouter);
 app.use("/community", communityRouter);
 
 app.get("/", (req, res) => {
-  res.send("Backend deveopment has started");
+  res.send("Server is running succesfully");
 });
 
 app.listen(PORT, () => {
