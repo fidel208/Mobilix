@@ -634,7 +634,8 @@ header nav button:hover {
   display: flex;
   flex-direction: row;
   align-items: center;
-  gap: 7px;
+  gap: 5px;
+  margin-left: 10px;
 }
 #user-signout-btn:hover {
   background-color: #fcded8;
