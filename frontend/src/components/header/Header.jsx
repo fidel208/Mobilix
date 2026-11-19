@@ -364,7 +364,7 @@ function Header() {
                       cursor: "pointer",
                     }}
                   >
-                    Sign out ({user.name})
+                    Sign out
                   </button>
                 )}
               </div>

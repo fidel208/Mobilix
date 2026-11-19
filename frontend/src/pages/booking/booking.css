@@ -176,11 +176,11 @@
 .booking-container,
 .hire-container {
   width: 700px;
-  height: 480px;
+  height: 580px;
   background-color: white;
   border-radius: 12px;
   box-shadow: 0 0 3px white;
-  padding: 20px;
+  padding: 25px;
   display: flex;
   flex-direction: column;
   gap: 20px;
@@ -216,17 +216,32 @@
   gap: 15px;
 }
 .names span,
-.place span,
-.date span {
+.place span {
   display: flex;
   flex-direction: column;
   justify-content: space-between;
   width: 48%;
   gap: 7px;
 }
-.names span input,
-.place span input,
+#email-div,
+.date span {
+  display: flex;
+  flex-direction: column;
+  gap: 7px;
+  width: 100%;
+}
+#email-div input,
 .date span input {
+  width: 93%;
+  font-size: 18px;
+  padding: 0 7px;
+  height: 35px;
+  border: solid 1px rgb(197, 193, 193);
+  outline: none;
+  border-radius: 5px;
+}
+.names span input,
+.place span input {
   width: 90%;
   font-size: 18px;
   padding: 0 7px;
@@ -373,6 +388,10 @@
   .ticket-booking {
     margin-bottom: 100px;
   }
+  .names span input,
+  .place span input {
+    width: 95%;
+  }
   .service-type {
     display: flex;
     flex-direction: column;
@@ -381,7 +400,11 @@
   .inputs {
     display: flex;
     flex-direction: column;
-    gap: 15spx;
+    gap: 15px;
+  }
+  #email-div input,
+  .date span input {
+    width: 98%;
   }
   .local-div span select,
   .private-div span select,
@@ -406,11 +429,20 @@
   .car-hire-booking form span input {
     width: 95%;
   }
+  .stk {
+    width: 100%;
+  }
+  .stk input {
+    width: 100% !important;
+  }
   .booking-container,
   .hire-container {
     width: 85%;
   }
   .agree-span a {
     font-size: 16px;
+  }
+  .stk button {
+    width: 100%;
   }
 }
