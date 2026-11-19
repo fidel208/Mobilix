@@ -46,35 +46,6 @@
   white-space: nowrap;
 }
 
-@media (max-width: 768px) {
-  .admin-services {
-    border-radius: 10px;
-    height: auto;
-    min-height: 100%;
-    padding: 12px 0;
-  }
-
-  .admin-services-container {
-    width: 92%;
-    gap: 12px;
-  }
-
-  .services-table {
-    min-width: 560px;
-  }
-
-  .services-table th,
-  .services-table td {
-    padding: 10px 12px;
-    font-size: 14px;
-  }
-}
-
-@media (max-width: 480px) {
-  .services-table {
-    min-width: 500px;
-  }
-}
 .services-overlay {
   display: none;
   position: fixed;
@@ -150,4 +121,52 @@
 }
 #form-submit-btn:hover {
   background-color: #6e443b;
+}
+
+@media (max-width: 768px) {
+  .admin-services {
+    border-radius: 10px;
+    height: auto;
+    min-height: 100%;
+    padding: 12px 0;
+  }
+
+  .admin-services-container {
+    width: 92%;
+    gap: 12px;
+  }
+
+  .services-table {
+    min-width: 560px;
+  }
+
+  .services-table th,
+  .services-table td {
+    padding: 10px 12px;
+    font-size: 14px;
+  }
+  .services-modal {
+    width: 90%;
+    height: 500px;
+    padding: 10px;
+  }
+  .services-modal form > span {
+    gap: 15px;
+  }
+  .services-modal form label {
+    width: 100px;
+    font-size: 16px;
+  }
+  .services-modal form select {
+    width: 65%;
+  }
+  #form-submit-btn {
+    margin-left: 115px;
+  }
+}
+
+@media (max-width: 480px) {
+  .services-table {
+    min-width: 500px;
+  }
 }

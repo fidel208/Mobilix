@@ -181,11 +181,21 @@
 
   .small-cont {
     min-height: 100px;
+    box-shadow: 0 0 2px gray;
+    margin-bottom: 10px;
+    padding: 5px;
   }
 
   .dash-graph {
     min-height: 260px;
-    height: 300px;
+    height: 350px;
+    font-size: 14px;
+  }
+  tspan {
+    font-size: 13px;
+  }
+  .recharts-legend-item-text {
+    font-size: 13px;
   }
 }
 
@@ -217,7 +227,7 @@
   }
 
   .small-cont > span {
-    width: 100%;
+    width: 90%;
   }
 
   #size {

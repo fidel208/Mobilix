@@ -88,48 +88,6 @@
   white-space: nowrap;
 }
 
-@media (max-width: 768px) {
-  .community {
-    border-radius: 10px;
-    height: auto;
-    min-height: 100%;
-    padding: 12px 0;
-  }
-
-  .community-container {
-    width: 92%;
-    gap: 12px;
-  }
-
-  .search-div {
-    flex-direction: column;
-    gap: 10px;
-  }
-
-  #search-input {
-    width: 90%;
-  }
-  .search-div button {
-    height: 40px;
-    width: 95%;
-  }
-
-  .community-table {
-    min-width: 560px;
-  }
-
-  .community-table th,
-  .community-table td {
-    padding: 10px 12px;
-    font-size: 14px;
-  }
-}
-
-@media (max-width: 480px) {
-  .community-table {
-    min-width: 500px;
-  }
-}
 #delete-btn {
   color: rgb(248, 54, 54);
   background-color: #fdfbf7;
@@ -233,4 +191,65 @@
 }
 #form-submit-btn:hover {
   background-color: #6e443b;
+}
+
+@media (max-width: 768px) {
+  .community {
+    border-radius: 10px;
+    height: auto;
+    min-height: 100%;
+    padding: 12px 0;
+  }
+
+  .community-container {
+    width: 92%;
+    gap: 12px;
+  }
+
+  .search-div {
+    flex-direction: column;
+    gap: 10px;
+  }
+
+  #search-input {
+    width: 90%;
+  }
+  .search-div button {
+    height: 40px;
+    width: 95%;
+  }
+
+  .community-table {
+    min-width: 560px;
+  }
+
+  .community-table th,
+  .community-table td {
+    padding: 10px 12px;
+    font-size: 14px;
+  }
+  .community-modal {
+    width: 90%;
+    height: 500px;
+    padding: 10px;
+  }
+  .community-modal form > span {
+    gap: 15px;
+  }
+  .community-modal form label {
+    width: 100px;
+    font-size: 16px;
+  }
+  .community-modal form select {
+    width: 65%;
+  }
+  #form-submit-btn {
+    margin-left: 115px;
+  }
+}
+
+@media (max-width: 480px) {
+  .community-table {
+    min-width: 500px;
+  }
 }

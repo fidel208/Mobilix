@@ -46,35 +46,6 @@
   white-space: nowrap;
 }
 
-@media (max-width: 768px) {
-  .vehicles {
-    border-radius: 10px;
-    height: auto;
-    min-height: 100%;
-    padding: 12px 0;
-  }
-
-  .vehicles-container {
-    width: 92%;
-    gap: 12px;
-  }
-
-  .vehicles-table {
-    min-width: 560px;
-  }
-
-  .vehicles-table th,
-  .vehicles-table td {
-    padding: 10px 12px;
-    font-size: 14px;
-  }
-}
-
-@media (max-width: 480px) {
-  .vehicles-table {
-    min-width: 500px;
-  }
-}
 .vehicles-overlay {
   display: none;
   position: fixed;
@@ -149,4 +120,51 @@
 }
 #form-submit-btn:hover {
   background-color: #6e443b;
+}
+
+@media (max-width: 768px) {
+  .vehicles {
+    border-radius: 10px;
+    height: auto;
+    min-height: 100%;
+    padding: 12px 0;
+  }
+
+  .vehicles-container {
+    width: 92%;
+    gap: 12px;
+  }
+
+  .vehicles-table {
+    min-width: 560px;
+  }
+
+  .vehicles-table th,
+  .vehicles-table td {
+    padding: 10px 12px;
+    font-size: 14px;
+  }
+  .vehicle-modal {
+    width: 90%;
+    height: 500px;
+    padding: 10px;
+  }
+  .vehicle-modal form > span {
+    gap: 15px;
+  }
+  .vehicle-modal form label {
+    width: 100px;
+  }
+  .vehicle-modal form select {
+    width: 65%;
+  }
+  #form-submit-btn {
+    margin-left: 115px;
+  }
+}
+
+@media (max-width: 480px) {
+  .vehicles-table {
+    min-width: 500px;
+  }
 }

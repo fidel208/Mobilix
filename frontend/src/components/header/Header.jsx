@@ -349,21 +349,14 @@ function Header() {
                 </Link>
                 {user && (
                   <button
+                    id="user-signout-btn"
                     type="button"
                     onClick={() => {
                       setOpenDropdown(false);
                       handleLogout();
                     }}
-                    style={{
-                      marginTop: "10px",
-                      backgroundColor: "#dc2626",
-                      color: "white",
-                      border: "none",
-                      padding: "8px 12px",
-                      borderRadius: "6px",
-                      cursor: "pointer",
-                    }}
                   >
+                    <span className="material-symbols-outlined">logout</span>
                     Sign out
                   </button>
                 )}
@@ -387,21 +380,9 @@ function Header() {
                 <h1>Login</h1>
 
                 <a
+                  id="google-sign-in-btn"
                   href={`${API_BASE_URL}/auth/google?returnTo=${encodeURIComponent(window.location.origin + window.location.pathname)}`}
                   className="google-sign-in-btn"
-                  style={{
-                    display: "flex",
-                    alignItem: "center",
-                    justifyContent: "center",
-                    gap: "10px",
-                    textDecoration: "none",
-                    color: "#333",
-                    border: "1px solid #ccc",
-                    padding: "10px",
-                    borderRadius: "6px",
-                    marginBottom: "15px",
-                    fontWeight: "500",
-                  }}
                 >
                   <svg width="20" height="20" viewBox="0 0 24 24">
                     <path
@@ -493,21 +474,9 @@ function Header() {
                 <h1>Create an account</h1>
 
                 <a
+                  id="google-sign-in-btn"
                   href={`${API_BASE_URL}/auth/google?returnTo=${encodeURIComponent(window.location.origin + window.location.pathname)}`}
                   className="google-sign-in-btn"
-                  style={{
-                    display: "flex",
-                    alignItem: "center",
-                    justifyContent: "center",
-                    gap: "10px",
-                    textDecoration: "none",
-                    color: "#333",
-                    border: "1px solid #ccc",
-                    padding: "10px",
-                    borderRadius: "6px",
-                    marginBottom: "15px",
-                    fontWeight: "500",
-                  }}
                 >
                   <svg width="20" height="20" viewBox="0 0 24 24">
                     <path
