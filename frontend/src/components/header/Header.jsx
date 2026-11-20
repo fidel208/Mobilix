@@ -75,7 +75,7 @@ function Header() {
     const timer = setTimeout(() => {
       setLoadOverlay(false);
       sessionStorage.setItem("mobilix_home_loaded_once", "true");
-    }, 1800);
+    }, 5000);
 
     return () => clearTimeout(timer);
   }, [location.pathname]);

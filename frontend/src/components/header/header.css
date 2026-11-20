@@ -139,7 +139,7 @@ header nav button:hover {
   align-items: center;
   z-index: 2000;
   animation: overlayFade 5s ease forwards;
-  animation-delay: 5s;
+  animation-delay: 6s;
 }
 .loader-modal {
   position: relative;
@@ -177,7 +177,7 @@ header nav button:hover {
   border-radius: inherit;
   background: #b77466;
   box-shadow: 0 0 18px rgba(247, 178, 103, 0.75);
-  animation: fillLine 3s ease-in-out forwards;
+  animation: fillLine 5s ease-in-out forwards;
 }
 .loader-modal p {
   margin: 0;
