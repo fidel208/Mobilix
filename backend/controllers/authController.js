@@ -3,13 +3,9 @@ import bcrypt from "bcrypt";
 import jwt from "jsonwebtoken";
 
 const generateToken = (userId, role = "CUSTOMER") => {
-  return jwt.sign(
-    { userId, role },
-    process.env.JWT_SECRET || "mobilix_super_secret_key",
-    {
-      expiresIn: "24h",
-    },
-  );
+  return jwt.sign({ userId, role }, process.env.JWT_SECRET, {
+    expiresIn: "24h",
+  });
 };
 
 export const register = async (req, res) => {

@@ -31,7 +31,7 @@ function Login() {
       setLoading(false);
       setPassword("");
       if (!err.response) {
-        setError("Cannot connect to server. Ensure the backend is running on port 3000.");
+        setError("Cannot connect to server.");
       } else {
         setError(err.response?.data?.message || "Invalid email or password.");
       }
