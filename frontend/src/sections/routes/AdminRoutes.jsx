@@ -1,4 +1,4 @@
-import React, { useState, useEffect } from "react";
+import { useState, useEffect } from "react";
 import "./admin-routes.css";
 import API from "../../services/api";
 
@@ -10,7 +10,6 @@ function AdminRoutes() {
   const [formLoading, setFormLoading] = useState(false);
   const [error, setError] = useState("");
 
-  
   const [startingPoint, setStartingPoint] = useState("");
   const [destination, setDestination] = useState("");
   const [price, setPrice] = useState("");
@@ -84,7 +83,7 @@ function AdminRoutes() {
   const filteredRoutes = routes.filter((r) =>
     `${r.startingPoint} ${r.destination} ${r.serviceType}`
       .toLowerCase()
-      .includes(searchQuery.toLowerCase())
+      .includes(searchQuery.toLowerCase()),
   );
 
   const lastRowIndex = currentPage * rowsPerPage;
@@ -119,7 +118,8 @@ function AdminRoutes() {
               />
             </span>
             <button type="button" onClick={handleRoutesModal}>
-              <span className="material-symbols-outlined">add</span>Add a new route
+              <span className="material-symbols-outlined">add</span>Add a new
+              route
             </button>
           </div>
           <div className="routes-table-cont">
@@ -136,14 +136,22 @@ function AdminRoutes() {
               <tbody>
                 {loading ? (
                   <tr>
-                    <td colSpan="5" style={{ textAlign: "center", padding: "20px" }}>
+                    <td
+                      colSpan="5"
+                      style={{ textAlign: "center", padding: "20px" }}
+                    >
                       Loading routes...
                     </td>
                   </tr>
                 ) : currentRows.length === 0 ? (
                   <tr>
-                    <td colSpan="5" style={{ textAlign: "center", padding: "20px" }}>
-                      {searchQuery ? "No routes match your search." : "No routes added yet."}
+                    <td
+                      colSpan="5"
+                      style={{ textAlign: "center", padding: "20px" }}
+                    >
+                      {searchQuery
+                        ? "No routes match your search."
+                        : "No routes added yet."}
                     </td>
                   </tr>
                 ) : (
@@ -160,7 +168,9 @@ function AdminRoutes() {
                           onClick={() => handleDelete(r.id)}
                           title="Delete route"
                         >
-                          <span className="material-symbols-outlined">delete</span>
+                          <span className="material-symbols-outlined">
+                            delete
+                          </span>
                         </button>
                       </td>
                     </tr>
@@ -202,7 +212,14 @@ function AdminRoutes() {
               </button>
             </div>
             {error && (
-              <p style={{ color: "red", padding: "0 20px", margin: 0, fontSize: "14px" }}>
+              <p
+                style={{
+                  color: "red",
+                  padding: "0 20px",
+                  margin: 0,
+                  fontSize: "14px",
+                }}
+              >
                 {error}
               </p>
             )}

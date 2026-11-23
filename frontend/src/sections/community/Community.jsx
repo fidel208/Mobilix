@@ -1,4 +1,4 @@
-import React, { useState, useEffect } from "react";
+import { useState, useEffect } from "react";
 import "./community.css";
 import API from "../../services/api";
 
@@ -10,7 +10,6 @@ function Community() {
   const [formLoading, setFormLoading] = useState(false);
   const [error, setError] = useState("");
 
-  
   const [clientEmail, setClientEmail] = useState("");
   const [status, setStatus] = useState("subscribed");
 
@@ -58,7 +57,9 @@ function Community() {
         setStatus("subscribed");
       }
     } catch (err) {
-      setError(err.response?.data?.message || "Failed to add community member.");
+      setError(
+        err.response?.data?.message || "Failed to add community member.",
+      );
     } finally {
       setFormLoading(false);
     }
@@ -75,7 +76,7 @@ function Community() {
   };
 
   const filteredCommunity = community.filter((m) =>
-    `${m.email} ${m.status}`.toLowerCase().includes(searchQuery.toLowerCase())
+    `${m.email} ${m.status}`.toLowerCase().includes(searchQuery.toLowerCase()),
   );
 
   const lastRowIndex = currentPage * rowsPerPage;
@@ -114,7 +115,8 @@ function Community() {
               />
             </span>
             <button type="button" onClick={handleCommunityModal}>
-              <span className="material-symbols-outlined">add</span>Add a new member
+              <span className="material-symbols-outlined">add</span>Add a new
+              member
             </button>
           </div>
           <div className="community-table-cont">
@@ -130,13 +132,19 @@ function Community() {
               <tbody>
                 {loading ? (
                   <tr>
-                    <td colSpan="4" style={{ textAlign: "center", padding: "20px" }}>
+                    <td
+                      colSpan="4"
+                      style={{ textAlign: "center", padding: "20px" }}
+                    >
                       Loading community members...
                     </td>
                   </tr>
                 ) : currentRows.length === 0 ? (
                   <tr>
-                    <td colSpan="4" style={{ textAlign: "center", padding: "20px" }}>
+                    <td
+                      colSpan="4"
+                      style={{ textAlign: "center", padding: "20px" }}
+                    >
                       {searchQuery
                         ? "No members match your search."
                         : "No community members added yet."}
@@ -149,7 +157,8 @@ function Community() {
                       <td>
                         <span
                           style={{
-                            color: m.status === "subscribed" ? "#10b981" : "#f59e0b",
+                            color:
+                              m.status === "subscribed" ? "#10b981" : "#f59e0b",
                             textTransform: "capitalize",
                           }}
                         >
@@ -164,7 +173,9 @@ function Community() {
                           onClick={() => handleDelete(m.id)}
                           title="Remove member"
                         >
-                          <span className="material-symbols-outlined">delete</span>
+                          <span className="material-symbols-outlined">
+                            delete
+                          </span>
                         </button>
                       </td>
                     </tr>
@@ -206,7 +217,14 @@ function Community() {
               </button>
             </div>
             {error && (
-              <p style={{ color: "red", padding: "0 20px", margin: 0, fontSize: "14px" }}>
+              <p
+                style={{
+                  color: "red",
+                  padding: "0 20px",
+                  margin: 0,
+                  fontSize: "14px",
+                }}
+              >
                 {error}
               </p>
             )}

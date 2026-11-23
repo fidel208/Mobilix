@@ -1,4 +1,4 @@
-import React, { useState, useEffect } from "react";
+import { useState, useEffect } from "react";
 import "./admin-tickets.css";
 import API from "../../services/api";
 
@@ -10,7 +10,6 @@ function AdminTickets() {
   const [formLoading, setFormLoading] = useState(false);
   const [error, setError] = useState("");
 
-  
   const [firstName, setFirstName] = useState("");
   const [lastName, setLastName] = useState("");
   const [phone, setPhone] = useState("");
@@ -132,7 +131,8 @@ function AdminTickets() {
               />
             </span>
             <button type="button" onClick={handleTicketsModal}>
-              <span className="material-symbols-outlined">add</span>Add a new ticket
+              <span className="material-symbols-outlined">add</span>Add a new
+              ticket
             </button>
           </div>
           <div className="tickets-table-cont">
@@ -151,14 +151,22 @@ function AdminTickets() {
               <tbody>
                 {loading ? (
                   <tr>
-                    <td colSpan="7" style={{ textAlign: "center", padding: "20px" }}>
+                    <td
+                      colSpan="7"
+                      style={{ textAlign: "center", padding: "20px" }}
+                    >
                       Loading tickets...
                     </td>
                   </tr>
                 ) : currentRows.length === 0 ? (
                   <tr>
-                    <td colSpan="7" style={{ textAlign: "center", padding: "20px" }}>
-                      {searchQuery ? "No tickets match your search." : "No tickets created yet."}
+                    <td
+                      colSpan="7"
+                      style={{ textAlign: "center", padding: "20px" }}
+                    >
+                      {searchQuery
+                        ? "No tickets match your search."
+                        : "No tickets created yet."}
                     </td>
                   </tr>
                 ) : (
@@ -182,7 +190,9 @@ function AdminTickets() {
                             onClick={() => handleDelete(t.id)}
                             title="Delete ticket"
                           >
-                            <span className="material-symbols-outlined">delete</span>
+                            <span className="material-symbols-outlined">
+                              delete
+                            </span>
                           </button>
                         </td>
                       </tr>
@@ -225,7 +235,14 @@ function AdminTickets() {
               </button>
             </div>
             {error && (
-              <p style={{ color: "red", padding: "0 20px", margin: 0, fontSize: "14px" }}>
+              <p
+                style={{
+                  color: "red",
+                  padding: "0 20px",
+                  margin: 0,
+                  fontSize: "14px",
+                }}
+              >
                 {error}
               </p>
             )}

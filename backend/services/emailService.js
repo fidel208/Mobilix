@@ -213,11 +213,8 @@ export const sendTicketEmail = async (toEmail, details) => {
       </html>
     `;
 
-    const fromEmail =
-      process.env.RESEND_FROM_EMAIL ||
-      "Mobilix Bookings <onboarding@resend.dev>";
-    const verifiedAccountEmail =
-      process.env.RESEND_TEST_EMAIL || "dempafidel@gmail.com";
+    const fromEmail = process.env.RESEND_FROM_EMAIL;
+    const verifiedAccountEmail = process.env.RESEND_TEST_EMAIL;
 
     const result = await sendViaResendHttp({
       from: fromEmail,
@@ -286,13 +283,12 @@ export const sendContactHelpEmail = async ({
   message,
 }) => {
   try {
-    const fromEmail =
-      process.env.RESEND_FROM_EMAIL ||
-      "Mobilix Support <onboarding@resend.dev>";
-    const adminEmail = process.env.SUPPORT_EMAIL || "info@mobilix.co.ke";
-    const verifiedAccountEmail =
-      process.env.RESEND_TEST_EMAIL || "dempafidel@gmail.com";
-    const senderFullName = `${String(firstName || "").trim()} ${String(lastName || "").trim()}`.trim() || "Customer";
+    const fromEmail = process.env.RESEND_FROM_EMAIL;
+    const adminEmail = process.env.SUPPORT_EMAIL;
+    const verifiedAccountEmail = process.env.RESEND_TEST_EMAIL;
+    const senderFullName =
+      `${String(firstName || "").trim()} ${String(lastName || "").trim()}`.trim() ||
+      "Customer";
 
     const emailHtml = `
       <!DOCTYPE html>
@@ -358,7 +354,9 @@ export const sendContactHelpEmail = async ({
       );
 
       if (adminEmail !== verifiedAccountEmail) {
-        console.info(`Forwarding support inquiry to verified test account (${verifiedAccountEmail})`);
+        console.info(
+          `Forwarding support inquiry to verified test account (${verifiedAccountEmail})`,
+        );
         const fallbackResult = await sendViaResendHttp({
           from: fromEmail,
           to: [verifiedAccountEmail],
@@ -368,40 +366,20 @@ export const sendContactHelpEmail = async ({
         });
 
         if (!fallbackResult.error) {
-          console.log("Support inquiry delivered to verified admin:", fallbackResult.data?.id);
+          console.log(
+            "Support inquiry delivered to verified admin:",
+            fallbackResult.data?.id,
+          );
           return fallbackResult;
         }
       }
       return primaryResult;
     }
 
-    console.log("Support inquiry sent successfully to admin:", primaryResult.data?.id);
-    return primaryResult;
-
-    if (primaryResult.error) {
-      console.warn(
-        `Primary admin delivery to ${adminEmail} failed (${primaryResult.error.statusCode}): ${primaryResult.error.message}`,
-      );
-
-      if (adminEmail !== verifiedAccountEmail) {
-        console.info(`Forwarding support inquiry to verified test account (${verifiedAccountEmail})`);
-        const fallbackResult = await resend.emails.send({
-          from: fromEmail,
-          to: [verifiedAccountEmail],
-          replyTo: email,
-          subject: `[FORWARDED TO ADMIN] Support Request from ${senderFullName} (${email})`,
-          html: emailHtml,
-        });
-
-        if (!fallbackResult.error) {
-          console.log("Support inquiry delivered to verified admin:", fallbackResult.data?.id);
-          return fallbackResult;
-        }
-      }
-      return primaryResult;
-    }
-
-    console.log("Support inquiry sent successfully to admin:", primaryResult.data?.id);
+    console.log(
+      "Support inquiry sent successfully to admin:",
+      primaryResult.data?.id,
+    );
     return primaryResult;
   } catch (error) {
     console.error("Resend sendContactHelpEmail error:", error);

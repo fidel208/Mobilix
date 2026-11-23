@@ -1,4 +1,4 @@
-import React, { useState } from "react";
+import { useState } from "react";
 import "./contact.css";
 import Header from "../../components/header/Header";
 import Footer from "../../components/footer/Footer";
@@ -99,7 +99,7 @@ function Contact() {
             <span>
               <i className="fa-solid fa-envelope"></i>
               <h2>Email us</h2>
-              <p>info@mobilix.co.ke</p>
+              <p>support@mobilix.co.ke</p>
             </span>
             <span>
               <i className="fa-solid fa-hourglass-start"></i>

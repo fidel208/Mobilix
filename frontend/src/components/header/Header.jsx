@@ -1,4 +1,4 @@
-import React, { useState, useEffect } from "react";
+import { useState, useEffect } from "react";
 import "./header.css";
 import { Link, NavLink, useLocation, useNavigate } from "react-router-dom";
 import API, { API_BASE_URL } from "../../services/api";

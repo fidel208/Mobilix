@@ -1,4 +1,4 @@
-import React, { useEffect, useState } from "react";
+import { useEffect, useState } from "react";
 import "./booking.css";
 import Header from "../../components/header/Header";
 import Footer from "../../components/footer/Footer";
@@ -435,7 +435,6 @@ function Booking() {
               </span>
             </div>
 
-            {}
             {type === "local" && (
               <div className="local-div">
                 <p>
@@ -784,21 +783,21 @@ function Booking() {
                   }}
                 >
                   <div style={{ fontSize: "15px" }}>
-                    Vehicle:
+                    Vehicle :&nbsp;
                     {selectedVehicle
                       ? formatVehicleLabel(selectedVehicle)
                       : "None selected"}
                   </div>
                   {selectedRoute && (
                     <div style={{ fontSize: "15px" }}>
-                      Route: {selectedRoute.startingPoint} -
+                      Route :&nbsp;{selectedRoute.startingPoint} -
                       {selectedRoute.destination} - (KES {selectedRoute.price} /
                       seat)
                     </div>
                   )}
                   {formData.date && (
                     <div style={{ fontSize: "14px" }}>
-                      <strong>Travel Date:</strong> {formData.date}
+                      Travel Date :&nbsp;{formData.date}
                     </div>
                   )}
                   {formData.seats > 0 && selectedRoute && (
@@ -809,7 +808,7 @@ function Booking() {
                         fontSize: "15px",
                       }}
                     >
-                      Estimated Total: KES -
+                      Estimated Total: KES :&nbsp;
                       {(
                         selectedRoute.price * (Number(formData.seats) || 1)
                       ).toLocaleString()}
@@ -977,7 +976,7 @@ function Booking() {
                   }}
                 >
                   <div style={{ fontSize: "15px" }}>
-                    Vehicle:
+                    Vehicle :&nbsp;
                     {selectedVehicle
                       ? formatVehicleLabel(selectedVehicle)
                       : "None selected"}
@@ -990,7 +989,7 @@ function Booking() {
                   )}
                   {formData.date && (
                     <div style={{ fontSize: "15px" }}>
-                      Travel Date: {formData.date}
+                      Travel Date :&nbsp;{formData.date}
                     </div>
                   )}
                   {selectedRoute && (
@@ -1001,7 +1000,7 @@ function Booking() {
                         fontSize: "15px",
                       }}
                     >
-                      Estimated Total: KES -
+                      Estimated Total: KES :&nbsp;
                       {(
                         selectedRoute.price * (Number(formData.seats) || 1)
                       ).toLocaleString()}
@@ -1195,18 +1194,18 @@ function Booking() {
                   }}
                 >
                   <div style={{ fontSize: "15px" }}>
-                    Vehicle:
+                    Vehicle :&nbsp;
                     {selectedVehicle
                       ? formatVehicleLabel(selectedVehicle)
                       : "None selected"}
                   </div>
                   <div style={{ fontSize: "15px" }}>
-                    Rental Period:
+                    Rental Period :&nbsp;
                     {days === "one" ? "1 Day" : "More than one days"}
                   </div>
                   {formData.date && (
                     <div style={{ fontSize: "15px" }}>
-                      Start Date: {formData.date}
+                      Start Date :&nbsp;{formData.date}
                     </div>
                   )}
                 </div>

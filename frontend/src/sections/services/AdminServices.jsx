@@ -1,4 +1,4 @@
-import React, { useState, useEffect } from "react";
+import { useState, useEffect } from "react";
 import "./admin-services.css";
 import API from "../../services/api";
 
@@ -10,7 +10,6 @@ function AdminServices() {
   const [formLoading, setFormLoading] = useState(false);
   const [error, setError] = useState("");
 
-  
   const [serviceName, setServiceName] = useState("");
   const [serviceDesc, setServiceDesc] = useState("");
 
@@ -65,7 +64,8 @@ function AdminServices() {
   };
 
   const handleDelete = async (id) => {
-    if (!window.confirm("Are you sure you want to delete this service?")) return;
+    if (!window.confirm("Are you sure you want to delete this service?"))
+      return;
     try {
       await API.delete(`/services/${id}`);
       setServices((prev) => prev.filter((s) => s.id !== id));
@@ -75,7 +75,7 @@ function AdminServices() {
   };
 
   const filteredServices = services.filter((s) =>
-    s.name.toLowerCase().includes(searchQuery.toLowerCase())
+    s.name.toLowerCase().includes(searchQuery.toLowerCase()),
   );
 
   const lastRowIndex = currentPage * rowsPerPage;
@@ -102,7 +102,8 @@ function AdminServices() {
               />
             </span>
             <button type="button" onClick={handleServicesModal}>
-              <span className="material-symbols-outlined">add</span>Add a new service
+              <span className="material-symbols-outlined">add</span>Add a new
+              service
             </button>
           </div>
           <div className="services-table-cont">
@@ -119,14 +120,22 @@ function AdminServices() {
               <tbody>
                 {loading ? (
                   <tr>
-                    <td colSpan="5" style={{ textAlign: "center", padding: "20px" }}>
+                    <td
+                      colSpan="5"
+                      style={{ textAlign: "center", padding: "20px" }}
+                    >
                       Loading services...
                     </td>
                   </tr>
                 ) : currentRows.length === 0 ? (
                   <tr>
-                    <td colSpan="5" style={{ textAlign: "center", padding: "20px" }}>
-                      {searchQuery ? "No services match your search." : "No services added yet."}
+                    <td
+                      colSpan="5"
+                      style={{ textAlign: "center", padding: "20px" }}
+                    >
+                      {searchQuery
+                        ? "No services match your search."
+                        : "No services added yet."}
                     </td>
                   </tr>
                 ) : (
@@ -143,7 +152,9 @@ function AdminServices() {
                           onClick={() => handleDelete(item.id)}
                           title="Delete service"
                         >
-                          <span className="material-symbols-outlined">delete</span>
+                          <span className="material-symbols-outlined">
+                            delete
+                          </span>
                         </button>
                       </td>
                     </tr>
@@ -185,7 +196,14 @@ function AdminServices() {
               </button>
             </div>
             {error && (
-              <p style={{ color: "red", padding: "0 20px", margin: 0, fontSize: "14px" }}>
+              <p
+                style={{
+                  color: "red",
+                  padding: "0 20px",
+                  margin: 0,
+                  fontSize: "14px",
+                }}
+              >
                 {error}
               </p>
             )}

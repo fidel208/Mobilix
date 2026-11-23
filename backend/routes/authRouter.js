@@ -43,10 +43,7 @@ authRouter.post(
 
 authRouter.get("/google", (req, res, next) => {
   const returnTo =
-    req.query.returnTo ||
-    req.headers.referer ||
-    process.env.CLIENT_URL ||
-    "http://localhost:5173";
+    req.query.returnTo || req.headers.referer || process.env.CLIENT_URL;
   const state = Buffer.from(returnTo).toString("base64");
 
   passport.authenticate("google", {
@@ -59,16 +56,16 @@ authRouter.get("/google", (req, res, next) => {
 authRouter.get(
   "/google/callback",
   (req, res, next) => {
-    let failureUrl = process.env.CLIENT_URL || "http://localhost:5173";
+    let failureUrl = process.env.CLIENT_URL;
     if (req.query.state) {
       try {
-        const decoded = Buffer.from(req.query.state, "base64").toString("ascii");
+        const decoded = Buffer.from(req.query.state, "base64").toString(
+          "ascii",
+        );
         if (decoded.startsWith("http://") || decoded.startsWith("https://")) {
           failureUrl = decoded.split("?")[0];
         }
-      } catch (e) {
-        
-      }
+      } catch {}
     }
 
     passport.authenticate("google", {
@@ -77,24 +74,22 @@ authRouter.get(
     })(req, res, next);
   },
   (req, res) => {
-    let frontendURL = process.env.CLIENT_URL || "http://localhost:5173";
+    let frontendURL = process.env.CLIENT_URL;
     if (req.query.state) {
       try {
-        const decoded = Buffer.from(req.query.state, "base64").toString("ascii");
+        const decoded = Buffer.from(req.query.state, "base64").toString(
+          "ascii",
+        );
         if (decoded.startsWith("http://") || decoded.startsWith("https://")) {
           frontendURL = decoded.split("?")[0];
         }
-      } catch (e) {
-        
-      }
+      } catch {}
     }
 
     const token = jwt.sign(
       { userId: req.user.id, role: req.user.role || "CUSTOMER" },
-      process.env.JWT_SECRET || "mobilix_super_secret_jwt_key_2026",
-      {
-        expiresIn: "24h",
-      },
+      process.env.JWT_SECRET,
+      { expiresIn: "24h" },
     );
 
     const { password: _, ...userSafe } = req.user;

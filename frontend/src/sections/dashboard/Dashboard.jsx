@@ -1,4 +1,4 @@
-import React, { useEffect, useState } from "react";
+import { useEffect, useState } from "react";
 import "./dashboard.css";
 import API from "../../services/api";
 import {
@@ -36,7 +36,6 @@ function Dashboard() {
     communityCount: 0,
     yearlyData: defaultMonthlyData,
   });
-  const [loading, setLoading] = useState(true);
 
   useEffect(() => {
     const fetchStats = async () => {
@@ -47,8 +46,6 @@ function Dashboard() {
         }
       } catch (err) {
         console.error("Failed to load dashboard stats:", err);
-      } finally {
-        setLoading(false);
       }
     };
 
@@ -155,7 +152,10 @@ function Dashboard() {
                     color: "#fff",
                     borderRadius: "12px",
                   }}
-                  formatter={(value) => [`Ksh. ${Number(value).toLocaleString()}`, "Amount"]}
+                  formatter={(value) => [
+                    `Ksh. ${Number(value).toLocaleString()}`,
+                    "Amount",
+                  ]}
                 />
                 <Legend iconType="circle" />
                 <Bar

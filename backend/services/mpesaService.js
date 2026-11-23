@@ -74,13 +74,15 @@ export const getMpesaToken = async () => {
 
   const consumerKey = process.env.MPESA_CONSUMER_KEY;
   const consumerSecret = process.env.MPESA_CONSUMER_SECRET;
-  const baseUrl = process.env.MPESA_BASE_URL || "https://api.safaricom.co.ke";
+  const baseUrl = process.env.MPESA_BASE_URL;
 
-  if (!consumerKey || !consumerSecret) {
-    throw new Error("M-Pesa Consumer Key or Consumer Secret is missing in environment variables.");
+  if (!consumerKey || !consumerSecret || !baseUrl) {
+    throw new Error("M-Pesa environment variables are missing.");
   }
 
-  const credentials = Buffer.from(`${consumerKey}:${consumerSecret}`).toString("base64");
+  const credentials = Buffer.from(`${consumerKey}:${consumerSecret}`).toString(
+    "base64",
+  );
 
   const response = await makeHttpsRequest(
     `${baseUrl}/oauth/v1/generate?grant_type=client_credentials`,
@@ -94,7 +96,9 @@ export const getMpesaToken = async () => {
 
   if (!response.ok) {
     const errorBody = await response.text();
-    throw new Error(`Failed to generate M-Pesa OAuth token (${response.status}): ${errorBody}`);
+    throw new Error(
+      `Failed to generate M-Pesa OAuth token (${response.status}): ${errorBody}`,
+    );
   }
 
   const data = await response.json();
@@ -115,7 +119,8 @@ export const initiateStkPush = async ({
     if (!formattedPhone || formattedPhone.length !== 12) {
       return {
         success: false,
-        message: "Invalid Kenyan phone number. Please use format 07XXXXXXXX or 01XXXXXXXX.",
+        message:
+          "Invalid Kenyan phone number. Please use format 07XXXXXXXX or 01XXXXXXXX.",
       };
     }
 
@@ -130,19 +135,24 @@ export const initiateStkPush = async ({
     }
 
     const token = await getMpesaToken();
-    const baseUrl = process.env.MPESA_BASE_URL || "https://api.safaricom.co.ke";
+    const baseUrl = process.env.MPESA_BASE_URL;
     const passkey = process.env.MPESA_PASSKEY;
-    const storeNumber = process.env.MPESA_STORE_NUMBER || "4346191";
-    const tillNumber = process.env.MPESA_TILL_NUMBER || "3022122";
-    const callbackUrl =
-      process.env.MPESA_CALLBACK_URL || "https://mobilix-fwbd.onrender.com/api/mpesa/callback";
+    const storeNumber = process.env.MPESA_STORE_NUMBER;
+    const tillNumber = process.env.MPESA_TILL_NUMBER;
+    const callbackUrl = process.env.MPESA_CALLBACK_URL;
+
+    if (!baseUrl || !passkey || !storeNumber || !tillNumber || !callbackUrl) {
+      throw new Error("M-Pesa payment configuration is incomplete.");
+    }
 
     const now = new Date();
     const pad = (n) => String(n).padStart(2, "0");
     const timestamp = `${now.getFullYear()}${pad(now.getMonth() + 1)}${pad(now.getDate())}${pad(now.getHours())}${pad(now.getMinutes())}${pad(now.getSeconds())}`;
 
     const businessShortCode = storeNumber;
-    const password = Buffer.from(`${businessShortCode}${passkey}${timestamp}`).toString("base64");
+    const password = Buffer.from(
+      `${businessShortCode}${passkey}${timestamp}`,
+    ).toString("base64");
 
     const payload = {
       BusinessShortCode: businessShortCode,
@@ -157,8 +167,6 @@ export const initiateStkPush = async ({
       AccountReference: String(accountReference).substring(0, 12),
       TransactionDesc: String(transactionDesc).substring(0, 13),
     };
-
-    console.log("Initiating Daraja STK Push to:", formattedPhone, "Amount:", payload.Amount);
 
     const postBody = JSON.stringify(payload);
     const response = await makeHttpsRequest(
@@ -175,7 +183,6 @@ export const initiateStkPush = async ({
     );
 
     const data = await response.json();
-    console.log("Daraja STK Push response:", data);
 
     if (data.ResponseCode === "0") {
       return {
@@ -188,7 +195,10 @@ export const initiateStkPush = async ({
     } else {
       return {
         success: false,
-        message: data.errorMessage || data.ResponseDescription || "STK Push request was rejected by Safaricom.",
+        message:
+          data.errorMessage ||
+          data.ResponseDescription ||
+          "STK Push request was rejected by Safaricom.",
         raw: data,
       };
     }
@@ -204,14 +214,20 @@ export const initiateStkPush = async ({
 export const queryStkPush = async (checkoutRequestId) => {
   try {
     const token = await getMpesaToken();
-    const baseUrl = process.env.MPESA_BASE_URL || "https://api.safaricom.co.ke";
+    const baseUrl = process.env.MPESA_BASE_URL;
     const passkey = process.env.MPESA_PASSKEY;
-    const storeNumber = process.env.MPESA_STORE_NUMBER || "4346191";
+    const storeNumber = process.env.MPESA_STORE_NUMBER;
+
+    if (!baseUrl || !passkey || !storeNumber) {
+      throw new Error("M-Pesa query configuration is incomplete.");
+    }
 
     const now = new Date();
     const pad = (n) => String(n).padStart(2, "0");
     const timestamp = `${now.getFullYear()}${pad(now.getMonth() + 1)}${pad(now.getDate())}${pad(now.getHours())}${pad(now.getMinutes())}${pad(now.getSeconds())}`;
-    const password = Buffer.from(`${storeNumber}${passkey}${timestamp}`).toString("base64");
+    const password = Buffer.from(
+      `${storeNumber}${passkey}${timestamp}`,
+    ).toString("base64");
 
     const payload = {
       BusinessShortCode: storeNumber,
@@ -238,6 +254,6 @@ export const queryStkPush = async (checkoutRequestId) => {
     return data;
   } catch (error) {
     console.error("Daraja queryStkPush error:", error);
-    return null;
+    throw error;
   }
 };

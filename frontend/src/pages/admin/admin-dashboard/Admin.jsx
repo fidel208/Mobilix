@@ -1,4 +1,4 @@
-import React, { useState } from "react";
+import { useState } from "react";
 import "./admin.css";
 import Aside from "../../../components/admin/aside/Aside";
 import AdminHeader from "../../../components/admin/admin-header/AdminHeader";

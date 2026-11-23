@@ -15,19 +15,19 @@ import communityRouter from "./routes/communityRouter.js";
 import dashboardRouter from "./routes/dashboardRouter.js";
 import mpesaRouter from "./routes/mpesaRouter.js";
 import contactRouter from "./routes/contactRouter.js";
-
 import passport from "./config/passport.js";
+import { validateEnvironment } from "./config/env.js";
+
+validateEnvironment();
 
 const app = express();
 const PORT = process.env.PORT || 3000;
+const allowedOrigins = process.env.CORS_ORIGINS.split(",")
+  .map((origin) => origin.trim())
+  .filter(Boolean);
 
 const corsOptions = {
-  origin: [
-    "https://mobilix.co.ke",
-    "https://www.mobilix.co.ke",
-    "http://localhost:5173",
-    "http://127.0.0.1:5173",
-  ],
+  origin: allowedOrigins,
   methods: ["GET", "POST", "PUT", "PATCH", "DELETE", "OPTIONS"],
   allowedHeaders: ["Content-Type", "Authorization"],
   credentials: true,
@@ -56,7 +56,7 @@ app.use("/mpesa", mpesaRouter);
 app.use("/contact", contactRouter);
 
 app.get("/", (req, res) => {
-  res.send("Server is running succesfully");
+  res.send("Server is running successfully");
 });
 
 app.listen(PORT, () => {
