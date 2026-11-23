@@ -46,22 +46,24 @@ model Ticket {
 }
 
 model Booking {
-  id            String   @id @default(uuid())
-  userId        String?
-  serviceType   String
-  firstName     String
-  lastName      String
-  startingPoint String
-  destination   String
-  travelDate    String
-  seats         Int      @default(1)
-  carType       String?
-  paymentType   String
-  mpesaNumber   String?
-  status        String   @default("PENDING")
-  createdAt     DateTime @default(now())
-  updatedAt     DateTime @updatedAt
-  ticket        Ticket?
+  id                String   @id @default(uuid())
+  userId            String?
+  email             String?
+  checkoutRequestId String?
+  serviceType       String
+  firstName         String
+  lastName          String
+  startingPoint     String
+  destination       String
+  travelDate        String
+  seats             Int      @default(1)
+  carType           String?
+  paymentType       String
+  mpesaNumber       String?
+  status            String   @default("PENDING")
+  createdAt         DateTime @default(now())
+  updatedAt         DateTime @updatedAt
+  ticket            Ticket?
 }
 
 model Service {

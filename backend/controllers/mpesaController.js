@@ -72,6 +72,7 @@ export const handleMpesaCallback = async (req, res) => {
       where: {
         OR: [
           { mpesaRefCode: CheckoutRequestID },
+          { booking: { checkoutRequestId: CheckoutRequestID } },
           { booking: { userId: CheckoutRequestID } },
         ],
       },
@@ -79,7 +80,6 @@ export const handleMpesaCallback = async (req, res) => {
     });
 
     if (ResultCode === 0) {
-      
       let realMpesaCode = "";
       let amountPaid = 0;
       let paidByPhone = "";
@@ -95,7 +95,6 @@ export const handleMpesaCallback = async (req, res) => {
       console.log(`Payment confirmed! Real M-Pesa Receipt: ${realMpesaCode}, Amount: ${amountPaid}`);
 
       if (existingTicket) {
-        
         const updatedTicket = await prisma.ticket.update({
           where: { id: existingTicket.id },
           data: {
@@ -104,56 +103,42 @@ export const handleMpesaCallback = async (req, res) => {
           },
         });
 
-        
         const updatedBooking = await prisma.booking.update({
           where: { id: existingTicket.bookingId },
           data: { status: "PAID" },
         });
 
-        
-        
-        
-        
-        let customerEmailAddr = "";
-        try {
-          const firstName = existingTicket.passengerName?.split(" ")[0]?.toLowerCase() || "";
-          if (firstName) {
-            const matchedMember = await prisma.communityMember.findFirst({
-              where: { email: { contains: firstName } },
-              orderBy: { createdAt: "desc" },
-            });
-            customerEmailAddr = matchedMember?.email || "";
-          }
-        } catch {
-          
-        }
+        const customerEmail =
+          updatedBooking.email ||
+          existingTicket.booking?.email ||
+          null;
 
-        if (customerEmailAddr) {
-          sendTicketEmail(customerEmailAddr, {
+        if (customerEmail) {
+          sendTicketEmail(customerEmail, {
             booking: updatedBooking,
             ticket: updatedTicket,
-          }).catch((err) => console.error("Email send error after Daraja callback:", err));
+          }).catch((err) =>
+            console.error("Email send error after Daraja callback:", err),
+          );
         }
       }
     } else {
-      
       console.log(`Payment failed/cancelled: ${ResultDesc} (ResultCode: ${ResultCode})`);
       if (existingTicket) {
         await prisma.ticket.update({
           where: { id: existingTicket.id },
           data: { status: "PAYMENT_FAILED" },
-        });
+        }).catch(() => {});
         await prisma.booking.update({
           where: { id: existingTicket.bookingId },
           data: { status: "CANCELLED" },
-        });
+        }).catch(() => {});
       }
     }
 
     return res.status(200).json({ ResultCode: 0, ResultDesc: "Accepted" });
   } catch (error) {
     console.error("M-Pesa callback processing error:", error);
-    
     return res.status(200).json({ ResultCode: 0, ResultDesc: "Error handled" });
   }
 };
@@ -165,11 +150,11 @@ export const checkPaymentStatus = async (req, res) => {
       return res.status(400).json({ status: "error", message: "CheckoutRequestID is required." });
     }
 
-    
     const ticket = await prisma.ticket.findFirst({
       where: {
         OR: [
           { mpesaRefCode: checkoutRequestId },
+          { booking: { checkoutRequestId: checkoutRequestId } },
           { booking: { userId: checkoutRequestId } },
           { id: checkoutRequestId },
         ],
@@ -187,43 +172,89 @@ export const checkPaymentStatus = async (req, res) => {
       });
     }
 
-    
     const queryResult = await queryStkPush(checkoutRequestId);
     console.log("Daraja STK Query result:", queryResult);
 
-    if (queryResult?.ResultCode === "0") {
-      
+    const resultCode =
+      queryResult?.ResultCode !== undefined ? String(queryResult.ResultCode) : null;
+    const resultDesc = String(
+      queryResult?.ResultDesc || queryResult?.errorMessage || "",
+    );
+
+    if (resultCode === "0") {
+      let updatedTicket = ticket;
+      let updatedBooking = ticket?.booking;
+
       if (ticket) {
-        await prisma.ticket.update({
+        updatedTicket = await prisma.ticket.update({
           where: { id: ticket.id },
-          data: { status: "CONFIRMED" },
+          data: {
+            status: "CONFIRMED",
+            mpesaRefCode:
+              ticket.mpesaRefCode && !ticket.mpesaRefCode.startsWith("ws_CO_")
+                ? ticket.mpesaRefCode
+                : `MPESA-${Date.now()}`,
+          },
         });
-        await prisma.booking.update({
+        updatedBooking = await prisma.booking.update({
           where: { id: ticket.bookingId },
           data: { status: "PAID" },
         });
+
+        const customerEmail = updatedBooking?.email || null;
+        if (customerEmail) {
+          sendTicketEmail(customerEmail, {
+            booking: updatedBooking,
+            ticket: updatedTicket,
+          }).catch((err) =>
+            console.error("Email send error after STK query confirmation:", err),
+          );
+        }
       }
 
       return res.status(200).json({
         status: "success",
         paid: true,
-        mpesaRefCode: ticket?.mpesaRefCode || "CONFIRMED",
-        ticketNumber: ticket?.ticketNumber,
-      });
-    } else if (queryResult?.ResultCode) {
-      
-      return res.status(200).json({
-        status: "failed",
-        paid: false,
-        message: queryResult.ResultDesc || "Payment was not completed.",
+        mpesaRefCode: updatedTicket?.mpesaRefCode || "CONFIRMED",
+        ticketNumber: updatedTicket?.ticketNumber,
+        booking: updatedBooking,
       });
     }
 
-    
+    const isStillProcessing =
+      resultCode === "4999" ||
+      resultDesc.toLowerCase().includes("processing") ||
+      resultDesc.toLowerCase().includes("pending") ||
+      !resultCode;
+
+    if (isStillProcessing) {
+      return res.status(200).json({
+        status: "pending",
+        paid: false,
+        message:
+          "Waiting for M-Pesa payment confirmation. Please enter your PIN on your phone.",
+      });
+    }
+
+    if (ticket) {
+      await prisma.ticket
+        .update({
+          where: { id: ticket.id },
+          data: { status: "PAYMENT_FAILED" },
+        })
+        .catch(() => {});
+      await prisma.booking
+        .update({
+          where: { id: ticket.bookingId },
+          data: { status: "CANCELLED" },
+        })
+        .catch(() => {});
+    }
+
     return res.status(200).json({
-      status: "pending",
+      status: "failed",
       paid: false,
-      message: "Waiting for M-Pesa payment confirmation. Please enter your PIN on your phone.",
+      message: resultDesc || "M-Pesa payment was not completed.",
     });
   } catch (error) {
     console.error("checkPaymentStatus error:", error);

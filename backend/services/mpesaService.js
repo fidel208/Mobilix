@@ -1,7 +1,16 @@
-import "dotenv/config";
+import dotenv from "dotenv";
+import path from "node:path";
+import { fileURLToPath } from "node:url";
 import dns from "node:dns";
+import https from "node:https";
+
+const __dirname = path.dirname(fileURLToPath(import.meta.url));
+dotenv.config({ path: path.resolve(__dirname, "../.env") });
+dotenv.config();
 
 dns.setDefaultResultOrder("ipv4first");
+
+const httpsAgent = new https.Agent({ family: 4, keepAlive: true });
 
 let cachedToken = null;
 let tokenExpiresAt = 0;
@@ -9,12 +18,52 @@ let tokenExpiresAt = 0;
 export const formatMpesaPhoneNumber = (phone) => {
   if (!phone) return "";
   let cleaned = String(phone).replace(/\D/g, "");
-  if (cleaned.startsWith("0")) {
+  if (cleaned.startsWith("2540")) {
+    cleaned = "254" + cleaned.slice(4);
+  } else if (cleaned.startsWith("0")) {
     cleaned = "254" + cleaned.slice(1);
   } else if (cleaned.startsWith("7") || cleaned.startsWith("1")) {
     cleaned = "254" + cleaned;
   }
   return cleaned;
+};
+
+const makeHttpsRequest = (urlStr, options, bodyData = null) => {
+  return new Promise((resolve, reject) => {
+    const url = new URL(urlStr);
+    const reqOptions = {
+      hostname: url.hostname,
+      port: url.port || 443,
+      path: url.pathname + url.search,
+      method: options.method || "GET",
+      agent: httpsAgent,
+      headers: options.headers || {},
+    };
+
+    const req = https.request(reqOptions, (res) => {
+      let data = "";
+      res.on("data", (chunk) => {
+        data += chunk;
+      });
+      res.on("end", () => {
+        resolve({
+          status: res.statusCode,
+          ok: res.statusCode >= 200 && res.statusCode < 300,
+          text: async () => data,
+          json: async () => JSON.parse(data || "{}"),
+        });
+      });
+    });
+
+    req.on("error", (err) => {
+      reject(err);
+    });
+
+    if (bodyData) {
+      req.write(bodyData);
+    }
+    req.end();
+  });
 };
 
 export const getMpesaToken = async () => {
@@ -33,12 +82,15 @@ export const getMpesaToken = async () => {
 
   const credentials = Buffer.from(`${consumerKey}:${consumerSecret}`).toString("base64");
 
-  const response = await fetch(`${baseUrl}/oauth/v1/generate?grant_type=client_credentials`, {
-    method: "GET",
-    headers: {
-      Authorization: `Basic ${credentials}`,
+  const response = await makeHttpsRequest(
+    `${baseUrl}/oauth/v1/generate?grant_type=client_credentials`,
+    {
+      method: "GET",
+      headers: {
+        Authorization: `Basic ${credentials}`,
+      },
     },
-  });
+  );
 
   if (!response.ok) {
     const errorBody = await response.text();
@@ -67,8 +119,7 @@ export const initiateStkPush = async ({
       };
     }
 
-    
-    if (process.env.NODE_ENV === "test" || formattedPhone === "254712345678") {
+    if (process.env.NODE_ENV === "test") {
       return {
         success: true,
         checkoutRequestId: `ws_CO_TEST_${Date.now()}`,
@@ -86,12 +137,10 @@ export const initiateStkPush = async ({
     const callbackUrl =
       process.env.MPESA_CALLBACK_URL || "https://mobilix-fwbd.onrender.com/api/mpesa/callback";
 
-    
     const now = new Date();
     const pad = (n) => String(n).padStart(2, "0");
     const timestamp = `${now.getFullYear()}${pad(now.getMonth() + 1)}${pad(now.getDate())}${pad(now.getHours())}${pad(now.getMinutes())}${pad(now.getSeconds())}`;
 
-    
     const businessShortCode = storeNumber;
     const password = Buffer.from(`${businessShortCode}${passkey}${timestamp}`).toString("base64");
 
@@ -111,14 +160,19 @@ export const initiateStkPush = async ({
 
     console.log("Initiating Daraja STK Push to:", formattedPhone, "Amount:", payload.Amount);
 
-    const response = await fetch(`${baseUrl}/mpesa/stkpush/v1/processrequest`, {
-      method: "POST",
-      headers: {
-        Authorization: `Bearer ${token}`,
-        "Content-Type": "application/json",
+    const postBody = JSON.stringify(payload);
+    const response = await makeHttpsRequest(
+      `${baseUrl}/mpesa/stkpush/v1/processrequest`,
+      {
+        method: "POST",
+        headers: {
+          Authorization: `Bearer ${token}`,
+          "Content-Type": "application/json",
+          "Content-Length": Buffer.byteLength(postBody),
+        },
       },
-      body: JSON.stringify(payload),
-    });
+      postBody,
+    );
 
     const data = await response.json();
     console.log("Daraja STK Push response:", data);
@@ -166,14 +220,19 @@ export const queryStkPush = async (checkoutRequestId) => {
       CheckoutRequestID: checkoutRequestId,
     };
 
-    const response = await fetch(`${baseUrl}/mpesa/stkpushquery/v1/query`, {
-      method: "POST",
-      headers: {
-        Authorization: `Bearer ${token}`,
-        "Content-Type": "application/json",
+    const postBody = JSON.stringify(payload);
+    const response = await makeHttpsRequest(
+      `${baseUrl}/mpesa/stkpushquery/v1/query`,
+      {
+        method: "POST",
+        headers: {
+          Authorization: `Bearer ${token}`,
+          "Content-Type": "application/json",
+          "Content-Length": Buffer.byteLength(postBody),
+        },
       },
-      body: JSON.stringify(payload),
-    });
+      postBody,
+    );
 
     const data = await response.json();
     return data;

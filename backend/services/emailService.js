@@ -1,6 +1,78 @@
-import { Resend } from "resend";
+import dotenv from "dotenv";
+import path from "node:path";
+import { fileURLToPath } from "node:url";
+import https from "node:https";
 
-const resend = new Resend(process.env.RESEND_API_KEY);
+const __dirname = path.dirname(fileURLToPath(import.meta.url));
+dotenv.config({ path: path.resolve(__dirname, "../.env") });
+dotenv.config();
+
+const httpsAgent = new https.Agent({ family: 4, keepAlive: true });
+
+const sendViaResendHttp = async ({ from, to, replyTo, subject, html }) => {
+  const apiKey = process.env.RESEND_API_KEY;
+  if (!apiKey) {
+    console.warn("RESEND_API_KEY is not defined in environment variables");
+    return { data: null, error: { message: "Missing RESEND_API_KEY" } };
+  }
+
+  const payload = JSON.stringify({
+    from,
+    to: Array.isArray(to) ? to : [to],
+    ...(replyTo ? { reply_to: replyTo } : {}),
+    subject,
+    html,
+  });
+
+  return new Promise((resolve) => {
+    const req = https.request(
+      "https://api.resend.com/emails",
+      {
+        method: "POST",
+        agent: httpsAgent,
+        headers: {
+          Authorization: `Bearer ${apiKey}`,
+          "Content-Type": "application/json",
+          "Content-Length": Buffer.byteLength(payload),
+        },
+      },
+      (res) => {
+        let raw = "";
+        res.on("data", (chunk) => {
+          raw += chunk;
+        });
+        res.on("end", () => {
+          try {
+            const parsed = JSON.parse(raw);
+            if (res.statusCode >= 200 && res.statusCode < 300) {
+              resolve({ data: parsed, error: null });
+            } else {
+              resolve({
+                data: null,
+                error: {
+                  statusCode: res.statusCode,
+                  message: parsed.message || raw,
+                },
+              });
+            }
+          } catch {
+            resolve({
+              data: null,
+              error: { statusCode: res.statusCode, message: raw },
+            });
+          }
+        });
+      },
+    );
+
+    req.on("error", (err) => {
+      resolve({ data: null, error: { message: err.message } });
+    });
+
+    req.write(payload);
+    req.end();
+  });
+};
 
 export const sendTicketEmail = async (toEmail, details) => {
   try {
@@ -20,16 +92,20 @@ export const sendTicketEmail = async (toEmail, details) => {
       .join(" ");
     const vehicleLabel =
       booking.carType ||
-      (vehicle.name ? `${vehicle.name} (${vehicle.plate})` : "Assigned Vehicle");
+      (vehicle.name
+        ? `${vehicle.name} (${vehicle.plate})`
+        : "Assigned Vehicle");
     const routeLabel =
       ticket.route ||
       `${booking.startingPoint || "Origin"} to ${booking.destination || "Destination"}`;
-    const travelDate = booking.travelDate || ticket.travelDate || "As scheduled";
+    const travelDate =
+      booking.travelDate || ticket.travelDate || "As scheduled";
     const seats = booking.seats || ticket.seats || 1;
     const amount = ticket.amount || (route.price ? route.price * seats : 500);
     const paymentType = booking.paymentType || "now";
     const paymentStatus =
-      booking.status || (paymentType === "now" ? "PAID" : "CONFIRMED (PAY ON ARRIVAL)");
+      booking.status ||
+      (paymentType === "now" ? "PAID" : "CONFIRMED (PAY ON ARRIVAL)");
     const mpesaNumber = booking.mpesaNumber || "N/A";
     const mpesaRef = ticket.mpesaRefCode || "N/A";
 
@@ -67,7 +143,9 @@ export const sendTicketEmail = async (toEmail, details) => {
                   <div style="text-align: right;">
                     <span style="font-size: 12px; color: #64748b; text-transform: uppercase; font-weight: 600;">Status</span>
                     <div style="display: inline-block; padding: 4px 10px; border-radius: 20px; font-size: 12px; font-weight: 600; background: ${
-                      paymentStatus.includes("PAID") ? "#dcfce7; color: #15803d" : "#fef9c3; color: #854d0e"
+                      paymentStatus.includes("PAID")
+                        ? "#dcfce7; color: #15803d"
+                        : "#fef9c3; color: #854d0e"
                     };">
                       ${paymentStatus}
                     </div>
@@ -135,18 +213,198 @@ export const sendTicketEmail = async (toEmail, details) => {
       </html>
     `;
 
-    const data = await resend.emails.send({
-      from: "Mobilix Bookings <onboarding@resend.dev>",
+    const fromEmail =
+      process.env.RESEND_FROM_EMAIL ||
+      "Mobilix Bookings <onboarding@resend.dev>";
+    const verifiedAccountEmail =
+      process.env.RESEND_TEST_EMAIL || "dempafidel@gmail.com";
+
+    const result = await sendViaResendHttp({
+      from: fromEmail,
       to: [toEmail],
       subject: `Mobilix Ticket Confirmation - ${ticketNumber} (${routeLabel})`,
       html: emailHtml,
     });
 
-    console.log("Resend email sent successfully:", data);
-    return data;
+    if (result.error) {
+      console.warn(
+        `Resend send warning for ${toEmail} (${result.error.statusCode}): ${result.error.message}`,
+      );
+
+      if (
+        (result.error.statusCode === 403 ||
+          result.error.message?.includes("testing emails")) &&
+        toEmail !== verifiedAccountEmail
+      ) {
+        console.info(
+          `Domain not yet verified. Forwarding test ticket copy to verified account email (${verifiedAccountEmail}) for inspection.`,
+        );
+
+        const banner = `
+          <div style="background: #fef3c7; border: 1px solid #f59e0b; padding: 12px 16px; margin-bottom: 20px; border-radius: 8px; font-size: 13px; color: #92400e;">
+            <strong>Test Mode Delivery:</strong> This ticket was generated for passenger <strong>${passengerName}</strong> (intended recipient: <strong>${toEmail}</strong>). Resend free tier forwarded it to your account email because a custom domain has not yet been verified.
+          </div>
+        `;
+
+        const fallbackHtml = emailHtml.replace(
+          '<div style="padding: 28px 24px;">',
+          `<div style="padding: 28px 24px;">${banner}`,
+        );
+
+        const fallbackResult = await sendViaResendHttp({
+          from: fromEmail,
+          to: [verifiedAccountEmail],
+          subject: `[TEST COPY - ${passengerName}] Mobilix Ticket Confirmation - ${ticketNumber}`,
+          html: fallbackHtml,
+        });
+
+        if (!fallbackResult.error) {
+          console.log(
+            "Test ticket email successfully delivered to account owner:",
+            fallbackResult.data?.id,
+          );
+          return fallbackResult;
+        }
+      }
+
+      return result;
+    }
+
+    console.log("Resend email sent successfully:", result.data?.id);
+    return result;
   } catch (error) {
     console.error("Resend sendTicketEmail error:", error);
-    
+    return null;
+  }
+};
+
+export const sendContactHelpEmail = async ({
+  firstName,
+  lastName,
+  email,
+  phone,
+  message,
+}) => {
+  try {
+    const fromEmail =
+      process.env.RESEND_FROM_EMAIL ||
+      "Mobilix Support <onboarding@resend.dev>";
+    const adminEmail = process.env.SUPPORT_EMAIL || "info@mobilix.co.ke";
+    const verifiedAccountEmail =
+      process.env.RESEND_TEST_EMAIL || "dempafidel@gmail.com";
+    const senderFullName = `${String(firstName || "").trim()} ${String(lastName || "").trim()}`.trim() || "Customer";
+
+    const emailHtml = `
+      <!DOCTYPE html>
+      <html>
+        <head>
+          <meta charset="utf-8">
+          <meta name="viewport" content="width=device-width, initial-scale=1.0">
+          <title>New Customer Support Inquiry</title>
+        </head>
+        <body style="font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Helvetica, Arial, sans-serif; background-color: #f3f4f6; margin: 0; padding: 24px;">
+          <div style="max-width: 600px; background: #ffffff; margin: 0 auto; border-radius: 12px; overflow: hidden; box-shadow: 0 4px 16px rgba(0,0,0,0.08); border: 1px solid #e5e7eb;">
+            <div style="background: linear-gradient(135deg, #1e293b, #0f172a); padding: 28px 24px; text-align: center; color: #ffffff;">
+              <h1 style="margin: 0; font-size: 24px; font-weight: 700; letter-spacing: 1px; color: #ffffff;">MOBILIX SUPPORT</h1>
+              <p style="margin: 6px 0 0 0; font-size: 13px; color: #94a3b8; text-transform: uppercase;">New Website Inquiry</p>
+            </div>
+            <div style="padding: 28px 24px;">
+              <p style="font-size: 15px; color: #1e293b; margin-top: 0;">
+                You have received a new customer inquiry from the Mobilix contact page:
+              </p>
+              <div style="background: #f8fafc; border: 1px solid #e2e8f0; border-radius: 8px; padding: 16px; margin: 16px 0;">
+                <table style="width: 100%; border-collapse: collapse; font-size: 14px; color: #334155;">
+                  <tr>
+                    <td style="padding: 6px 0; color: #64748b; width: 35%;">Customer Name:</td>
+                    <td style="padding: 6px 0; font-weight: 600;">${senderFullName}</td>
+                  </tr>
+                  <tr>
+                    <td style="padding: 6px 0; color: #64748b;">Customer Email:</td>
+                    <td style="padding: 6px 0; font-weight: 600;"><a href="mailto:${email}" style="color: #2563eb;">${email}</a></td>
+                  </tr>
+                  <tr>
+                    <td style="padding: 6px 0; color: #64748b;">Phone Number:</td>
+                    <td style="padding: 6px 0; font-weight: 600;">${phone || "Not provided"}</td>
+                  </tr>
+                </table>
+              </div>
+              <div style="margin: 20px 0;">
+                <h4 style="margin: 0 0 8px 0; font-size: 14px; color: #475569; text-transform: uppercase;">Message Content</h4>
+                <div style="background: #ffffff; border: 1px solid #cbd5e1; border-radius: 8px; padding: 16px; font-size: 14px; line-height: 1.6; color: #1e293b; white-space: pre-wrap;">${message}</div>
+              </div>
+              <div style="border-top: 1px solid #e2e8f0; padding-top: 16px; font-size: 12px; color: #64748b;">
+                You can reply directly to this email to contact <strong>${email}</strong>.
+              </div>
+            </div>
+            <div style="background: #f8fafc; border-top: 1px solid #e2e8f0; padding: 16px; text-align: center; font-size: 12px; color: #94a3b8;">
+              Mobilix Transport Services Administrator Notification
+            </div>
+          </div>
+        </body>
+      </html>
+    `;
+
+    const primaryResult = await sendViaResendHttp({
+      from: fromEmail,
+      to: [adminEmail],
+      replyTo: email,
+      subject: `Support Request from ${senderFullName} - Mobilix Help`,
+      html: emailHtml,
+    });
+
+    if (primaryResult.error) {
+      console.warn(
+        `Primary admin delivery to ${adminEmail} failed (${primaryResult.error.statusCode}): ${primaryResult.error.message}`,
+      );
+
+      if (adminEmail !== verifiedAccountEmail) {
+        console.info(`Forwarding support inquiry to verified test account (${verifiedAccountEmail})`);
+        const fallbackResult = await sendViaResendHttp({
+          from: fromEmail,
+          to: [verifiedAccountEmail],
+          replyTo: email,
+          subject: `[FORWARDED TO ADMIN] Support Request from ${senderFullName} (${email})`,
+          html: emailHtml,
+        });
+
+        if (!fallbackResult.error) {
+          console.log("Support inquiry delivered to verified admin:", fallbackResult.data?.id);
+          return fallbackResult;
+        }
+      }
+      return primaryResult;
+    }
+
+    console.log("Support inquiry sent successfully to admin:", primaryResult.data?.id);
+    return primaryResult;
+
+    if (primaryResult.error) {
+      console.warn(
+        `Primary admin delivery to ${adminEmail} failed (${primaryResult.error.statusCode}): ${primaryResult.error.message}`,
+      );
+
+      if (adminEmail !== verifiedAccountEmail) {
+        console.info(`Forwarding support inquiry to verified test account (${verifiedAccountEmail})`);
+        const fallbackResult = await resend.emails.send({
+          from: fromEmail,
+          to: [verifiedAccountEmail],
+          replyTo: email,
+          subject: `[FORWARDED TO ADMIN] Support Request from ${senderFullName} (${email})`,
+          html: emailHtml,
+        });
+
+        if (!fallbackResult.error) {
+          console.log("Support inquiry delivered to verified admin:", fallbackResult.data?.id);
+          return fallbackResult;
+        }
+      }
+      return primaryResult;
+    }
+
+    console.log("Support inquiry sent successfully to admin:", primaryResult.data?.id);
+    return primaryResult;
+  } catch (error) {
+    console.error("Resend sendContactHelpEmail error:", error);
     return null;
   }
 };

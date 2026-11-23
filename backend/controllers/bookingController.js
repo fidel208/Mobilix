@@ -186,8 +186,9 @@ export const createBooking = async (req, res) => {
 
     const newBooking = await prisma.booking.create({
       data: {
-        
-        userId: stkResult?.checkoutRequestId || normalizedEmail || null,
+        userId: req.user?.id || null,
+        email: normalizedEmail,
+        checkoutRequestId: stkResult?.checkoutRequestId || null,
         serviceType: normalizedServiceType,
         firstName: normalizedFirstName,
         lastName: normalizedLastName,
