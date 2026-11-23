@@ -23,7 +23,7 @@
 .booking form {
   display: flex;
   flex-direction: column;
-  gap: 10px;
+  gap: 5px;
 }
 .form-buttons {
   display: flex;
@@ -183,7 +183,6 @@
   padding: 25px;
   display: flex;
   flex-direction: column;
-  gap: 20px;
 }
 .booking-container label {
   font-size: 18px;
