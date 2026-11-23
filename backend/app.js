@@ -23,7 +23,7 @@ const PORT = process.env.PORT || 3000;
 
 const corsOptions = {
   origin: [
-    "https://mobilix-eight.vercel.app",
+    "https://mobilix.co.ke/",
     "http://localhost:5173",
     "http://127.0.0.1:5173",
   ],
