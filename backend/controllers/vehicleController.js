@@ -24,16 +24,6 @@ export const createVehicle = async (req, res) => {
       });
     }
 
-    const existing = await prisma.vehicle.findUnique({
-      where: { plate: plate.trim().toUpperCase() },
-    });
-    if (existing) {
-      return res.status(400).json({
-        status: "error",
-        message: "A vehicle with this number plate already exists.",
-      });
-    }
-
     const vehicle = await prisma.vehicle.create({
       data: {
         name: name.trim(),
