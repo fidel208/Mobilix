@@ -95,14 +95,15 @@
   .services-top h2 {
     font-size: 25px;
   }
-  #cont-2,
-  #cont-4 {
-    flex-direction: column-reverse;
-  }
+
   .service-cont {
     display: flex;
     flex-direction: column;
     gap: 50px;
+  }
+  #cont-2,
+  #cont-4 {
+    flex-direction: column-reverse !important;
   }
   #description {
     width: 100%;
