@@ -763,12 +763,26 @@ function Booking() {
                   </button>
                 </div>
                 {successMsg && (
-                  <p style={{ color: "green", fontWeight: "600" }}>
+                  <p
+                    style={{
+                      color: "green",
+                      fontWeight: "600",
+                      fontSize: "14px",
+                    }}
+                  >
                     {successMsg}
                   </p>
                 )}
                 {errorMsg && (
-                  <p style={{ color: "red", fontWeight: "600" }}>{errorMsg}</p>
+                  <p
+                    style={{
+                      color: "red",
+                      fontWeight: "600",
+                      fontSize: "14px",
+                    }}
+                  >
+                    {errorMsg}
+                  </p>
                 )}
 
                 {}
@@ -1174,12 +1188,26 @@ function Booking() {
                   </button>
                 </div>
                 {successMsg && (
-                  <p style={{ color: "green", fontWeight: "600" }}>
+                  <p
+                    style={{
+                      color: "green",
+                      fontWeight: "600",
+                      fontSize: "14px",
+                    }}
+                  >
                     {successMsg}
                   </p>
                 )}
                 {errorMsg && (
-                  <p style={{ color: "red", fontWeight: "600" }}>{errorMsg}</p>
+                  <p
+                    style={{
+                      color: "red",
+                      fontWeight: "600",
+                      fontSize: "14px",
+                    }}
+                  >
+                    {errorMsg}
+                  </p>
                 )}
 
                 {}
