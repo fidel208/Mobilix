@@ -43,7 +43,7 @@ function Home() {
                 We provide short distance travels that gives you quick
                 comfortable and dependable rides for your everyday errands.
               </p>
-              <Link>
+              <Link to={"/services#local-transit"}>
                 Learn more
                 <span className="material-symbols-outlined">
                   arrow_right_alt
@@ -59,7 +59,7 @@ function Home() {
                 We let you experience the utimate comfort with our private
                 transport service.
               </p>
-              <Link>
+              <Link to={"/services#private-transport"}>
                 Learn more
                 <span className="material-symbols-outlined">
                   arrow_right_alt
@@ -75,7 +75,7 @@ function Home() {
                 Our dedicated luggage transport service ensures your belongings
                 reach at your destination safely, securely and right on time.
               </p>
-              <Link>
+              <Link to={"/services#carrier-services"}>
                 Learn more
                 <span className="material-symbols-outlined">
                   arrow_right_alt
@@ -91,7 +91,7 @@ function Home() {
                 We offer well-maintained, comfortable and fuel-efficient
                 vehicles available for both self-drives ad chauffered options.
               </p>
-              <Link>
+              <Link to={"/services#car-hire"}>
                 Learn more
                 <span className="material-symbols-outlined">
                   arrow_right_alt
