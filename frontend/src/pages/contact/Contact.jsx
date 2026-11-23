@@ -1,9 +1,81 @@
-import React from "react";
+import React, { useState } from "react";
 import "./contact.css";
 import Header from "../../components/header/Header";
 import Footer from "../../components/footer/Footer";
+import API from "../../services/api";
 
 function Contact() {
+  const [formData, setFormData] = useState({
+    firstName: "",
+    lastName: "",
+    email: "",
+    phone: "",
+    message: "",
+  });
+  const [loading, setLoading] = useState(false);
+  const [successMsg, setSuccessMsg] = useState("");
+  const [errorMsg, setErrorMsg] = useState("");
+
+  const handleChange = (e) => {
+    const { name, value } = e.target;
+    setFormData((prev) => ({
+      ...prev,
+      [name]: value,
+    }));
+  };
+
+  const handleSubmit = async (e) => {
+    e.preventDefault();
+    setErrorMsg("");
+    setSuccessMsg("");
+
+    if (!formData.firstName.trim()) {
+      setErrorMsg("Please enter your first name.");
+      return;
+    }
+
+    if (!formData.email.trim() || !formData.email.includes("@")) {
+      setErrorMsg("Please provide a valid email address.");
+      return;
+    }
+
+    if (!formData.message.trim()) {
+      setErrorMsg("Please enter your message.");
+      return;
+    }
+
+    setLoading(true);
+
+    try {
+      const response = await API.post("/contact", {
+        firstName: formData.firstName,
+        lastName: formData.lastName,
+        email: formData.email,
+        phone: formData.phone,
+        message: formData.message,
+      });
+
+      setSuccessMsg(
+        response.data?.message ||
+          "Your message has been sent to info@mobilix.co.ke. We will get back to you shortly.",
+      );
+      setFormData({
+        firstName: "",
+        lastName: "",
+        email: "",
+        phone: "",
+        message: "",
+      });
+    } catch (err) {
+      setErrorMsg(
+        err.response?.data?.message ||
+          "Failed to send your message. Please try again or contact us directly.",
+      );
+    } finally {
+      setLoading(false);
+    }
+  };
+
   return (
     <>
       <Header />
@@ -50,15 +122,48 @@ function Contact() {
               </p>
             </span>
           </div>
-          <form className="send-message">
+          <form className="send-message" onSubmit={handleSubmit}>
+            {successMsg && (
+              <div
+                style={{
+                  background: "#dcfce7",
+                  color: "#15803d",
+                  padding: "12px 16px",
+                  borderRadius: "8px",
+                  fontSize: "14px",
+                  fontWeight: "600",
+                  marginBottom: "16px",
+                }}
+              >
+                {successMsg}
+              </div>
+            )}
+            {errorMsg && (
+              <div
+                style={{
+                  background: "#fee2e2",
+                  color: "#b91c1c",
+                  padding: "12px 16px",
+                  borderRadius: "8px",
+                  fontSize: "14px",
+                  fontWeight: "600",
+                  marginBottom: "16px",
+                }}
+              >
+                {errorMsg}
+              </div>
+            )}
             <div id="form-div">
               <span id="form-span">
                 <label htmlFor="first-name">First name</label>
                 <input
                   type="text"
                   id="first-name"
-                  name="first-name"
+                  name="firstName"
+                  value={formData.firstName}
+                  onChange={handleChange}
                   placeholder="Enter your first name"
+                  required
                 />
               </span>
               <span id="form-span">
@@ -66,7 +171,9 @@ function Contact() {
                 <input
                   type="text"
                   id="last-name"
-                  name="last-name"
+                  name="lastName"
+                  value={formData.lastName}
+                  onChange={handleChange}
                   placeholder="Enter your last name"
                 />
               </span>
@@ -78,7 +185,10 @@ function Contact() {
                   type="email"
                   id="email"
                   name="email"
+                  value={formData.email}
+                  onChange={handleChange}
                   placeholder="your@email.com"
+                  required
                 />
               </span>
               <span id="form-span">
@@ -87,6 +197,8 @@ function Contact() {
                   type="tel"
                   id="phone"
                   name="phone"
+                  value={formData.phone}
+                  onChange={handleChange}
                   placeholder="eg. +254712345678"
                 />
               </span>
@@ -96,10 +208,16 @@ function Contact() {
               <textarea
                 name="message"
                 id="message"
+                value={formData.message}
+                onChange={handleChange}
                 placeholder="Enter your message"
+                rows={5}
+                required
               ></textarea>
             </span>
-            <button>Send message</button>
+            <button type="submit" disabled={loading}>
+              {loading ? "Sending..." : "Send message"}
+            </button>
           </form>
         </div>
       </div>
