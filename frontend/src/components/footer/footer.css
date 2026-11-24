@@ -1,5 +1,5 @@
 footer {
-  height: 60dvh;
+  height: auto;
   width: 100%;
   background-color: #4b4038;
   color: white;
@@ -15,9 +15,10 @@ footer {
 footer a {
   text-decoration: none;
   color: #fdfbf7;
+  font-size: 17px;
 }
 footer h3 {
-  font-size: 22px;
+  font-size: 20px;
 }
 footer a:hover {
   color: #cecbc8;
@@ -30,10 +31,10 @@ footer a:hover {
   width: 70%;
 }
 #comp-name {
-  font-size: 22px;
+  font-size: 20px;
 }
 #notion {
-  font-size: 30px;
+  font-size: 27px;
 }
 #entails {
   font-size: 18px;
@@ -115,7 +116,7 @@ footer a:hover {
 
 @media (max-width: 768px) {
   footer {
-    height: 95dvh;
+    height: auto;
   }
   #comp-name {
     font-size: 17px;

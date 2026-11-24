@@ -84,7 +84,7 @@ function Footer() {
           <div className="footer-bottom-one">
             <span>
               <h3>Contact</h3>
-              <Link to={"mailto:rajaxraj1997@gmail.com"} target="_blank">
+              <Link to={"mailto:info@mobilix.co.ke"} target="_blank">
                 Email us
               </Link>
               <Link to={"tel:+254704679648"} target="_blank">
@@ -116,7 +116,7 @@ function Footer() {
               <Link to={"https://wa.link/2exqq4"} target="_blank">
                 <i className="fa-brands fa-whatsapp"></i>
               </Link>
-              <Link to={"mailto:rajaxraj1997@gmail.com"} target="_blank">
+              <Link to={"mailto:info@mobilix.co.ke"} target="_blank">
                 <i className="fa-solid fa-envelope"></i>
               </Link>
             </span>

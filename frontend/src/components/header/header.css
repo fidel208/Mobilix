@@ -12,8 +12,8 @@ header {
   top: 0;
 }
 header img {
-  height: 70px;
-  width: 70px;
+  height: 60px;
+  width: 60px;
 }
 .head-one {
   display: flex;
@@ -26,7 +26,7 @@ header img {
 .head-one a {
   text-decoration: none;
   font-weight: bold;
-  font-size: 25px;
+  font-size: 22px;
   color: #202940;
 }
 header nav {
@@ -48,7 +48,7 @@ header nav {
 .nav-links a {
   position: relative;
   text-decoration: none;
-  font-size: 22px;
+  font-size: 20px;
   color: #8b584e;
   padding-bottom: 8px;
   transition: color 0.3s ease;

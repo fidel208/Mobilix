@@ -48,7 +48,7 @@ function Tickets() {
               type="text"
               id="ticket"
               name="ticket"
-              placeholder="Enter your ticket number or phone"
+              placeholder="Enter your ticket number"
               value={searchQuery}
               onChange={(e) => setSearchQuery(e.target.value)}
               required
