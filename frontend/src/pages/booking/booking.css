@@ -382,7 +382,8 @@
 @media (max-width: 768px) {
   .booking {
     width: 90%;
-    padding: 20px 0;
+    padding-top: 20px;
+    padding-bottom: 100px;
   }
   .ticket-booking {
     margin-bottom: 100px;

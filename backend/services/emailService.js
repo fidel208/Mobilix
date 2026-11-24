@@ -120,20 +120,17 @@ export const sendTicketEmail = async (toEmail, details) => {
         <body style="font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Helvetica, Arial, sans-serif; background-color: #f3f4f6; margin: 0; padding: 24px;">
           <div style="max-width: 600px; background: #ffffff; margin: 0 auto; border-radius: 12px; overflow: hidden; box-shadow: 0 4px 16px rgba(0,0,0,0.08); border: 1px solid #e5e7eb;">
             
-            <!-- Header -->
             <div style="background: linear-gradient(135deg, #1e293b, #0f172a); padding: 32px 24px; text-align: center; color: #ffffff;">
               <h1 style="margin: 0; font-size: 26px; font-weight: 700; letter-spacing: 1px; color: #ffffff;">MOBILIX</h1>
               <p style="margin: 8px 0 0 0; font-size: 14px; color: #94a3b8; text-transform: uppercase; letter-spacing: 0.5px;">Booking &amp; Ticket Confirmation</p>
             </div>
 
-            <!-- Content Area -->
             <div style="padding: 28px 24px;">
               <p style="font-size: 16px; color: #1e293b; margin-top: 0;">Hello <strong>${passengerName}</strong>,</p>
               <p style="font-size: 15px; color: #475569; line-height: 1.5;">
                 Thank you for choosing Mobilix. Your booking has been confirmed! Here are all the details of your reservation:
               </p>
 
-              <!-- Ticket Badge Box -->
               <div style="background: #f8fafc; border: 2px dashed #cbd5e1; border-radius: 10px; padding: 20px; margin: 24px 0;">
                 <div style="display: flex; justify-content: space-between; align-items: center; border-bottom: 1px solid #e2e8f0; padding-bottom: 12px; margin-bottom: 16px;">
                   <div>
@@ -152,7 +149,6 @@ export const sendTicketEmail = async (toEmail, details) => {
                   </div>
                 </div>
 
-                <!-- Detail Rows -->
                 <table style="width: 100%; border-collapse: collapse; font-size: 14px; color: #334155;">
                   <tr>
                     <td style="padding: 6px 0; color: #64748b; font-weight: 500;">Service Type:</td>
@@ -200,7 +196,6 @@ export const sendTicketEmail = async (toEmail, details) => {
               </p>
             </div>
 
-            <!-- Footer -->
             <div style="background: #f8fafc; border-top: 1px solid #e2e8f0; padding: 20px 24px; text-align: center;">
               <p style="margin: 0; font-size: 12px; color: #94a3b8;">
                 &copy; ${new Date().getFullYear()} Mobilix Transport Services. All rights reserved.<br>

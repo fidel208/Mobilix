@@ -32,6 +32,8 @@ function Booking() {
   const [vehicles, setVehicles] = useState([]);
   const [routes, setRoutes] = useState([]);
 
+  const todayStr = new Date().toISOString().split("T")[0];
+
   const [formData, setFormData] = useState({
     firstName: "",
     lastName: "",
@@ -71,6 +73,31 @@ function Booking() {
   };
 
   const formatVehicleLabel = (vehicle) => `${vehicle.name} (${vehicle.plate})`;
+
+  const getHireVehicleDetails = (vehicle) => {
+    if (!vehicle)
+      return { capacity: "4 Seater", dailyRate: 3000, routeId: null };
+    const name = (vehicle.name || "").toLowerCase();
+    const isSevenSeater =
+      name.includes("sienta") ||
+      name.includes("noah") ||
+      name.includes("voxy") ||
+      name.includes("7");
+    const matchedRoute =
+      routesByServiceType.hire.find((r) =>
+        isSevenSeater ? Number(r.price) >= 4000 : Number(r.price) < 4000,
+      ) || routesByServiceType.hire[0];
+    const dailyRate = matchedRoute
+      ? Number(matchedRoute.price)
+      : isSevenSeater
+        ? 4500
+        : 3000;
+    return {
+      capacity: isSevenSeater ? "7 Seater" : "4 Seater",
+      dailyRate,
+      routeId: matchedRoute ? matchedRoute.id : null,
+    };
+  };
 
   const vehiclesByServiceType = {
     local: vehicles.filter(
@@ -154,22 +181,22 @@ function Booking() {
 
     if (type === "hire") {
       if (
-        currentServiceVehicles.length > 0 &&
+        formData.hireVehicleId &&
         !currentServiceVehicles.some((v) => v.id === formData.hireVehicleId)
       ) {
         setFormData((prev) => ({
           ...prev,
-          hireVehicleId: currentServiceVehicles[0].id,
+          hireVehicleId: "",
         }));
       }
     } else {
       if (
-        currentServiceVehicles.length > 0 &&
+        formData.selectedVehicleId &&
         !currentServiceVehicles.some((v) => v.id === formData.selectedVehicleId)
       ) {
         setFormData((prev) => ({
           ...prev,
-          selectedVehicleId: currentServiceVehicles[0].id,
+          selectedVehicleId: "",
         }));
       }
     }
@@ -178,18 +205,9 @@ function Booking() {
   useEffect(() => {
     const currentServiceRoutes = routesByServiceType[type] || [];
     if (
-      currentServiceRoutes.length > 0 &&
+      formData.selectedRouteId &&
       !currentServiceRoutes.some((r) => r.id === formData.selectedRouteId)
     ) {
-      const defaultRoute = currentServiceRoutes[0];
-      setFormData((prev) => ({
-        ...prev,
-        selectedRouteId: defaultRoute.id,
-        startingPoint: defaultRoute.startingPoint,
-        destination: defaultRoute.destination,
-        price: defaultRoute.price,
-      }));
-    } else if (currentServiceRoutes.length === 0 && type !== "hire") {
       setFormData((prev) => ({
         ...prev,
         selectedRouteId: "",
@@ -255,6 +273,8 @@ function Booking() {
     (v) => v.id === formData.hireVehicleId,
   );
 
+  const hireInfo = getHireVehicleDetails(selectedHireVehicle);
+
   const selectedRoute = routes.find((r) => r.id === formData.selectedRouteId);
 
   const handleBookingSubmit = async (e, serviceType) => {
@@ -287,26 +307,31 @@ function Booking() {
 
       if (!formData.email || !formData.email.includes("@")) {
         setLoading(false);
-        setErrorMsg("Please provide a valid email address for confirmation.");
+        setErrorMsg("Please provide a valid email address.");
         return;
       }
+
+      const hireDetails =
+        serviceType === "hire" ? getHireVehicleDetails(vehicle) : null;
 
       const payload = {
         serviceType,
         firstName: formData.firstName,
         lastName: formData.lastName,
         email: formData.email,
-        routeId: serviceType === "hire" ? null : formData.selectedRouteId || null,
+        routeId:
+          serviceType === "hire"
+            ? hireDetails?.routeId || null
+            : formData.selectedRouteId || null,
         startingPoint:
           serviceType === "hire"
             ? "Hire Station"
             : formData.startingPoint || "N/A",
         destination:
-          serviceType === "hire"
-            ? "Self Drive"
-            : formData.destination || "N/A",
+          serviceType === "hire" ? "Self Drive" : formData.destination || "N/A",
         travelDate: formData.date,
         seats: Number(formData.seats) || 1,
+        days: serviceType === "hire" ? days : undefined,
         vehicleId: vehicle.id,
         carType: formatVehicleLabel(vehicle),
         paymentType:
@@ -377,7 +402,7 @@ function Booking() {
 
       setSuccessMsg(
         response.data.message ||
-          "Booking successful! Ticket confirmation has been sent to your email and you have been added to the community.",
+          "Booking successful! Ticket confirmation has been sent to your email.",
       );
       setLoading(false);
 
@@ -453,7 +478,7 @@ function Booking() {
                       style={{
                         color: "#d97706",
                         fontSize: "14px",
-                        margin: "4px 0",
+                        margin: "0",
                       }}
                     >
                       No vehicles available.
@@ -465,7 +490,7 @@ function Booking() {
                     style={{
                       color: "#d97706",
                       fontSize: "14px",
-                      margin: "4px 0",
+                      margin: "0",
                     }}
                   >
                     No routes added available.
@@ -515,12 +540,26 @@ function Booking() {
                       type="date"
                       name="date"
                       id="local-date"
+                      min={todayStr}
                       value={formData.date}
                       onChange={handleInputChange}
                       required
                     />
                   </span>
                 </div>
+                {(!formData.selectedVehicleId ||
+                  !formData.selectedRouteId ||
+                  !formData.date) && (
+                  <p
+                    style={{
+                      color: "#64748b",
+                      fontSize: "13px",
+                    }}
+                  >
+                    Please select a vehicle, route, and travel date to proceed
+                    with booking.
+                  </p>
+                )}
                 <div className="form-buttons">
                   <button type="submit">Search for seats</button>
                   <button
@@ -531,7 +570,10 @@ function Booking() {
                       vehiclesByServiceType.local.length === 0 ||
                       routesByServiceType.local.length === 0 ||
                       vehiclesLoading ||
-                      routesLoading
+                      routesLoading ||
+                      !formData.selectedVehicleId ||
+                      !formData.selectedRouteId ||
+                      !formData.date
                     }
                   >
                     Get a ticket
@@ -540,7 +582,6 @@ function Booking() {
               </div>
             )}
 
-            {}
             {type === "private" && (
               <div className="private-div">
                 <p>
@@ -555,7 +596,7 @@ function Booking() {
                       style={{
                         color: "#d97706",
                         fontSize: "14px",
-                        margin: "4px 0",
+                        margin: "0",
                       }}
                     >
                       No vehicles available.
@@ -567,7 +608,7 @@ function Booking() {
                     style={{
                       color: "#d97706",
                       fontSize: "14px",
-                      margin: "4px 0",
+                      margin: "0",
                     }}
                   >
                     No routes available.
@@ -617,12 +658,26 @@ function Booking() {
                       type="date"
                       name="date"
                       id="private-date"
+                      min={todayStr}
                       value={formData.date}
                       onChange={handleInputChange}
                       required
                     />
                   </span>
                 </div>
+                {(!formData.selectedVehicleId ||
+                  !formData.selectedRouteId ||
+                  !formData.date) && (
+                  <p
+                    style={{
+                      color: "#64748b",
+                      fontSize: "13px",
+                    }}
+                  >
+                    Please select a vehicle, route, and travel date to proceed
+                    with booking.
+                  </p>
+                )}
                 <div className="form-buttons">
                   <button type="submit">Search for cars</button>
                   <button
@@ -633,7 +688,10 @@ function Booking() {
                       vehiclesByServiceType.private.length === 0 ||
                       routesByServiceType.private.length === 0 ||
                       vehiclesLoading ||
-                      routesLoading
+                      routesLoading ||
+                      !formData.selectedVehicleId ||
+                      !formData.selectedRouteId ||
+                      !formData.date
                     }
                   >
                     Reserve a seat
@@ -642,7 +700,6 @@ function Booking() {
               </div>
             )}
 
-            {}
             {type === "luggage" && (
               <div className="luggage-div">
                 <p>
@@ -657,7 +714,7 @@ function Booking() {
                       style={{
                         color: "#d97706",
                         fontSize: "14px",
-                        margin: "4px 0",
+                        margin: "0",
                       }}
                     >
                       No vehicles available.
@@ -669,7 +726,7 @@ function Booking() {
                     style={{
                       color: "#d97706",
                       fontSize: "14px",
-                      margin: "4px 0",
+                      margin: "0",
                     }}
                   >
                     No routes available.
@@ -719,12 +776,26 @@ function Booking() {
                       type="date"
                       name="date"
                       id="luggage-date"
+                      min={todayStr}
                       value={formData.date}
                       onChange={handleInputChange}
                       required
                     />
                   </span>
                 </div>
+                {(!formData.selectedVehicleId ||
+                  !formData.selectedRouteId ||
+                  !formData.date) && (
+                  <p
+                    style={{
+                      color: "#64748b",
+                      fontSize: "13px",
+                    }}
+                  >
+                    Please select a vehicle, route, and travel date to proceed
+                    with booking.
+                  </p>
+                )}
                 <button
                   type="button"
                   id="luggage-book-btn"
@@ -733,7 +804,10 @@ function Booking() {
                     vehiclesByServiceType.luggage.length === 0 ||
                     routesByServiceType.luggage.length === 0 ||
                     vehiclesLoading ||
-                    routesLoading
+                    routesLoading ||
+                    !formData.selectedVehicleId ||
+                    !formData.selectedRouteId ||
+                    !formData.date
                   }
                 >
                   Book carrier
@@ -748,7 +822,6 @@ function Booking() {
             </p>
           )}
 
-          {}
           {localBookingModal && (
             <div className="booking-modal">
               <form
@@ -789,7 +862,6 @@ function Booking() {
                   </p>
                 )}
 
-                {}
                 <div
                   style={{
                     background: "#f8fafc",
@@ -946,7 +1018,6 @@ function Booking() {
             </div>
           )}
 
-          {}
           {privateBookingModal && (
             <div className="booking-modal">
               <form
@@ -982,7 +1053,6 @@ function Booking() {
                   </p>
                 )}
 
-                {}
                 <div
                   style={{
                     background: "#f8fafc",
@@ -1105,7 +1175,6 @@ function Booking() {
           )}
         </div>
 
-        {}
         <div className="car-hire-booking">
           <h1>Rent a car</h1>
           <form className="search-form" onSubmit={(e) => e.preventDefault()}>
@@ -1120,11 +1189,15 @@ function Booking() {
                   required
                 >
                   <option value="">Select vehicle</option>
-                  {vehiclesByServiceType.hire.map((vehicle) => (
-                    <option key={vehicle.id} value={vehicle.id}>
-                      {formatVehicleLabel(vehicle)}
-                    </option>
-                  ))}
+                  {vehiclesByServiceType.hire.map((vehicle) => {
+                    const info = getHireVehicleDetails(vehicle);
+                    return (
+                      <option key={vehicle.id} value={vehicle.id}>
+                        {formatVehicleLabel(vehicle)} - {info.capacity} (KES{" "}
+                        {info.dailyRate.toLocaleString()} / day)
+                      </option>
+                    );
+                  })}
                 </select>
               </span>
               <span>
@@ -1147,6 +1220,7 @@ function Booking() {
                     type="date"
                     name="date"
                     id="hire-date"
+                    min={todayStr}
                     value={formData.date}
                     onChange={handleInputChange}
                     required
@@ -1156,13 +1230,20 @@ function Booking() {
             </div>
 
             {vehiclesByServiceType.hire.length === 0 && !vehiclesLoading && (
-              <p
-                style={{ color: "#d97706", fontSize: "14px", margin: "4px 0" }}
-              >
+              <p style={{ color: "#d97706", fontSize: "14px", margin: "0" }}>
                 No vehicles available.
               </p>
             )}
-
+            {(!formData.hireVehicleId || !formData.date) && (
+              <p
+                style={{
+                  color: "#64748b",
+                  fontSize: "13px",
+                }}
+              >
+                Please select a vehicle and rental date to proceed with hiring.
+              </p>
+            )}
             <div className="form-buttons">
               <button type="submit">Search for cars</button>
               <button
@@ -1170,7 +1251,10 @@ function Booking() {
                 onClick={handleHire}
                 id="book-button"
                 disabled={
-                  vehiclesByServiceType.hire.length === 0 || vehiclesLoading
+                  vehiclesByServiceType.hire.length === 0 ||
+                  vehiclesLoading ||
+                  !formData.hireVehicleId ||
+                  !formData.date
                 }
               >
                 Hire a car
@@ -1178,7 +1262,6 @@ function Booking() {
             </div>
           </form>
 
-          {}
           {hireModal && (
             <div className="hire-modal">
               <form
@@ -1214,7 +1297,6 @@ function Booking() {
                   </p>
                 )}
 
-                {}
                 <div
                   style={{
                     background: "#f8fafc",
@@ -1228,18 +1310,34 @@ function Booking() {
                   <div style={{ fontSize: "15px" }}>
                     Vehicle :&nbsp;
                     {selectedHireVehicle
-                      ? formatVehicleLabel(selectedHireVehicle)
+                      ? `${formatVehicleLabel(selectedHireVehicle)} (${hireInfo.capacity})`
                       : "None selected"}
                   </div>
                   <div style={{ fontSize: "15px" }}>
+                    Daily Rate :&nbsp;KES {hireInfo.dailyRate.toLocaleString()}{" "}
+                    / day
+                  </div>
+                  <div style={{ fontSize: "15px" }}>
                     Rental Period :&nbsp;
-                    {days === "one" ? "1 Day" : "More than one days"}
+                    {days === "one" ? "1 Day" : "More than one day (2+ Days)"}
                   </div>
                   {formData.date && (
                     <div style={{ fontSize: "15px" }}>
                       Start Date :&nbsp;{formData.date}
                     </div>
                   )}
+                  <div
+                    style={{
+                      color: "#2563eb",
+                      fontWeight: "700",
+                      fontSize: "15px",
+                    }}
+                  >
+                    Estimated Total :&nbsp;KES{" "}
+                    {(
+                      hireInfo.dailyRate * (days === "more" ? 2 : 1)
+                    ).toLocaleString()}
+                  </div>
                 </div>
 
                 <div className="details-form">

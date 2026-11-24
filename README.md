@@ -10,7 +10,7 @@
 
 ## Live Demo
 
-Explore the live web application here: **[mobilix-eight.vercel.app](https://mobilix.co.ke/)**
+Explore the live web application here: **[mobilix.co.ke](https://mobilix.co.ke/)**
 
 ---
 

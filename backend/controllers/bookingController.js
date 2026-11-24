@@ -140,11 +140,56 @@ export const createBooking = async (req, res) => {
     const formattedCarLabel = `${adminVehicle.name} (${adminVehicle.plate})`;
     let routeFare = 0;
     if (normalizedServiceType === "hire") {
-      routeFare = adminRoute ? Number(adminRoute.price) : 0;
+      const vName = (adminVehicle.name || "").toLowerCase();
+      const isSevenSeater = vName.includes("sienta") || vName.includes("noah") || vName.includes("voxy") || vName.includes("7");
+      const matchedRoute =
+        adminRoute ||
+        (await prisma.route.findFirst({
+          where: {
+            serviceType: "car-hire",
+            ...(isSevenSeater
+              ? {
+                  OR: [
+                    { destination: { contains: "7", mode: "insensitive" } },
+                    { startingPoint: { contains: "7", mode: "insensitive" } },
+                    { destination: { contains: "sienta", mode: "insensitive" } },
+                    { price: { gte: 4000 } },
+                  ],
+                }
+              : {
+                  OR: [
+                    { destination: { contains: "4", mode: "insensitive" } },
+                    { startingPoint: { contains: "4", mode: "insensitive" } },
+                    { price: { lte: 3500 } },
+                  ],
+                }),
+          },
+          orderBy: { price: "asc" },
+        })) ||
+        (await prisma.route.findFirst({
+          where: { serviceType: "car-hire" },
+          orderBy: { price: isSevenSeater ? "desc" : "asc" },
+        }));
+
+      if (matchedRoute) {
+        routeFare = Number(matchedRoute.price);
+        adminRoute = matchedRoute;
+      } else {
+        routeFare = isSevenSeater ? 4500 : 3000;
+      }
     } else {
       routeFare = adminRoute ? Number(adminRoute.price) : 500;
     }
-    const totalAmount = routeFare * seatCount;
+    const rentalDaysMultiplier =
+      normalizedServiceType === "hire"
+        ? String(req.body.days).toLowerCase() === "more"
+          ? 2
+          : 1
+        : 1;
+    const totalAmount =
+      normalizedServiceType === "hire"
+        ? routeFare * rentalDaysMultiplier
+        : routeFare * seatCount;
     const ticketCode = generateTicketNumber();
 
     let stkResult = null;
