@@ -17,6 +17,18 @@ export const getDashboardStats = async (req, res) => {
       ]);
 
     const allTickets = await prisma.ticket.findMany({
+      where: {
+        status: "CONFIRMED",
+        booking: {
+          paymentType: { not: "arrival" },
+          status: "PAID",
+        },
+        NOT: [
+          { mpesaRefCode: null },
+          { mpesaRefCode: "PAYMENT ON ARRIVAL" },
+          { mpesaRefCode: { startsWith: "ws_CO_" } },
+        ],
+      },
       select: {
         amount: true,
         createdAt: true,

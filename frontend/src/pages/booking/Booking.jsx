@@ -247,10 +247,12 @@ function Booking() {
     setSuccessMsg("");
   };
 
-  const selectedVehicle = vehicles.find((v) =>
-    type === "hire"
-      ? v.id === formData.hireVehicleId
-      : v.id === formData.selectedVehicleId,
+  const selectedTransitVehicle = vehicles.find(
+    (v) => v.id === formData.selectedVehicleId,
+  );
+
+  const selectedHireVehicle = vehicles.find(
+    (v) => v.id === formData.hireVehicleId,
   );
 
   const selectedRoute = routes.find((r) => r.id === formData.selectedRouteId);
@@ -294,13 +296,15 @@ function Booking() {
         firstName: formData.firstName,
         lastName: formData.lastName,
         email: formData.email,
-        routeId: formData.selectedRouteId || null,
+        routeId: serviceType === "hire" ? null : formData.selectedRouteId || null,
         startingPoint:
-          formData.startingPoint ||
-          (serviceType === "hire" ? "Hire Station" : "N/A"),
+          serviceType === "hire"
+            ? "Hire Station"
+            : formData.startingPoint || "N/A",
         destination:
-          formData.destination ||
-          (serviceType === "hire" ? "Self Drive" : "N/A"),
+          serviceType === "hire"
+            ? "Self Drive"
+            : formData.destination || "N/A",
         travelDate: formData.date,
         seats: Number(formData.seats) || 1,
         vehicleId: vehicle.id,
@@ -798,8 +802,8 @@ function Booking() {
                 >
                   <div style={{ fontSize: "15px" }}>
                     Vehicle :&nbsp;
-                    {selectedVehicle
-                      ? formatVehicleLabel(selectedVehicle)
+                    {selectedTransitVehicle
+                      ? formatVehicleLabel(selectedTransitVehicle)
                       : "None selected"}
                   </div>
                   {selectedRoute && (
@@ -991,8 +995,8 @@ function Booking() {
                 >
                   <div style={{ fontSize: "15px" }}>
                     Vehicle :&nbsp;
-                    {selectedVehicle
-                      ? formatVehicleLabel(selectedVehicle)
+                    {selectedTransitVehicle
+                      ? formatVehicleLabel(selectedTransitVehicle)
                       : "None selected"}
                   </div>
                   {selectedRoute && (
@@ -1223,8 +1227,8 @@ function Booking() {
                 >
                   <div style={{ fontSize: "15px" }}>
                     Vehicle :&nbsp;
-                    {selectedVehicle
-                      ? formatVehicleLabel(selectedVehicle)
+                    {selectedHireVehicle
+                      ? formatVehicleLabel(selectedHireVehicle)
                       : "None selected"}
                   </div>
                   <div style={{ fontSize: "15px" }}>

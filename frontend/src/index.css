@@ -8,6 +8,10 @@
   font-size: 20px;
   font-style: normal;
 }
+html {
+  scroll-behavior: smooth;
+}
+
 body {
   background-color: #fdfbf7;
   color: #020202;

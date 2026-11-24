@@ -138,7 +138,12 @@ export const createBooking = async (req, res) => {
     }
 
     const formattedCarLabel = `${adminVehicle.name} (${adminVehicle.plate})`;
-    const routeFare = adminRoute ? Number(adminRoute.price) : 500;
+    let routeFare = 0;
+    if (normalizedServiceType === "hire") {
+      routeFare = adminRoute ? Number(adminRoute.price) : 0;
+    } else {
+      routeFare = adminRoute ? Number(adminRoute.price) : 500;
+    }
     const totalAmount = routeFare * seatCount;
     const ticketCode = generateTicketNumber();
 
