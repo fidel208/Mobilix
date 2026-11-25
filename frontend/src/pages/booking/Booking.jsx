@@ -348,7 +348,7 @@ function Booking() {
       if (response.data.requiresPayment && response.data.checkoutRequestId) {
         const checkoutId = response.data.checkoutRequestId;
         setSuccessMsg(
-          "M-Pesa STK prompt sent to your phone! Please enter your M-Pesa PIN to complete payment.",
+          "M-Pesa STK prompt sent to your phone. Please check your phone to complete payment.",
         );
 
         let attempts = 0;
@@ -845,6 +845,7 @@ function Booking() {
                       color: "green",
                       fontWeight: "600",
                       fontSize: "14px",
+                      margin: "0",
                     }}
                   >
                     {successMsg}
@@ -856,6 +857,7 @@ function Booking() {
                       color: "red",
                       fontWeight: "600",
                       fontSize: "14px",
+                      margin: "0",
                     }}
                   >
                     {errorMsg}
@@ -1036,6 +1038,7 @@ function Booking() {
                       color: "green",
                       fontWeight: "600",
                       fontSize: "14px",
+                      margin: "0",
                     }}
                   >
                     {successMsg}
@@ -1047,6 +1050,7 @@ function Booking() {
                       color: "red",
                       fontWeight: "600",
                       fontSize: "14px",
+                      margin: "0",
                     }}
                   >
                     {errorMsg}
@@ -1280,6 +1284,7 @@ function Booking() {
                       color: "green",
                       fontWeight: "600",
                       fontSize: "14px",
+                      margin: "0",
                     }}
                   >
                     {successMsg}
@@ -1291,6 +1296,7 @@ function Booking() {
                       color: "red",
                       fontWeight: "600",
                       fontSize: "14px",
+                      margin: "0",
                     }}
                   >
                     {errorMsg}
