@@ -116,6 +116,7 @@ function Contact() {
               <h4>Head office</h4>
               <p>info@mobilix.co.ke</p>
               <p>+254704679648</p>
+              <p>+254718176860</p>
               <p>
                 <i className="fa-solid fa-location-dot"></i> Ukunda, Kwale -
                 Kenya
